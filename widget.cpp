@@ -191,7 +191,6 @@ void Widget::on_btn_run_stop_toggled(bool checked)
         ui->btn_run_stop->setText("运行");
 
         modbus->stop_motor();
-//        modbus->disable_motor();                    // 电机失能
 //        QThread::msleep(50);
 //        modbus->break_connection();                 // 断开连接[!!!!!!!!这里有问题 待测]
     }
@@ -211,10 +210,14 @@ void Widget::on_btn_stop_now_clicked()
 void Widget::on_btn_angle_cali_clicked()
 {
     if (modbus != NULL) {
-        modbus->angle_cali(11.1);
+//        modbus->get_input_angle(QString::number(1000));       // 将目标角度传给modbus内部变量
+//        modbus->enable_motor();                     // 电机使能
+//        modbus->run_motor();                        // 电机运行
+
+        modbus->angle_cali();
 
         double modbus_read_num = (double)modbus->put_read_num();
-        ui->textB_angle_cali->setText(QString::number(modbus_read_num * 360 / 12800, 'f', 1));
+        ui->textB_angle_cali->setText("初始角度: "+ QString::number(modbus_read_num * 360 / 12800, 'f', 1));
     }
 }
 

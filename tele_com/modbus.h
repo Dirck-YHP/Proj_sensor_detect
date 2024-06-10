@@ -7,6 +7,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QVariant>
 #include <QDebug>
+#include <QThread>
 
 class Modbus : public QObject
 {
@@ -28,7 +29,7 @@ public:
 
     void stop_motor();          // 急停
 
-    void angle_cali(double cali_angle);          // 角度校准：设置电机当前位置
+    void angle_cali();          // 角度校准：设置电机当前位置
 private:
     void write(int address, int count, int parameter);      // 往地址写
     void read(int address, int count);                      // 从地址读

@@ -85,18 +85,18 @@ void Modbus::stop_motor()
 
 
 
-void Modbus::angle_cali(double cali_angle)
+void Modbus::angle_cali()
 {
     _angle_calibration = true;
 
     // 失能状态下，首先写入位置参数
     disable_motor();     // 先失能
 
-    int parameter = cali_angle * 12800 / 360;
-    write(1, 2, parameter); // 写入位置参数：即传感器当前的角度
+    write(0, 1, 0x302); // 写入位置参数
     write(0, 1, 0x200);     // 设置当前位置
 
     enable_motor();         // 再使能
+    _angle_calibration = false;
 }
 
 
@@ -121,7 +121,7 @@ void Modbus::write(int address, int count, int parameter)
                     qDebug() << "Success Write!";
                 } else {
                     // 请求出错，处理错误
-                    qDebug() << "Error Write!";
+//                    qDebug() << "Error Write!";
                 }
                 // 删除已完成的回复
                 reply->deleteLater();
@@ -152,7 +152,7 @@ void Modbus::read(int address, int count)
                         _read_num += val;
                         if(i != count - 1) _read_num = _read_num << 16;
                     }
-                    qDebug() << "Success Read!" ;
+//                    qDebug() << "Success Read!" ;
                 } else {
                     // 请求出错，处理错误
                     qDebug() << "Error Read!" << reply->errorString();
