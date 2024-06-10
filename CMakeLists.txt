@@ -26,6 +26,7 @@ add_executable(Proj_Sensor
     tools/simpleQtLogger.h tools/simpleQtLogger.cpp
     assist_func/assist.cpp assist_func/assist.h
     tele_com/modbus.cpp tele_com/modbus.h
+    tele_com/serialportcom.cpp tele_com/serialportcom.h
 )
 
 target_include_directories(Proj_Sensor PRIVATE

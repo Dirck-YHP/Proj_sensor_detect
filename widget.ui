@@ -222,7 +222,7 @@
       <widget class="QLabel" name="label_5">
        <property name="maximumSize">
         <size>
-         <width>50</width>
+         <width>100</width>
          <height>30</height>
         </size>
        </property>
@@ -257,14 +257,17 @@
        <property name="minimumSize">
         <size>
          <width>100</width>
-         <height>20</height>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>200</width>
+         <width>9999</width>
          <height>50</height>
         </size>
+       </property>
+       <property name="text">
+        <string>3000</string>
        </property>
       </widget>
      </item>
@@ -286,6 +289,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="btn_build_connect">
+       <property name="text">
+        <string>建立连接</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_break_connect">
+       <property name="text">
+        <string>断开连接</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>电机实际角度值</string>
@@ -301,6 +318,23 @@
         </size>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>角度校准</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_angle_cali">
+       <property name="text">
+        <string>角度校准</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextBrowser" name="textB_angle_cali"/>
      </item>
     </layout>
    </item>

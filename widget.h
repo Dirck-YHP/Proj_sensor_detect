@@ -11,6 +11,7 @@
 #include "qcustomplot.h"
 #include "assist.h"
 #include <QThreadPool>
+#include <QThread>
 #include <QTimer>
 
 QT_BEGIN_NAMESPACE
@@ -29,12 +30,15 @@ private slots:
     void get_data_and_plot_9205(QVector<double> data);
     void get_data_and_plot_9403(QVector<QVector<double>> data);
     void get_data_and_plot_9401(QVector<double> data);
-
     void on_btn_startAcquire_toggled(bool checked);
 
     void on_btn_run_stop_toggled(bool checked);
-
     void on_btn_stop_now_clicked();
+    void on_btn_angle_cali_clicked();
+
+    void on_btn_break_connect_clicked();
+
+    void on_btn_build_connect_clicked();
 
 private:
     QVector<QVector<double>> add_data_to_queue(QVector<QVector<double>> data);

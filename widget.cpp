@@ -7,12 +7,14 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    modbus = new Modbus;
+    modbus->build_connecttion();                // 建立连接
 
     // 通过队列让初始化波形展示为滑动，初始化为6个通道
     plot_queue = QVector<QQueue<double>>(6);
 
     // 设置定时器：每500ms显示一次电机当前角度值
-    timer_modbus.setInterval(500);
+    timer_modbus.setInterval(200);
     connect(&timer_modbus, &QTimer::timeout, this, [=](){
         // 如果电机处于连接状态，则读取值
         // 这个条件待测，可能需要加上一个bool变量作为条件，放在按键触发事件里变为有效
@@ -20,6 +22,7 @@ Widget::Widget(QWidget *parent)
             double modbus_read_num = (double)modbus->put_read_num();
             ui->textB_modbus->setText(QString::number(modbus_read_num * 360 / 12800, 'f', 1));
         }
+//        qDebug() << modbus->put_modbusdevice_state();
     });
     timer_modbus.start();
 
@@ -179,27 +182,29 @@ void Widget::on_btn_run_stop_toggled(bool checked)
 
         QString input_angel = ui->Edit_target_angle->text();    // 获取目标角度
 
-        modbus = new Modbus;
         modbus->get_input_angle(input_angel);       // 将目标角度传给modbus内部变量
-        modbus->build_connecttion();                // 建立连接
+//        modbus->build_connecttion();                // 建立连接
         modbus->enable_motor();                     // 电机使能
         modbus->run_motor();                        // 电机运行
 
     } else {            // 点击“停止”：这里进行 电机失能 + 断开连接
         ui->btn_run_stop->setText("运行");
 
-
-        modbus->disable_motor();                    // 电机失能
-        modbus->break_connection();                 // 断开连接
-
-        delete modbus;
+        modbus->stop_motor();
+//        modbus->disable_motor();                    // 电机失能
+//        QThread::msleep(50);
+//        modbus->break_connection();                 // 断开连接[!!!!!!!!这里有问题 待测]
     }
 }
+
+
 
 void Widget::on_btn_stop_now_clicked()
 {
     if (modbus != NULL) {
         modbus->stop_motor();
+        modbus->disable_motor();
+        ui->btn_run_stop->setChecked(false);
     }
 }
 
@@ -207,5 +212,18 @@ void Widget::on_btn_angle_cali_clicked()
 {
     if (modbus != NULL) {
         modbus->angle_cali(11.1);
+
+        double modbus_read_num = (double)modbus->put_read_num();
+        ui->textB_angle_cali->setText(QString::number(modbus_read_num * 360 / 12800, 'f', 1));
     }
+}
+
+void Widget::on_btn_break_connect_clicked()
+{
+    modbus->break_connection();                 // 断开连接
+}
+
+void Widget::on_btn_build_connect_clicked()
+{
+    modbus->build_connecttion();                // 建立连接
 }

@@ -35,7 +35,7 @@ private:
 
 private:
     double _input_angle;
-//    bool _angle_calibration = false;
+    bool _angle_calibration = false;
 
     QModbusRtuSerialMaster _modbusDevice;
     QTimer _timer;
