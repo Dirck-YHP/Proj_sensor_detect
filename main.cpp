@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "mainwindow.h"
 
 #include <QApplication>
 
@@ -10,7 +11,10 @@ int main(int argc, char *argv[])
     qRegisterMetaType<int32>("int32");
     qRegisterMetaType<QVector<QVector<double>>>("QVector<QVector<double>>");
 
-    Widget w;
-    w.show();
+//    Widget w;
+//    w.show();
+    mainWindow mW;
+    mW.show();
+
     return a.exec();
 }

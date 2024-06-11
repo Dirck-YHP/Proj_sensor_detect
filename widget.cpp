@@ -8,25 +8,32 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
     modbus = new Modbus;
-    modbus->build_connecttion();                // 建立连接
+//    modbus->build_connecttion();                // 建立连接【位置待定】
 
     // 通过队列让初始化波形展示为滑动，初始化为6个通道
     plot_queue = QVector<QQueue<double>>(6);
+
 
     // 设置定时器：每500ms显示一次电机当前角度值
     timer_modbus.setInterval(200);
     connect(&timer_modbus, &QTimer::timeout, this, [=](){
         // 如果电机处于连接状态，则读取值
         // 这个条件待测，可能需要加上一个bool变量作为条件，放在按键触发事件里变为有效
-        if (modbus->put_modbusdevice_state() == QModbusDevice::ConnectedState) {
-            double modbus_read_num = (double)modbus->put_read_num();
-            ui->textB_modbus->setText(QString::number(modbus_read_num * 360 / 12800, 'f', 1));
-        }
+        if (MODBUS)
+            if (modbus->put_modbusdevice_state() == QModbusDevice::ConnectedState) {
+                double modbus_read_num = (double)modbus->put_read_num();
+                ui->textB_modbus->setText(QString::number(modbus_read_num * 360 / 12800, 'f', 1));
+            }
 //        qDebug() << modbus->put_modbusdevice_state();
     });
     timer_modbus.start();
 
 
+    // 串口通信测试：接收数据
+    serialPort_com = new SerialPortCom;
+    connect(&serialPort_com->serialPort, &QSerialPort::readyRead, [&](){
+        ui->textE_rev->append(serialPort_com->serialPort.readAll());
+    });
 }
 
 Widget::~Widget()
@@ -35,6 +42,7 @@ Widget::~Widget()
 }
 
 
+/**************************数据采集*********************************/
 // 接收到NI9205发送来的数据后开始处理
 void Widget::get_data_and_plot_9205(QVector<double> data)
 {
@@ -174,16 +182,17 @@ QVector<QVector<double>> Widget::add_data_to_queue(QVector<QVector<double> > dat
 }
 
 
-
+/**************************MODBUS*********************************/
 void Widget::on_btn_run_stop_toggled(bool checked)
 {
     if (checked) {      // 点击“运行”：这里进行 电机连接 + 电机使能
         ui->btn_run_stop->setText("停止");
+        MODBUS = true;
 
         QString input_angel = ui->Edit_target_angle->text();    // 获取目标角度
 
         modbus->get_input_angle(input_angel);       // 将目标角度传给modbus内部变量
-//        modbus->build_connecttion();                // 建立连接
+        modbus->build_connecttion();                // 建立连接
         modbus->enable_motor();                     // 电机使能
         modbus->run_motor();                        // 电机运行
 
@@ -195,8 +204,6 @@ void Widget::on_btn_run_stop_toggled(bool checked)
 //        modbus->break_connection();                 // 断开连接[!!!!!!!!这里有问题 待测]
     }
 }
-
-
 
 void Widget::on_btn_stop_now_clicked()
 {
@@ -229,4 +236,12 @@ void Widget::on_btn_break_connect_clicked()
 void Widget::on_btn_build_connect_clicked()
 {
     modbus->build_connecttion();                // 建立连接
+}
+
+
+/**************************串口通信*********************************/
+void Widget::on_btn_serial_snd_clicked()
+{
+    serialPort_com->serial_port_connect();
+    serialPort_com->serial_snd_msg(ui->textE_snd->toPlainText());
 }
