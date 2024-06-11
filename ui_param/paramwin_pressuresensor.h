@@ -17,6 +17,12 @@ public:
 
 private:
     Ui::paramWin_pressureSensor *ui;
+
+signals:
+    void subWindowClosed();
+private slots:
+    void on_btn_back_mainW_clicked();
+    void on_btn_exit_clicked();
 };
 
 #endif // PARAMWIN_PRESSURESENSOR_H

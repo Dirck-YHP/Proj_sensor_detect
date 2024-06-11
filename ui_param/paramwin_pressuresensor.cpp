@@ -12,3 +12,14 @@ paramWin_pressureSensor::~paramWin_pressureSensor()
 {
     delete ui;
 }
+
+void paramWin_pressureSensor::on_btn_back_mainW_clicked()
+{
+    emit subWindowClosed();
+    this->close();
+}
+
+void paramWin_pressureSensor::on_btn_exit_clicked()
+{
+    qApp->quit();
+}

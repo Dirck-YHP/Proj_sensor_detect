@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
+    <width>544</width>
     <height>559</height>
    </rect>
   </property>
@@ -121,32 +121,6 @@
      <width>71</width>
      <height>21</height>
     </rect>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioBtn_measure_resis">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>290</y>
-     <width>101</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>测电阻</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioBtn_need_device">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>290</y>
-     <width>171</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>需要工装设备</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
@@ -299,6 +273,32 @@
    </property>
    <property name="text">
     <string>退出</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_measure_resis">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>290</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>测电阻</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_need_device">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>290</y>
+     <width>101</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>工装设备</string>
    </property>
   </widget>
  </widget>

@@ -20,17 +20,35 @@ void mainWindow::on_btn_exit_clicked()
 
 void mainWindow::on_btn_start_clicked()
 {
+       // 隐藏当前窗口，而不是销毁
+
     if (ui->cbox_choose_sensor->currentText() == "角位移传感器") {
         paramWin_angleSensor *param_win_angle_sensor = new paramWin_angleSensor;
+        connect(param_win_angle_sensor, &paramWin_angleSensor::subWindowClosed,
+                this, &mainWindow::showMainWindow);
+
+        this->hide();
         param_win_angle_sensor->show();
     } else if (ui->cbox_choose_sensor->currentText() == "角位移编码器") {
         paramWin_angleEncoder *param_win_angle_encoder = new paramWin_angleEncoder;
+        connect(param_win_angle_encoder, &paramWin_angleEncoder::subWindowClosed,
+                this, &mainWindow::showMainWindow);
+
+        this->hide();
         param_win_angle_encoder->show();
     } else if (ui->cbox_choose_sensor->currentText() == "接近开关") {
         paramWin_proximitySwitch *param_win_proximity_switch = new paramWin_proximitySwitch;
+        connect(param_win_proximity_switch, &paramWin_proximitySwitch::subWindowClosed,
+                this, &mainWindow::showMainWindow);
+
+        this->hide();
         param_win_proximity_switch->show();
     } else if (ui->cbox_choose_sensor->currentText() == "压力传感器") {
         paramWin_pressureSensor *param_win_pressure_sensor = new paramWin_pressureSensor;
+        connect(param_win_pressure_sensor, &paramWin_pressureSensor::subWindowClosed,
+                this, &mainWindow::showMainWindow);
+
+        this->hide();
         param_win_pressure_sensor->show();
     }
 }
@@ -38,4 +56,9 @@ void mainWindow::on_btn_start_clicked()
 void mainWindow::on_btn_data_export_clicked()
 {
     // 数据导出功能
+}
+
+void mainWindow::showMainWindow()
+{
+    this->show();
 }

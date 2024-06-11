@@ -12,3 +12,14 @@ paramWin_proximitySwitch::~paramWin_proximitySwitch()
 {
     delete ui;
 }
+
+void paramWin_proximitySwitch::on_btn_exit_clicked()
+{
+    qApp->quit();
+}
+
+void paramWin_proximitySwitch::on_btn_back_mainW_clicked()
+{
+    emit subWindowClosed();
+    this->close();
+}

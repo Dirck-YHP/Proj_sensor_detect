@@ -17,11 +17,12 @@ add_executable(Proj_Sensor
     main.cpp
     widget.cpp widget.h widget.ui
     mainwindow.cpp mainwindow.h mainwindow.ui
-    ui/paramwin_anglesensor.cpp ui/paramwin_anglesensor.h ui/paramwin_anglesensor.ui
-    ui/paramwin_angleencoder.cpp ui/paramwin_angleencoder.h ui/paramwin_angleencoder.ui
-    ui/paramwin_proximityswitch.cpp ui/paramwin_proximityswitch.h ui/paramwin_proximityswitch.ui
-    ui/paramwin_pressuresensor.cpp ui/paramwin_pressuresensor.h ui/paramwin_pressuresensor.ui
+    ui_param//paramwin_anglesensor.cpp ui_param/paramwin_anglesensor.h ui_param/paramwin_anglesensor.ui
+    ui_param/paramwin_angleencoder.cpp ui_param/paramwin_angleencoder.h ui_param/paramwin_angleencoder.ui
+    ui_param/paramwin_proximityswitch.cpp ui_param/paramwin_proximityswitch.h ui_param/paramwin_proximityswitch.ui
+    ui_param/paramwin_pressuresensor.cpp ui_param/paramwin_pressuresensor.h ui_param/paramwin_pressuresensor.ui
 
+    ui_show/showwin_measureresis.cpp ui_show/showwin_measureresis.h ui_show/showwin_measureresis.ui
 
     data_acquire/dataacquireai.cpp data_acquire/dataacquireai.h
     data_acquire/dataacquiredi.cpp data_acquire/dataacquiredi.h
@@ -31,6 +32,8 @@ add_executable(Proj_Sensor
     tools/NIDAQmx.h
     tools/qcustomplot.h tools/qcustomplot.cpp
     tools/simpleQtLogger.h tools/simpleQtLogger.cpp
+
+    sensors/anglesensor.cpp sensors/anglesensor.h
 
     assist_func/assist.cpp assist_func/assist.h
 
@@ -43,7 +46,8 @@ target_include_directories(Proj_Sensor PRIVATE
    ./tools
    ./assist_func
    ./tele_com
-   ./ui
+   ./ui_param
+   ./ui_show
 )
 
 target_link_libraries(Proj_Sensor PRIVATE Qt5::Widgets

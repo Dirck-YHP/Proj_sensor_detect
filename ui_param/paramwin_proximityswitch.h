@@ -17,6 +17,12 @@ public:
 
 private:
     Ui::paramWin_proximitySwitch *ui;
+
+signals:
+    void subWindowClosed();
+private slots:
+    void on_btn_exit_clicked();
+    void on_btn_back_mainW_clicked();
 };
 
 #endif // PARAMWIN_PROXIMITYSWITCH_H

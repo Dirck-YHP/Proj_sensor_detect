@@ -2,10 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
-#include "ui/paramwin_anglesensor.h"
-#include "ui/paramwin_angleencoder.h"
-#include "ui/paramwin_proximityswitch.h"
-#include "ui/paramwin_pressuresensor.h"
+#include "ui_param/paramwin_anglesensor.h"
+#include "ui_param/paramwin_angleencoder.h"
+#include "ui_param/paramwin_proximityswitch.h"
+#include "ui_param/paramwin_pressuresensor.h"
 
 namespace Ui {
 class mainWindow;
@@ -23,6 +23,8 @@ private slots:
     void on_btn_exit_clicked();
     void on_btn_start_clicked();
     void on_btn_data_export_clicked();
+
+    void showMainWindow();
 
 private:
     Ui::mainWindow *ui;
