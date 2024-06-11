@@ -15,8 +15,10 @@ private:
 
 public:
     void set_label(QString label);
-    QString get_label();
+    QString get_label() const;
+
     void set_range(QString angle_4mA, QString angle_20mA);
+    QPair<int, int> get_range() const;
 
 signals:
 

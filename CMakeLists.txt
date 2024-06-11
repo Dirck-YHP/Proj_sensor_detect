@@ -23,6 +23,7 @@ add_executable(Proj_Sensor
     ui_param/paramwin_pressuresensor.cpp ui_param/paramwin_pressuresensor.h ui_param/paramwin_pressuresensor.ui
 
     ui_show/showwin_measureresis.cpp ui_show/showwin_measureresis.h ui_show/showwin_measureresis.ui
+    ui_show/showwin_anglesensor.cpp ui_show/showwin_anglesensor.h ui_show/showwin_anglesensor.ui
 
     data_acquire/dataacquireai.cpp data_acquire/dataacquireai.h
     data_acquire/dataacquiredi.cpp data_acquire/dataacquiredi.h

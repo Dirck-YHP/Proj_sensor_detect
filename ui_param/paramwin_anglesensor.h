@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "sensors/anglesensor.h"
 #include "ui_show/showwin_measureresis.h"
+#include "ui_show/showwin_anglesensor.h"
 
 namespace Ui {
 class paramWin_angleSensor;
@@ -23,7 +24,7 @@ private slots:
 
     void on_checkBox_measure_resis_stateChanged(int arg1);
 
-    void on_checkBox_need_device_stateChanged(int arg1);
+    void on_checkBox_no_need_device_stateChanged(int arg1);
 
     void on_btn_exit_clicked();
 
@@ -34,6 +35,7 @@ private:
     Ui::paramWin_angleSensor *ui;
     AngleSensor *angle_sensor;
     showWin_measureResis *show_win_measure_r;
+    showWin_angleSensor *show_win_angle_sensor;
 
 signals:
     void subWindowClosed();

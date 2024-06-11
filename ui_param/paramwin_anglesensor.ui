@@ -40,6 +40,16 @@
      <height>31</height>
     </rect>
    </property>
+   <item>
+    <property name="text">
+     <string>test1</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>test2</string>
+    </property>
+   </item>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
@@ -288,17 +298,17 @@
     <string>测电阻</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox_need_device">
+  <widget class="QCheckBox" name="checkBox_no_need_device">
    <property name="geometry">
     <rect>
      <x>270</x>
      <y>290</y>
-     <width>101</width>
+     <width>181</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>工装设备</string>
+    <string>不需要工装设备</string>
    </property>
   </widget>
  </widget>

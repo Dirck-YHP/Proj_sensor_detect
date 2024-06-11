@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>showWin_measureResis</class>
- <widget class="QWidget" name="showWin_measureResis">
+ <class>showWin_angleSensor</class>
+ <widget class="QWidget" name="showWin_angleSensor">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
-    <height>412</height>
+    <width>568</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>显示_电阻</string>
+   <string>显示_角位移传感器</string>
   </property>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>201</width>
+     <width>301</width>
      <height>31</height>
     </rect>
    </property>
@@ -28,14 +28,14 @@
     </font>
    </property>
    <property name="text">
-    <string>显示——电阻</string>
+    <string>显示——角位移传感器</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btn_ok">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>280</y>
+     <x>320</x>
+     <y>310</y>
      <width>131</width>
      <height>51</height>
     </rect>
@@ -44,24 +44,27 @@
     <string>确定</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QPushButton" name="btn_start_finish_mea">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>90</y>
+     <x>110</x>
+     <y>310</y>
      <width>131</width>
-     <height>41</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
-    <string>电池电量：</string>
+    <string>开始测量</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QProgressBar" name="pBar_battery">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>100</y>
+     <x>180</x>
+     <y>70</y>
      <width>118</width>
      <height>23</height>
     </rect>
@@ -70,26 +73,39 @@
     <number>24</number>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>140</y>
-     <width>111</width>
+     <x>100</x>
+     <y>60</y>
+     <width>131</width>
      <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string> 电阻值：</string>
+    <string>电池电量：</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineE_show_resis">
+  <widget class="QPushButton" name="btn_test">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>150</y>
-     <width>113</width>
-     <height>21</height>
+     <x>90</x>
+     <y>230</y>
+     <width>201</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>测试</string>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="textB_test">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>120</y>
+     <width>201</width>
+     <height>101</height>
     </rect>
    </property>
   </widget>
