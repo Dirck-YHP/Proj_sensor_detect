@@ -14,10 +14,18 @@ showWin_angleSensor::~showWin_angleSensor()
     delete ui;
 }
 
+void showWin_angleSensor::get_data_and_plot_angle(QVector<double> angle)
+{
+
+}
+
 void showWin_angleSensor::on_btn_ok_clicked()
 {
     this->close();
 }
+
+
+
 
 void showWin_angleSensor::on_btn_test_clicked()
 {
@@ -27,3 +35,45 @@ void showWin_angleSensor::on_btn_test_clicked()
     QPair range = _angle_sensor->get_range();
     ui->textB_test->append(QString::number(range.first) + " " + QString::number(range.second));
 }
+
+void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
+{
+    if (checked) {
+        ui->btn_start_finish_mea->setText("结束测量");
+
+        _angle_sensor->start_acquire();
+        _channel_num = Assist::extractNumbers(_angle_sensor->get_channel()).size(); // 获取通道
+
+//        for (int i = 0; i < _channel_num; i++) {
+
+//        }
+
+        connect(_angle_sensor, &AngleSensor::emit_data,
+                this, &showWin_angleSensor::get_data_and_plot_angle);
+
+    } else {
+        ui->btn_start_finish_mea->setText("开始测量");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

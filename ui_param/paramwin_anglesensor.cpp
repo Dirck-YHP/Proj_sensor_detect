@@ -18,16 +18,20 @@ void paramWin_angleSensor::on_btn_ok_clicked()
     angle_sensor = new AngleSensor;
     angle_sensor->set_label(ui->cBox_angle_sensor_type->currentText());     // 读取标签
     angle_sensor->set_range(ui->lineE_4mA->text(), ui->lineE_20mA->text()); // 读取量程
+    angle_sensor->set_channel(ui->lineE_channel->text());
 
     if (ui->checkBox_measure_resis->isChecked()) {  // 如果选中了测电阻，则弹出测电阻的窗口
         show_win_measure_r = new showWin_measureResis;
         show_win_measure_r->show();
     } else {
-        show_win_angle_sensor = new showWin_angleSensor(angle_sensor);
-        show_win_angle_sensor->show();
-        if (!ui->checkBox_no_need_device->isChecked()) {
+        if (!ui->checkBox_no_need_device->isChecked()) {    // 不需要工装
+
+        } else {    // 需要工装
 
         }
+
+        show_win_angle_sensor = new showWin_angleSensor(angle_sensor);
+        show_win_angle_sensor->show();
     }
 }
 
