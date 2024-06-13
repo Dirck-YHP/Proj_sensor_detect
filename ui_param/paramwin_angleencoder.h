@@ -2,6 +2,7 @@
 #define PARAMWIN_ANGLEENCODER_H
 
 #include <QWidget>
+#include
 
 namespace Ui {
 class paramWin_angleEncoder;
@@ -23,6 +24,7 @@ signals:
 private slots:
     void on_btn_back_mainW_clicked();
     void on_btn_exit_clicked();
+    void on_btn_ok_clicked();
 };
 
 #endif // PARAMWIN_ANGLEENCODER_H

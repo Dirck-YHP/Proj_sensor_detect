@@ -24,6 +24,9 @@ add_executable(Proj_Sensor
 
     ui_show/showwin_measureresis.cpp ui_show/showwin_measureresis.h ui_show/showwin_measureresis.ui
     ui_show/showwin_anglesensor.cpp ui_show/showwin_anglesensor.h ui_show/showwin_anglesensor.ui
+    ui_show/showwin_angleencoder.cpp ui_show/showwin_angleencoder.h ui_show/showwin_angleencoder.ui
+    ui_show/showwin_pressuresensor.cpp ui_show/showwin_pressuresensor.h ui_show/showwin_pressuresensor.ui
+    ui_show/showwin_proximityswitch.cpp ui_show/showwin_proximityswitch.h ui_show/showwin_proximityswitch.ui
 
     data_acquire/dataacquireai.cpp data_acquire/dataacquireai.h
     data_acquire/dataacquiredi.cpp data_acquire/dataacquiredi.h
@@ -35,6 +38,9 @@ add_executable(Proj_Sensor
     tools/simpleQtLogger.h tools/simpleQtLogger.cpp
 
     sensors/anglesensor.cpp sensors/anglesensor.h
+    sensors/angleencoder.cpp sensors/angleencoder.h
+    sensors/pressuresensor.cpp sensors/pressuresensor.h
+    sensors/proximityswitch.cpp sensors/proximityswitch.h
 
     assist_func/assist.cpp assist_func/assist.h
 

@@ -23,3 +23,8 @@ void paramWin_angleEncoder::on_btn_exit_clicked()
 {
     qApp->quit();
 }
+
+void paramWin_angleEncoder::on_btn_ok_clicked()
+{
+
+}
