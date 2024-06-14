@@ -3,11 +3,11 @@
 
 #include <QObject>
 
-class ProximitySwitch
+class ProximitySwitch : public QObject
 {
     Q_OBJECT
 public:
-    ProximitySwitch();
+    explicit ProximitySwitch(QObject *parent = nullptr);
 };
 
 #endif // PROXIMITYSWITCH_H

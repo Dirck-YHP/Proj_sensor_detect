@@ -2,7 +2,6 @@
 #define PARAMWIN_ANGLEENCODER_H
 
 #include <QWidget>
-#include
 
 namespace Ui {
 class paramWin_angleEncoder;

@@ -46,6 +46,15 @@ add_executable(Proj_Sensor
 
     tele_com/modbus.cpp tele_com/modbus.h
     tele_com/serialportcom.cpp tele_com/serialportcom.h  
+
+    devices/motor.cpp devices/motor.h
+    devices/variableresis.cpp devices/variableresis.h
+    devices/hydraulicstation.cpp devices/hydraulicstation.h
+
+    functionality/measureresis.cpp functionality/measureresis.h
+    functionality/electricitycalc.cpp functionality/electricitycalc.h
+    functionality/datasave.cpp functionality/datasave.h
+    functionality/dataexport.cpp functionality/dataexport.h
 )
 
 target_include_directories(Proj_Sensor PRIVATE
@@ -55,6 +64,8 @@ target_include_directories(Proj_Sensor PRIVATE
    ./tele_com
    ./ui_param
    ./ui_show
+   ./devices
+   ./functionality
 )
 
 target_link_libraries(Proj_Sensor PRIVATE Qt5::Widgets

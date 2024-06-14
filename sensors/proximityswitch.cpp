@@ -1,6 +1,6 @@
 #include "proximityswitch.h"
 
-ProximitySwitch::ProximitySwitch()
+ProximitySwitch::ProximitySwitch(QObject *parent) : QObject(parent)
 {
 
 }
