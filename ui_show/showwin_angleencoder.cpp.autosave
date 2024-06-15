@@ -33,7 +33,6 @@ void showWin_angleEncoder::on_btn_ok_clicked()
 void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
-//        qDebug() << "now btn pressed";
         ui->btn_start_finish_mea->setText("结束测量");
 
         _angle_encoder->start_acquire();

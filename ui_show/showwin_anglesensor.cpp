@@ -41,15 +41,6 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
 
-        _angle_sensor->start_acquire();
-        _channel_num = Assist::extractNumbers(_angle_sensor->get_channel()).size(); // 获取通道
-
-//        for (int i = 0; i < _channel_num; i++) {
-
-//        }
-
-        connect(_angle_sensor, &AngleSensor::emit_data,
-                this, &showWin_angleSensor::get_data_and_plot_angle);
 
     } else {
         ui->btn_start_finish_mea->setText("开始测量");

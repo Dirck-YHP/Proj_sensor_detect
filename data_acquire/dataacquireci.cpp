@@ -40,6 +40,9 @@ void DataAcquireCI::run() {
 
     while (!STOP) {
         DAQmxReadCounterF64(_task, -1, -1, data, DATA_SIZE, &_sampsPerChanRead, NULL);
+
+//        data[0] = 2;
+
         emit send_data(QVector<double>(data, data + _sampsPerChanRead));
     }
 
