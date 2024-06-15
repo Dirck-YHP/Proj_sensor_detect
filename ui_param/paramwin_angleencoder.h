@@ -27,11 +27,11 @@ private:
 signals:
     void subWindowClosed();
 private slots:
-    void on_btn_back_mainW_clicked();
-    void on_btn_exit_clicked();
-    void on_btn_ok_clicked();
-    void on_checkBox_measure_resis_stateChanged(int arg1);
-    void on_checkBox_no_need_device_stateChanged(int arg1);
+    void on_btn_back_mainW_clicked();   // 返回主界面
+    void on_btn_exit_clicked(); // 退出
+    void on_btn_ok_clicked();   // 确认
+    void on_checkBox_measure_resis_stateChanged(int arg1);  // 是否测电阻
+    void on_checkBox_no_need_device_stateChanged(int arg1); // 是否需要工装
 };
 
 #endif // PARAMWIN_ANGLEENCODER_H

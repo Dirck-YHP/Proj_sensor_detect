@@ -48,8 +48,6 @@ void AngleEncoder::start_acquire()
     //--------------------------NI 9403--------------------------------------
     data_acquire_di = new DataAcquireDI;
 
-    qDebug() << "di : " << QString::number(data_acquire_di == NULL);
-
     QThreadPool::globalInstance()->start(data_acquire_di);
 
     connect(data_acquire_di, &DataAcquireDI::send_data,
@@ -58,8 +56,6 @@ void AngleEncoder::start_acquire()
     //--------------------------NI 9401--------------------------------------
     data_acquire_ci = new DataAcquireCI;
     data_acquire_ci->get_pulses_per_rev(get_pul_per_cir().toUInt());
-
-//    qDebug() << "pul_per_cir:" + get_pul_per_cir();
 
     QThreadPool::globalInstance()->start(data_acquire_ci);
 
@@ -74,22 +70,22 @@ void AngleEncoder::stop_acquire()
     data_acquire_ci->stop_acquire();
 }
 
+
+// 接收9205的电压信号，后续需要根据通道不同，单独转化成角度、供电/信号回路的电压电流
 void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
 {
-//    qDebug() << "now rev data from 9205";
     emit send_ni9205_to_ui(data);
 }
 
+// 接收9403的数字信号，后续似乎不需要做处理，直接转发就行
 void AngleEncoder::rev_data_from_ni9403(QVector<QVector<double> > data_final)
 {
-    qDebug() << "now rev data from 9403";
     emit send_ni9403_to_ui(data_final);
 }
 
+// 接收9403的计数信号，后续似乎也不需要做处理，已经是角度值了
 void AngleEncoder::rev_data_from_ni9401(QVector<double> data)
 {
-//    qDebug() << "now rev data: " + QString::number(data[0]);
-
     emit send_ni9401_to_ui(data);
 }
 

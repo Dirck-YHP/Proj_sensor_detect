@@ -86,29 +86,6 @@
     <string>电池电量：</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_test">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>110</y>
-     <width>81</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>测试</string>
-   </property>
-  </widget>
-  <widget class="QTextBrowser" name="textB_test">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>70</y>
-     <width>81</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QCustomPlot" name="plot_angle" native="true">
    <property name="geometry">
     <rect>

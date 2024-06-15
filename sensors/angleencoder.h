@@ -38,6 +38,7 @@ public:
     void stop_acquire();
 
 private slots:
+    // 这三个函数负责接收来自采集卡的原始数据并做处理，然后发出去
     void rev_data_from_ni9205(QVector<double> data);
     void rev_data_from_ni9403(QVector<QVector<double>> data_final);
     void rev_data_from_ni9401(QVector<double> data);

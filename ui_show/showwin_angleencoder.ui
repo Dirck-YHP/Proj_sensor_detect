@@ -67,7 +67,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>传感器角度：</string>
+    <string>编码器角度：</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_9">
@@ -185,7 +185,7 @@
     <string>供电回路电流：</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineE_sensor_angle">
+  <widget class="QLineEdit" name="lineE_encoder_angle">
    <property name="geometry">
     <rect>
      <x>170</x>
@@ -337,64 +337,6 @@
    </property>
    <property name="text">
     <string>脉冲：</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btn_test">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>730</y>
-     <width>141</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>测试</string>
-   </property>
-  </widget>
-  <widget class="QTextBrowser" name="textB_test">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>650</y>
-     <width>141</width>
-     <height>71</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QTextBrowser" name="textB_ni_9401">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>46</y>
-     <width>111</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>99999</width>
-     <height>50</height>
-    </size>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_14">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>10</y>
-     <width>191</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>200</width>
-     <height>30</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>NI 9401测试</string>
    </property>
   </widget>
  </widget>

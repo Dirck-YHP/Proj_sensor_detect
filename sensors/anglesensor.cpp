@@ -2,8 +2,6 @@
 
 AngleSensor::AngleSensor(QObject *parent) : QObject(parent)
 {
-    data_acquire_ai = new DataAcquireAI;
-    connect(data_acquire_ai, &DataAcquireAI::send_data, this, &AngleSensor::on_data_acquired);
 
 }
 
@@ -40,20 +38,27 @@ QString AngleSensor::get_channel() const
 
 void AngleSensor::start_acquire()
 {
-//    data_acquire_ai = new DataAcquireAI;
-    data_acquire_ai->get_channel(_channel);
+    data_acquire_ai = new DataAcquireAI;
+    data_acquire_ai->get_channel(get_channel());
     QThreadPool::globalInstance()->start(data_acquire_ai);
+
+    connect(data_acquire_ai, &DataAcquireAI::send_data,
+            this, &AngleSensor::rev_data_from_ni9205);
 }
 
-void AngleSensor::finish_acquire()
+void AngleSensor::stop_acquire()
 {
     data_acquire_ai->stop_acquire();
 }
 
-void AngleSensor::on_data_acquired(QVector<double> data)
+// 接收9205的电压信号，后续需要根据通道不同，单独转化成角度、供电/信号回路的电压电流
+void AngleSensor::rev_data_from_ni9205(QVector<double> data)
 {
-    emit emit_data(data);
+    emit send_angle_to_ui(data);
+    emit send_current_to_ui(data);
+    emit send_voltage_to_ui(data);
 }
+
 
 
 

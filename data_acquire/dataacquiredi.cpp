@@ -51,9 +51,6 @@ void DataAcquireDI::run() {
             }
         }
 
-        qDebug() << "-3 ";
-        qDebug() << "-2 " + QString::number(data_final[0][0]);
-
         // 发送数据
         emit send_data(data_final);
 

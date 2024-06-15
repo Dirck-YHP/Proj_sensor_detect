@@ -17,23 +17,14 @@ showWin_angleEncoder::~showWin_angleEncoder()
     delete ui;
 }
 
-void showWin_angleEncoder::on_btn_test_clicked()
-{
-    ui->textB_test->append(_angle_encoder->get_label());
-    ui->textB_test->append("   hahaha   ");
-    ui->textB_test->append(_angle_encoder->get_pul_per_cir());
-}
-
 void showWin_angleEncoder::on_btn_ok_clicked()
 {
     this->close();
 }
 
-
 void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
-//        qDebug() << "now btn pressed";
         ui->btn_start_finish_mea->setText("结束测量");
 
         _angle_encoder->start_acquire();
@@ -47,8 +38,6 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         ui->plot_angle->xAxis->setLabel("time/s");
         ui->plot_angle->yAxis->setLabel("Y");
         ui->plot_angle->yAxis->setRange(-10, 10);
-
-//        qDebug() << QString::number(channel_num);
 
         for (int i = 0; i < channel_num; i++) {
             ui->plot_angle->addGraph();
@@ -82,6 +71,7 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
     }
 }
 
+// 接收到来自传感器的数据，然后显示出来
 void showWin_angleEncoder::get_data_and_plot_9205(QVector<double> data)
 {
     int length = data.size() / channel_num;     // 每通道数据 数
@@ -129,9 +119,9 @@ void showWin_angleEncoder::get_data_and_plot_9403(QVector<QVector<double> > data
 
 void showWin_angleEncoder::get_data_and_plot_9401(QVector<double> data)
 {
-    QString content = "正向：" + QString::number(data[0]);
+    QString content = QString::number(data[0]) + "°";
 
-    ui->textB_ni_9401->setText(content);
+    ui->lineE_encoder_angle->setText(content);
 }
 
 // 画图数据处理

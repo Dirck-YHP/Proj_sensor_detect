@@ -14,11 +14,11 @@ public:
     explicit AngleSensor(QObject *parent = nullptr);
 
 private:
-    QString _label;
-    QPair<int, int> _range;
-    QString _channel;
+    QString _label;             // 标签
+    QPair<int, int> _range;     // 范围
+    QString _channel;           // 通道
 
-    DataAcquireAI *data_acquire_ai;
+    DataAcquireAI *data_acquire_ai;     // NI 9205的数据
 
 
 public:
@@ -32,13 +32,15 @@ public:
     QString get_channel() const;
 
     void start_acquire();
-    void finish_acquire();
+    void stop_acquire();
 
 public slots:
-    void on_data_acquired(QVector<double> data);
+    void rev_data_from_ni9205(QVector<double> data);
 
 signals:
-    void emit_data(QVector<double> data);   // 转发信号
+    void send_angle_to_ui(QVector<double> data);
+    void send_voltage_to_ui(QVector<double> data);
+    void send_current_to_ui(QVector<double> data);
 
 };
 
