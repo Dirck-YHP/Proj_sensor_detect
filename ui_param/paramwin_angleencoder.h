@@ -24,8 +24,14 @@ private:
     showWin_measureResis *show_win_measure_r;
     showWin_angleEncoder *show_win_angle_encoder;
 
+    bool IF_NEED_MOTOR = true;
+
 signals:
     void subWindowClosed();
+
+signals:
+    void motor_target_angle_changed(const QString &text);
+
 private slots:
     void on_btn_back_mainW_clicked();   // 返回主界面
     void on_btn_exit_clicked(); // 退出

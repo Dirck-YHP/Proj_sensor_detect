@@ -6,6 +6,10 @@ paramWin_angleEncoder::paramWin_angleEncoder(QWidget *parent) :
     ui(new Ui::paramWin_angleEncoder)
 {
     ui->setupUi(this);
+
+    // 连接电机目标角度和本地信号
+    connect(ui->lineE_target_angle, &QLineEdit::textChanged,
+            this, &paramWin_angleEncoder::motor_target_angle_changed);
 }
 
 paramWin_angleEncoder::~paramWin_angleEncoder()
@@ -36,14 +40,18 @@ void paramWin_angleEncoder::on_btn_ok_clicked()
         show_win_measure_r->show();
     } else {
         if (!ui->checkBox_no_need_device->isChecked()) {    // 不需要工装
+            IF_NEED_MOTOR = true;
 
         } else {    // 需要工装
-
+            IF_NEED_MOTOR = false;
         }
-        show_win_angle_encoder = new showWin_angleEncoder(angle_encoder);
+        show_win_angle_encoder = new showWin_angleEncoder(angle_encoder, IF_NEED_MOTOR);
         show_win_angle_encoder->show();
-    }
 
+        // 连接参数窗口的电机目标输入和显示窗口的输出
+        connect(this, &paramWin_angleEncoder::motor_target_angle_changed,
+                show_win_angle_encoder, &showWin_angleEncoder::update_motor_tar_angle);
+    }
 }
 
 void paramWin_angleEncoder::on_checkBox_measure_resis_stateChanged(int arg1)

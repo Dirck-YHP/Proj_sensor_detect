@@ -1,24 +1,66 @@
 #include "showwin_angleencoder.h"
 #include "ui_showwin_angleencoder.h"
 
-showWin_angleEncoder::showWin_angleEncoder(AngleEncoder *angle_encoder, QWidget *parent) :
+showWin_angleEncoder::showWin_angleEncoder(AngleEncoder *angle_encoder,
+                                           bool if_need_motor,
+                                           QWidget *parent) :
     QWidget(parent),
     ui(new Ui::showWin_angleEncoder),
-    _angle_encoder(angle_encoder)
+    _angle_encoder(angle_encoder),
+    _if_need_motor(if_need_motor)
 {
     // 通过队列让初始化波形展示为滑动，初始化为6个通道
     plot_queue = QVector<QQueue<double>>(6);
 
     ui->setupUi(this);
+
+    // 是否需要电机
+    if (_if_need_motor) {
+        ui->btn_run_stop->setVisible(true);
+        ui->btn_stop_now->setVisible(true);
+
+        if (_motor == nullptr) {
+            _motor = new Motor;
+            _motor->build_connection();     // 直接建立连接
+            qDebug() << "first new motor";
+            qDebug() << _motor->get_dev_state();
+        }
+
+        _timer_motor.setInterval(200);
+        connect(&_timer_motor, &QTimer::timeout, this, [=](){
+            if (_motor->IF_MOTOR) {
+                if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
+                    double motor_read_num = (double)_motor->get_read_num();
+                    ui->lineE_motor_angle->setText(QString::number(motor_read_num * 360 / 12800, 'f', 1));
+                }
+            }
+        });
+        _timer_motor.start();
+
+    } else {
+        ui->btn_run_stop->setVisible(false);
+        ui->btn_stop_now->setVisible(false);
+    }
+
+    // Set the attribute to delete the window when it is closed
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 showWin_angleEncoder::~showWin_angleEncoder()
 {
+    qDebug() << "MyWindow destroyed";
     delete ui;
 }
 
 void showWin_angleEncoder::on_btn_ok_clicked()
 {
+    if (_motor != nullptr) {
+        _motor->break_connection();     // 断开连接
+        qDebug() << "motor break conn succeed";
+        qDebug() << "delete motor succeed";
+        delete _motor;
+    }
+
     this->close();
 }
 
@@ -147,19 +189,31 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
     return data_after_queue;
 }
 
+void showWin_angleEncoder::update_motor_tar_angle(const QString &text)
+{
+    _motor->set_target_angle(text);
+    ui->lineE_test->setText(_motor->get_target_angle() + "°");
+}
 
+void showWin_angleEncoder::on_btn_run_stop_toggled(bool checked)
+{
+    if (checked) {
+        ui->btn_run_stop->setText("停止");
+        _motor->IF_MOTOR = true;
 
+        _motor->enable_motor();
+        _motor->run_motor();
+    } else {
+        ui->btn_run_stop->setText("运行");
 
+        _motor->stop_motor();
+    }
+}
 
+void showWin_angleEncoder::on_btn_stop_now_clicked()
+{
+    _motor->stop_motor();
+    _motor->disable_motor();
 
-
-
-
-
-
-
-
-
-
-
-
+    ui->btn_run_stop->setChecked(false);
+}
