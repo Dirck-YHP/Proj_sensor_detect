@@ -189,6 +189,8 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
     return data_after_queue;
 }
 
+
+/*******************************电机************************************/
 void showWin_angleEncoder::update_motor_tar_angle(const QString &text)
 {
     _motor->set_target_angle(text);

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>582</width>
-    <height>449</height>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,8 +34,8 @@
   <widget class="QPushButton" name="btn_ok">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>340</y>
+     <x>230</x>
+     <y>250</y>
      <width>101</width>
      <height>41</height>
     </rect>
@@ -47,8 +47,8 @@
   <widget class="QPushButton" name="btn_back_mainW">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>340</y>
+     <x>50</x>
+     <y>250</y>
      <width>101</width>
      <height>41</height>
     </rect>
@@ -60,8 +60,8 @@
   <widget class="QPushButton" name="btn_exit">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>340</y>
+     <x>410</x>
+     <y>250</y>
      <width>101</width>
      <height>41</height>
     </rect>
@@ -69,6 +69,177 @@
    <property name="text">
     <string>退出</string>
    </property>
+  </widget>
+  <widget class="QComboBox" name="cBox_prox_switch_type">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>60</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>test1</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>test2</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>40</y>
+     <width>151</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>传感器类型</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_file_dir">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>130</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>文件保存路径</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_load_data">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>60</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>导入历史数据</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_measure_resis">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>170</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>测电阻</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cBox_distance">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>120</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>test1</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>test2</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>100</y>
+     <width>141</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>感应距离</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cBox_use_time">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>60</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>test1</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>test2</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>40</y>
+     <width>141</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>使用时间</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>100</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>感应材料</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cBox_material">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>120</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>test1</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>test2</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

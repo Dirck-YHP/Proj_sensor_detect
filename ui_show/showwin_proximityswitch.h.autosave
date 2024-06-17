@@ -16,6 +16,9 @@ public:
     explicit showWin_proximitySwitch(ProximitySwitch *proxi_switch, QWidget *parent = nullptr);
     ~showWin_proximitySwitch();
 
+private slots:
+    void on_btn_start_finish_mea_toggled(bool checked);
+    
 private:
     Ui::showWin_proximitySwitch *ui;
     ProximitySwitch *_proxi_switch;
