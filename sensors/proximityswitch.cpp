@@ -45,11 +45,12 @@ QString ProximitySwitch::get_sensing_matirial() const
     return _sensing_matirial;
 }
 
+
 void ProximitySwitch::start_acquire()
 {
     //--------------------------NI 9205--------------------------------------
     data_acquire_ai = new DataAcquireAI;
-    QString channel_temp = "6";
+    QString channel_temp = "6";         // 暂定一个通道
     data_acquire_ai->get_channel(channel_temp);    // 把传感器获取到的通道传给数据采集
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
@@ -60,4 +61,9 @@ void ProximitySwitch::start_acquire()
 void ProximitySwitch::stop_acquire()
 {
     data_acquire_ai->stop_acquire();
+}
+
+void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
+{
+    emit send_ni9205_to_ui(data);
 }

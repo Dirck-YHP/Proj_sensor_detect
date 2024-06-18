@@ -41,6 +41,9 @@ private slots:
     // 这个函数负责接收来自采集卡的原始数据并做处理，然后发出去
     void rev_data_from_ni9205(QVector<double> data);
 
+signals:
+    void send_ni9205_to_ui(QVector<double> data);
+
 };
 
 #endif // PROXIMITYSWITCH_H

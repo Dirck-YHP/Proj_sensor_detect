@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>781</width>
-    <height>704</height>
+    <width>578</width>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,8 +34,8 @@
   <widget class="QPushButton" name="btn_ok">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>600</y>
+     <x>350</x>
+     <y>390</y>
      <width>131</width>
      <height>51</height>
     </rect>
@@ -47,8 +47,8 @@
   <widget class="QPushButton" name="btn_start_finish_mea">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>600</y>
+     <x>70</x>
+     <y>390</y>
      <width>131</width>
      <height>51</height>
     </rect>
@@ -64,7 +64,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>500</y>
+     <y>290</y>
      <width>191</width>
      <height>31</height>
     </rect>
@@ -77,7 +77,7 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>500</y>
+     <y>290</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -86,8 +86,8 @@
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>500</y>
+     <x>30</x>
+     <y>290</y>
      <width>251</width>
      <height>31</height>
     </rect>
@@ -99,8 +99,8 @@
   <widget class="QLineEdit" name="lineE_supply_voltage">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>450</y>
+     <x>130</x>
+     <y>240</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -110,7 +110,7 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>450</y>
+     <y>240</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -119,8 +119,8 @@
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>450</y>
+     <x>30</x>
+     <y>240</y>
      <width>251</width>
      <height>31</height>
     </rect>
@@ -132,8 +132,8 @@
   <widget class="QLineEdit" name="lineE_supply_current">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>500</y>
+     <x>130</x>
+     <y>290</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -143,7 +143,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>450</y>
+     <y>240</y>
      <width>181</width>
      <height>31</height>
     </rect>
@@ -152,57 +152,11 @@
     <string>信号回路电压：</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_11">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>40</y>
-     <width>91</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>电压：</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_12">
-   <property name="geometry">
-    <rect>
-     <x>340</x>
-     <y>40</y>
-     <width>91</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>电流：</string>
-   </property>
-  </widget>
-  <widget class="QCustomPlot" name="plot_voltage" native="true">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>70</y>
-     <width>271</width>
-     <height>161</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QCustomPlot" name="plot_current" native="true">
-   <property name="geometry">
-    <rect>
-     <x>340</x>
-     <y>70</y>
-     <width>271</width>
-     <height>161</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>230</y>
+     <y>50</y>
      <width>91</width>
      <height>31</height>
     </rect>
@@ -215,7 +169,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>260</y>
+     <y>80</y>
      <width>271</width>
      <height>141</height>
     </rect>
@@ -224,8 +178,8 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>0</y>
+     <x>290</x>
+     <y>20</y>
      <width>131</width>
      <height>41</height>
     </rect>
@@ -237,8 +191,8 @@
   <widget class="QProgressBar" name="pBar_battery">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>10</y>
+     <x>390</x>
+     <y>30</y>
      <width>118</width>
      <height>23</height>
     </rect>
@@ -251,7 +205,7 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>260</y>
+     <y>80</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -261,7 +215,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>260</y>
+     <y>80</y>
      <width>141</width>
      <height>31</height>
     </rect>
@@ -274,7 +228,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>310</y>
+     <y>130</y>
      <width>191</width>
      <height>31</height>
     </rect>
@@ -287,7 +241,7 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>310</y>
+     <y>130</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -297,7 +251,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>360</y>
+     <y>180</y>
      <width>191</width>
      <height>31</height>
     </rect>
@@ -310,7 +264,7 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>360</y>
+     <y>180</y>
      <width>71</width>
      <height>31</height>
     </rect>
