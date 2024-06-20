@@ -23,3 +23,10 @@ void paramWin_pressureSensor::on_btn_exit_clicked()
 {
     qApp->quit();
 }
+
+void paramWin_pressureSensor::on_btn_ok_clicked()
+{
+    _pressure_sensor = new PressureSensor;
+    _pressure_sensor->set_label(ui->cBox_pressure_sensor_type->currentText());
+    _pressure_sensor->set_range(ui->lineE_4mA->text(), ui->lineE_20mA->text());
+}

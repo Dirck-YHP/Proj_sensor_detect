@@ -17,6 +17,9 @@ public:
 
 public:
     QSerialPort serialPort;
+
+private:
+    QString COM = "COM2";       // 暂定COM2
 };
 
 #endif // SERIALPORTCOM_H

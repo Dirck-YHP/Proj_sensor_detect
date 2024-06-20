@@ -26,7 +26,7 @@ private slots:
 private:
     Ui::showWin_pressureSensor *ui;
     PressureSensor *_pressure_sensor;
-    HydraulicStation *_hydraulic_station;
+    HydraulicStation *_hydraulic_station = nullptr;
 };
 
 #endif // SHOWWIN_PRESSURESENSOR_H

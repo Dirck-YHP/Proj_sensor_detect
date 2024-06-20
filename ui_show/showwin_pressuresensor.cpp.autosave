@@ -30,7 +30,7 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
     } else {
         ui->btn_start_finish_mea->setText("开始测量");
 
-
+        
     }
 }
 

@@ -7,7 +7,8 @@ SerialPortCom::SerialPortCom(QObject *parent) : QObject(parent)
 
 void SerialPortCom::serial_port_connect()
 {
-    serialPort.setPortName("COM2");
+    serialPort.setPortName(COM);
+
     if (!serialPort.open(QIODevice::ReadWrite)) {
         // 打开失败，处理错误
         qDebug() << "Connect Error";

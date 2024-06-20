@@ -48,7 +48,7 @@ showWin_angleEncoder::showWin_angleEncoder(AngleEncoder *angle_encoder,
 
 showWin_angleEncoder::~showWin_angleEncoder()
 {
-    qDebug() << "MyWindow destroyed";
+    qDebug() << "encoder window destroyed";
     delete ui;
 }
 
