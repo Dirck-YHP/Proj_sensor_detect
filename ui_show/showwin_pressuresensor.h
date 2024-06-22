@@ -15,7 +15,7 @@ class showWin_pressureSensor : public QWidget
     Q_OBJECT
 
 public:
-    explicit showWin_pressureSensor(QWidget *parent = nullptr);
+    explicit showWin_pressureSensor(PressureSensor *pressure_sensor, QWidget *parent = nullptr);
     ~showWin_pressureSensor();
 
 private slots:
@@ -26,7 +26,7 @@ private slots:
 private:
     Ui::showWin_pressureSensor *ui;
     PressureSensor *_pressure_sensor;
-    HydraulicStation *_hydraulic_station;
+    HydraulicStation *_hydraulic_station = nullptr;
 };
 
 #endif // SHOWWIN_PRESSURESENSOR_H

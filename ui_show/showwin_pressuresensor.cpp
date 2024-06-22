@@ -1,9 +1,10 @@
 #include "showwin_pressuresensor.h"
 #include "ui_showwin_pressuresensor.h"
 
-showWin_pressureSensor::showWin_pressureSensor(QWidget *parent) :
+showWin_pressureSensor::showWin_pressureSensor(PressureSensor *pressure_sensor, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::showWin_pressureSensor)
+    ui(new Ui::showWin_pressureSensor),
+    _pressure_sensor(pressure_sensor)
 {
     ui->setupUi(this);
 

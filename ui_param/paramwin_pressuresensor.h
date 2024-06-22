@@ -32,6 +32,7 @@ private slots:
     void on_btn_back_mainW_clicked();
     void on_btn_exit_clicked();
     void on_btn_ok_clicked();
+    void on_checkBox_measure_r_stateChanged(int arg1);
 };
 
 #endif // PARAMWIN_PRESSURESENSOR_H

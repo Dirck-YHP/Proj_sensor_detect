@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>578</width>
-    <height>479</height>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,8 +34,8 @@
   <widget class="QPushButton" name="btn_ok">
    <property name="geometry">
     <rect>
-     <x>350</x>
-     <y>390</y>
+     <x>330</x>
+     <y>440</y>
      <width>131</width>
      <height>51</height>
     </rect>
@@ -47,8 +47,8 @@
   <widget class="QPushButton" name="btn_start_finish_mea">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>390</y>
+     <x>50</x>
+     <y>440</y>
      <width>131</width>
      <height>51</height>
     </rect>
@@ -63,9 +63,9 @@
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>290</y>
-     <width>191</width>
+     <x>320</x>
+     <y>220</y>
+     <width>211</width>
      <height>31</height>
     </rect>
    </property>
@@ -76,8 +76,8 @@
   <widget class="QLineEdit" name="lineE_signal_current">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>290</y>
+     <x>420</x>
+     <y>220</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -86,8 +86,8 @@
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>290</y>
+     <x>320</x>
+     <y>120</y>
      <width>251</width>
      <height>31</height>
     </rect>
@@ -99,8 +99,8 @@
   <widget class="QLineEdit" name="lineE_supply_voltage">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>240</y>
+     <x>420</x>
+     <y>70</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -109,8 +109,8 @@
   <widget class="QLineEdit" name="lineE_signal_voltage">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>240</y>
+     <x>420</x>
+     <y>170</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -119,8 +119,8 @@
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>240</y>
+     <x>320</x>
+     <y>70</y>
      <width>251</width>
      <height>31</height>
     </rect>
@@ -132,8 +132,8 @@
   <widget class="QLineEdit" name="lineE_supply_current">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>290</y>
+     <x>420</x>
+     <y>120</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -142,9 +142,9 @@
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>240</y>
-     <width>181</width>
+     <x>320</x>
+     <y>170</y>
+     <width>211</width>
      <height>31</height>
     </rect>
    </property>
@@ -171,7 +171,7 @@
      <x>30</x>
      <y>80</y>
      <width>271</width>
-     <height>141</height>
+     <height>181</height>
     </rect>
    </property>
   </widget>
@@ -204,8 +204,8 @@
   <widget class="QLineEdit" name="lineE_dis_max">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>80</y>
+     <x>90</x>
+     <y>320</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -214,9 +214,9 @@
   <widget class="QLabel" name="label_13">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>80</y>
-     <width>141</width>
+     <x>30</x>
+     <y>320</y>
+     <width>101</width>
      <height>31</height>
     </rect>
    </property>
@@ -227,8 +227,8 @@
   <widget class="QLabel" name="label_14">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>130</y>
+     <x>200</x>
+     <y>320</y>
      <width>191</width>
      <height>31</height>
     </rect>
@@ -240,8 +240,8 @@
   <widget class="QLineEdit" name="lineE_dis_min">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>130</y>
+     <x>260</x>
+     <y>320</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -250,8 +250,8 @@
   <widget class="QLabel" name="label_15">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>180</y>
+     <x>380</x>
+     <y>320</y>
      <width>191</width>
      <height>31</height>
     </rect>
@@ -264,10 +264,23 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>180</y>
+     <y>320</y>
      <width>71</width>
      <height>31</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_repeat_precise">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>370</y>
+     <width>131</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>重复精度测量</string>
    </property>
   </widget>
  </widget>

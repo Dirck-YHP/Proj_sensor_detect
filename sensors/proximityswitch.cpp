@@ -50,7 +50,7 @@ void ProximitySwitch::start_acquire()
 {
     //--------------------------NI 9205--------------------------------------
     data_acquire_ai = new DataAcquireAI;
-    QString channel_temp = "6";         // 暂定一个通道
+    QString channel_temp = "6";         // 暂定一个通道，需要好几个通道，分别读取触发、电压和电流
     data_acquire_ai->get_channel(channel_temp);    // 把传感器获取到的通道传给数据采集
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
@@ -65,5 +65,7 @@ void ProximitySwitch::stop_acquire()
 
 void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 {
-    emit send_ni9205_to_ui(data);
+    // 目前还没做转化，直接发送原始数据
+    data[0]++;
+    emit send_ni9205_to_ui(true);
 }

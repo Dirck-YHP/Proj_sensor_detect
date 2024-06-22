@@ -42,7 +42,8 @@ private slots:
     void rev_data_from_ni9205(QVector<double> data);
 
 signals:
-    void send_ni9205_to_ui(QVector<double> data);
+     // 这里需要做转化，原始电压信号——>是否“触发”，发送的是“是否触发”的信号
+    void send_ni9205_to_ui(bool if_pulse);
 
 };
 

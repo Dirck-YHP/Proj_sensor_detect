@@ -15,7 +15,7 @@ HydraulicStation::HydraulicStation(QObject *parent) : QObject(parent)
 HydraulicStation::~HydraulicStation()
 {
     if (serial_port_com != nullptr) {
-        qDebug() << "serial_port_com modus succeed";
+        qDebug() << "serial_port_com delete succeed";
         delete serial_port_com;
     }
 }

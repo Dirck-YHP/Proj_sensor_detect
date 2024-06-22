@@ -14,6 +14,7 @@ public:
     explicit VariableResis(QObject *parent = nullptr);
 
 signals:
+    // 这里需要做转化，原始电压信号——>电流——>距离，发送的是距离
     void send_ni9205_to_ui(QVector<double> data);
 
 private slots:
