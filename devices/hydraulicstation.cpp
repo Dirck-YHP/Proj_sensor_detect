@@ -47,7 +47,11 @@ void HydraulicStation::get_serial_data()
     QString data = QString(serial_port_com->serialPort.readAll());
 
     // 这里加上对data的处理，取出压力值
-    data = "1124";
+    QStringList parts = data.split(':'); // 使用冒号作为分隔符分割字符串
+    QString valueAfterColon = "";
+    if (parts.size() > 1) {
+        valueAfterColon = parts.at(1); // 获取冒号后面的部分
+    }
 
-    _hydrau_value = data;
+    _hydrau_value = valueAfterColon;
 }

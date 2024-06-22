@@ -71,7 +71,7 @@ void AngleEncoder::stop_acquire()
 }
 
 
-// 接收9205的电压信号，后续需要根据通道不同，单独转化成角度、供电/信号回路的电压电流
+// 接收9205的电压信号，后续需要根据通道不同，单独转化成角度、供电/信号回路的电压电流分别发送出去
 void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
 {
     emit send_ni9205_to_ui(data);

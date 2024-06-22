@@ -41,6 +41,7 @@ void DataAcquireAI::__init__(QString channel)
     // 创建任务
     DAQmxCreateTask("NI9205", &_task);
 
+    // 将字符串形式的通道转化成数组
     idx = str_to_int(channel);
 
     // 配置通道

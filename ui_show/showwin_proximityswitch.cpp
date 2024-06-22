@@ -7,10 +7,14 @@ showWin_proximitySwitch::showWin_proximitySwitch(ProximitySwitch *proxi_switch, 
     _proxi_switch(proxi_switch)
 {
     ui->setupUi(this);
+
+    // Set the attribute to delete the window when it is closed
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 showWin_proximitySwitch::~showWin_proximitySwitch()
 {
+    qDebug() << "proximity window destroyed";
     delete ui;
 }
 
