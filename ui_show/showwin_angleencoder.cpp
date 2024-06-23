@@ -21,25 +21,28 @@ showWin_angleEncoder::showWin_angleEncoder(AngleEncoder *angle_encoder,
 
         if (_motor == nullptr) {
             _motor = new Motor;
+
+            while (_motor->get_modbus_dev() == nullptr);
+
             _motor->build_connection();     // 直接建立连接
-            qDebug() << "first new motor";
-            qDebug() << _motor->get_dev_state();
+             qDebug() << "first new motor: " << _motor->get_dev_state();
         }
 
-        _timer_motor.setInterval(200);
+        _timer_motor.setInterval(500);
         connect(&_timer_motor, &QTimer::timeout, this, [=](){
-            if (_motor->IF_MOTOR) {
                 if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
-                    double motor_read_num = (double)_motor->get_read_num();
-                    ui->lineE_motor_angle->setText(QString::number(motor_read_num * 360 / 12800, 'f', 1));
+                    ui->lineE_motor_angle->setText(QString::number(_motor_angle, 'f', 1));
                 }
-            }
         });
         _timer_motor.start();
 
     } else {
         ui->btn_run_stop->setVisible(false);
         ui->btn_stop_now->setVisible(false);
+        ui->lineE_motor_angle->setVisible(false);
+        ui->lineE_motor_circle->setVisible(false);
+        ui->label_5->setVisible(false);
+        ui->label_6->setVisible(false);
     }
 
     // Set the attribute to delete the window when it is closed
@@ -57,7 +60,8 @@ void showWin_angleEncoder::on_btn_ok_clicked()
     if (_motor != nullptr) {
         _motor->break_connection();     // 断开连接
         qDebug() << "motor break conn succeed";
-        qDebug() << "delete motor succeed";
+
+        QThreadPool::globalInstance()->waitForDone();
         delete _motor;
     }
 
@@ -166,6 +170,12 @@ void showWin_angleEncoder::get_data_and_plot_9401(QVector<double> data)
     ui->lineE_encoder_angle->setText(content);
 }
 
+void showWin_angleEncoder::get_angle(double motor_angle)
+{
+    _motor_angle = motor_angle;
+//    qDebug() << "ui : " << _motor_angle;
+}
+
 // 画图数据处理
 // 将二维数组限制在一个queue里，然后转成二维数组再传出去
 QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector<double> > data)
@@ -203,12 +213,22 @@ void showWin_angleEncoder::on_btn_run_stop_toggled(bool checked)
         ui->btn_run_stop->setText("停止");
         _motor->IF_MOTOR = true;
 
-        _motor->enable_motor();
-        _motor->run_motor();
+        connect(_motor, &Motor::send_angle_to_ui,
+                this, &showWin_angleEncoder::get_angle);
+
+        if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
+            _motor->enable_motor();
+            _motor->run_motor();
+        } else {
+            qDebug() << "connect failed!please build connection!";
+        }
+
     } else {
         ui->btn_run_stop->setText("运行");
 
-        _motor->stop_motor();
+        if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
+            _motor->stop_motor();
+        }
     }
 }
 

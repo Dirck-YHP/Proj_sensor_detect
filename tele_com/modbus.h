@@ -7,13 +7,17 @@
 #include <QtSerialPort/QSerialPort>
 #include <QVariant>
 #include <QDebug>
+#include <QRunnable>
 #include <QThread>
 
-class Modbus : public QObject
+class Modbus : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
     Modbus(QObject *parent = nullptr);
+    ~Modbus();
+
+    void run() override;
 
 public:
     int put_read_num();     // 将协议读到的值传出去
@@ -30,17 +34,32 @@ public:
     void stop_motor();          // 急停
 
     void angle_cali();          // 角度校准：设置电机当前位置
+
+    QModbusRtuSerialMaster *get_modbus_dev();
 private:
-    void write(int address, int count, int parameter);      // 往地址写
+    void write_run(int address, int count, int parameter);      // 往地址写
     void read(int address, int count);                      // 从地址读
+    void write(int address, int count, int parameter);
 
 private:
     double _input_angle;
     bool _angle_calibration = false;
 
-    QModbusRtuSerialMaster _modbusDevice;
+    bool STOP = false;
+    bool WRITE = false;
+    int _addr;
+    int _cnt;
+    int _param;
+
+    QModbusRtuSerialMaster *_modbusDevice = nullptr;
+
     QTimer _timer;
     int _read_num = 0;       // 读到的值
+
+signals:
+    void send_data(int data);
+
+//    void write_param(int address, int count, int parameter);
 };
 
 #endif // MODBUS_H

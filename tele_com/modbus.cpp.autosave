@@ -154,8 +154,7 @@ void Modbus::write_run(int address, int count, int parameter)
         qDebug() << "reply1";
         if (!reply->isFinished()) {
             qDebug() << "reply2";
-            qDebug() << "wrong: " << reply->errorString();
-            qDebug() << _modbusDevice->  state();
+
             connect(reply, &QModbusReply::finished, this, [reply]() {
                 // 请求完成，处理结果
                 if (reply->error() == QModbusDevice::NoError) {

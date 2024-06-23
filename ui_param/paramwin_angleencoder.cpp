@@ -58,11 +58,7 @@ void paramWin_angleEncoder::on_checkBox_measure_resis_stateChanged(int arg1)
 {
     QList<QWidget*> motor_params;       // 把电机相关的控件打包
     motor_params << ui->lineE_target_angle
-            << ui->label_6
-            << ui->btn_build_connect
-            << ui->btn_break_connect
-            << ui->btn_run_stop
-            << ui->btn_stop_now;
+            << ui->label_6;
 
     if (arg1 == Qt::Checked) {      // 如果测电阻，则工装及电机不可用
         ui->checkBox_no_need_device->setEnabled(false);
@@ -83,11 +79,7 @@ void paramWin_angleEncoder::on_checkBox_no_need_device_stateChanged(int arg1)
 {
     QList<QWidget*> motor_params;       // 把电机相关的控件打包
     motor_params << ui->lineE_target_angle
-            << ui->label_6
-            << ui->btn_build_connect
-            << ui->btn_break_connect
-            << ui->btn_run_stop
-            << ui->btn_stop_now;
+            << ui->label_6;
 
     if (arg1 == Qt::Unchecked) {    // 如果需要工装，则电机相关可配置
         ui->checkBox_measure_resis->setEnabled(true);
@@ -103,3 +95,4 @@ void paramWin_angleEncoder::on_checkBox_no_need_device_stateChanged(int arg1)
         }
     }
 }
+

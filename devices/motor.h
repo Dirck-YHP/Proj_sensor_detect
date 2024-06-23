@@ -2,6 +2,8 @@
 #define MOTOR_H
 
 #include <QObject>
+#include <QThreadPool>
+
 #include "tele_com/modbus.h"
 
 class Motor : public QObject
@@ -26,6 +28,8 @@ public:
     void stop_motor();              // 急停
     void angle_cili();              // 角度校准
 
+    QModbusRtuSerialMaster *get_modbus_dev();
+
     QModbusDevice::State get_dev_state();   // 获取电机当前状态
     int get_read_num() const;             // 获取协议读到的值
 
@@ -36,7 +40,11 @@ private:
 
     QString _input_angle;
 
+private slots:
+    void rev_data_from_modbus(int data);
 
+signals:
+    void send_angle_to_ui(double angle);
 };
 
 #endif // MOTOR_H
