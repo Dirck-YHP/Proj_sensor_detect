@@ -69,6 +69,7 @@ QString paramWin_pressureSensor::check_channel_choosed() {
             }
             // 将通道编号添加到字符串中
             channel_choosed.append(QString::number(i));
+            // channel_choosed.append(电压+电流)
         }
     }
     return channel_choosed;

@@ -41,7 +41,7 @@ private:
     QVector<double> _dis_arr;
 
     double _distance;       // 距离
-    bool _if_pulse;         // 是否触发
+    bool _if_pulse = false;         // 是否触发
 };
 
 #endif // SHOWWIN_PROXIMITYSWITCH_H

@@ -19,13 +19,17 @@ showWin_pressureSensor::showWin_pressureSensor(PressureSensor *pressure_sensor, 
     }
 
     // 定时发送报文读取液压站的压力值
-    _timer_hydrau.setInterval(200);
+    _timer_hydrau.setInterval(500);
     connect(&_timer_hydrau, &QTimer::timeout, this, [=](){
         _hydraulic_station->send_msg();     // 发送自定义报文
         // 这中间需不需要加上消息是否发送成功的判断？
         QString msg = _hydraulic_station->get_msg();    // 接收液压站的返回的压力值
-        ui->textBrowser->append(msg);       // 暂时先单纯打印出来，后续要画波形
-        ui->lineE_hydra_val->setText(msg);
+        if (msg != "") {    // 如果不为空
+            ui->textBrowser->append(msg);       // 暂时先单纯打印出来，后续要画波形
+//            ui->lineE_hydra_val->setText(msg);
+        } else {    // 如果是空的话，则提示用户接收到的数据有问题
+            qDebug() << "serial data received wrong!";
+        }
     });
 
     // Set the attribute to delete the window when it is closed
@@ -43,31 +47,31 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
 
-        _pressure_sensor->start_acquire();  // 开始采集
+//        _pressure_sensor->start_acquire();  // 开始采集
         _timer_hydrau.start();      // 开启定时
 
         // 先获取参数配置页面勾选了哪几个通道,这里需要注意有没有去掉电压电流的通道
-        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
+//        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
 
         // 根据通道数来确定要画多少个波形
-        ui->plot_pressure->clearGraphs();
-        ui->plot_pressure->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-        ui->plot_pressure->xAxis->setLabel("time/s");
-        ui->plot_pressure->yAxis->setLabel("Y");
-        ui->plot_pressure->yAxis->setRange(-10, 10);
+//        ui->plot_pressure->clearGraphs();
+//        ui->plot_pressure->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+//        ui->plot_pressure->xAxis->setLabel("time/s");
+//        ui->plot_pressure->yAxis->setLabel("Y");
+//        ui->plot_pressure->yAxis->setRange(-10, 10);
 
-        for (int i = 0; i < channel_num; i++) {
-            ui->plot_pressure->addGraph();
-        }
+//        for (int i = 0; i < channel_num; i++) {
+//            ui->plot_pressure->addGraph();
+//        }
 
-        // 建立连接
-        connect(_pressure_sensor, &PressureSensor::send_ni9205_to_ui,
-                this, &showWin_pressureSensor::get_data_and_plot_pressure);
+//        // 建立连接
+//        connect(_pressure_sensor, &PressureSensor::send_ni9205_to_ui,
+//                this, &showWin_pressureSensor::get_data_and_plot_pressure);
 
     } else {
         ui->btn_start_finish_mea->setText("开始测量");
 
-        _pressure_sensor->stop_acquire();   // 停止采集
+//        _pressure_sensor->stop_acquire();   // 停止采集
         _timer_hydrau.stop();       // 关闭定时
     }
 }

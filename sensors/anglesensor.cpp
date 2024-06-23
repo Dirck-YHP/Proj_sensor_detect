@@ -54,6 +54,8 @@ void AngleSensor::stop_acquire()
 // 接收9205的电压信号，后续需要根据通道不同，单独转化成角度、供电/信号回路的电压电流
 void AngleSensor::rev_data_from_ni9205(QVector<double> data)
 {
+
+
     emit send_angle_to_ui(data);
     emit send_current_to_ui(data);
     emit send_voltage_to_ui(data);

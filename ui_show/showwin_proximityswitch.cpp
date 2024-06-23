@@ -65,10 +65,12 @@ void showWin_proximitySwitch::get_data_and_plot_distance(QVector<double> data)
 // 画“触发”点
 void showWin_proximitySwitch::get_data_and_plot_pulse(bool if_Pulse)
 {
+    // 在这里判断上升下降沿
+    bool if_changed = (if_Pulse != _if_pulse);
     _if_pulse = if_Pulse;       // 保存触发状态
 
     if (_if_rep_mea) {      // 如果用户点击了“重复精度测量”
-        if (if_Pulse)       // 只有“触发”的时候才记录距离
+        if (if_changed)       // 只有“触发”的时候才记录距离
             _dis_arr.push_back(_distance);
     }
 }

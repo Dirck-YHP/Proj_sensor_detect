@@ -7,10 +7,14 @@ showWin_angleSensor::showWin_angleSensor(AngleSensor *angle_sensor, QWidget *par
     _angle_sensor(angle_sensor)
 {
     ui->setupUi(this);
+
+    // Set the attribute to delete the window when it is closed
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 showWin_angleSensor::~showWin_angleSensor()
 {
+    qDebug() << "angle window destroyed";
     delete ui;
 }
 
