@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QDebug>
+#include <QThread>
 
 #include "tele_com/serialportcom.h"
 
@@ -14,7 +15,11 @@ public:
     ~HydraulicStation();
 
 private:
-    SerialPortCom *serial_port_com = nullptr;
+    // 线程相关变量
+    QThread *thread_serial_port;
+    SerialPortCom *serial_port_com;
+    // end
+
     QString _hydrau_value;
 
     const QString SEND_MSG = "001100";      // 发送给液压站的命令，固定的
@@ -28,11 +33,15 @@ public:
     void send_msg();
     QString get_msg();
 
-private slots:
-    void get_serial_data();
+public slots:
+    void get_serial_data(QString rev_data);
+
+    void get_config_signal();
+    void get_close_signal();
 
 signals:
-
+    void signal_set_config_serial_port();
+    void signal_close_seriao_port();
 };
 
 #endif // HYDRAULICSTATION_H

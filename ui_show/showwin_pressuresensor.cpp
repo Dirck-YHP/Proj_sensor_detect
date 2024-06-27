@@ -14,23 +14,31 @@ showWin_pressureSensor::showWin_pressureSensor(PressureSensor *pressure_sensor, 
     // 初始化液压站
     if (_hydraulic_station == nullptr) {
         _hydraulic_station = new HydraulicStation;
-        _hydraulic_station->build_connection();     // 直接建立连接
+
+        // 用户点击“开始测量”之后会发送这个配置信号给 液压站
+        connect(this, &showWin_pressureSensor::signal_setConfigSerialPort,
+                _hydraulic_station, &HydraulicStation::get_config_signal);
+        // 用户点击“结束测量”之后会发送这个关闭信号给 液压站
+        connect(this, &showWin_pressureSensor::signal_closeOpen,
+                _hydraulic_station, &HydraulicStation::get_close_signal);
+
         qDebug() << "first new HydraulicStation and build conn";
     }
 
-    // 定时发送报文读取液压站的压力值
-    _timer_hydrau.setInterval(500);
-    connect(&_timer_hydrau, &QTimer::timeout, this, [=](){
-        _hydraulic_station->send_msg();     // 发送自定义报文
-        // 这中间需不需要加上消息是否发送成功的判断？
-        QString msg = _hydraulic_station->get_msg();    // 接收液压站的返回的压力值
-        if (msg != "") {    // 如果不为空
-            ui->textBrowser->append(msg);       // 暂时先单纯打印出来，后续要画波形
+//    // 定时发送报文读取液压站的压力值
+//    _timer_hydrau.setInterval(500);
+//    connect(&_timer_hydrau, &QTimer::timeout, this, [=](){
+////        _hydraulic_station->send_msg();     // 发送自定义报文
+//        // 这中间需不需要加上消息是否发送成功的判断？
+//        QString msg = _hydraulic_station->get_msg();    // 接收液压站的返回的压力值
+//        if (msg != "") {    // 如果不为空
+//            ui->textBrowser->append(msg);       // 暂时先单纯打印出来，后续要画波形
 //            ui->lineE_hydra_val->setText(msg);
-        } else {    // 如果是空的话，则提示用户接收到的数据有问题
-            qDebug() << "serial data received wrong!";
-        }
-    });
+//        } else {    // 如果是空的话，则提示用户接收到的数据有问题
+//            qDebug() << "serial data received wrong!";
+//        }
+//    });
+//    _timer_hydrau.start();      // 开启定时
 
     // Set the attribute to delete the window when it is closed
     setAttribute(Qt::WA_DeleteOnClose);
@@ -46,9 +54,9 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
+        emit signal_setConfigSerialPort();
 
 //        _pressure_sensor->start_acquire();  // 开始采集
-        _timer_hydrau.start();      // 开启定时
 
         // 先获取参数配置页面勾选了哪几个通道,这里需要注意有没有去掉电压电流的通道
 //        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
@@ -70,18 +78,17 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 
     } else {
         ui->btn_start_finish_mea->setText("开始测量");
+        emit signal_closeOpen();
 
 //        _pressure_sensor->stop_acquire();   // 停止采集
-        _timer_hydrau.stop();       // 关闭定时
     }
 }
 
 void showWin_pressureSensor::on_btn_ok_clicked()
 {
     if (_hydraulic_station != nullptr) {
-        _hydraulic_station->break_connection();     // 断开连接
-        qDebug() << "HydraulicStation break conn and delete succeed";
         delete _hydraulic_station;
+        qDebug() << "HydraulicStation and delete succeed!";
     }
 
     this->close();

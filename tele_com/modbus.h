@@ -58,8 +58,6 @@ private:
 
 signals:
     void send_data(int data);
-
-//    void write_param(int address, int count, int parameter);
 };
 
 #endif // MODBUS_H

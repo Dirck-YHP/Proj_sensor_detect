@@ -31,8 +31,10 @@ Widget::Widget(QWidget *parent)
 
     // 串口通信测试：接收数据
     serialPort_com = new SerialPortCom;
-    connect(&serialPort_com->serialPort, &QSerialPort::readyRead, [&](){
-        ui->textE_rev->append(serialPort_com->serialPort.readAll());
+//    connect(&serialPort_com->serialPort, &QSerialPort::readyRead, [&](){
+//        ui->textE_rev->append(serialPort_com->serialPort.readAll());
+    connect(serialPort_com, &SerialPortCom::dataReceived,
+            [&](){ui->textE_rev->append(serialPort_com->serial_rev_msg());
     });
 }
 

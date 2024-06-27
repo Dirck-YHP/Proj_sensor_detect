@@ -30,6 +30,10 @@ private slots:
 
     void on_pushButton_clicked();
 
+signals:
+    void signal_setConfigSerialPort();
+    void signal_closeOpen();
+
 private:
     Ui::showWin_pressureSensor *ui;
     PressureSensor *_pressure_sensor;
