@@ -56,6 +56,12 @@ void mainWindow::on_btn_start_clicked()
 void mainWindow::on_btn_data_export_clicked()
 {
     // 数据导出功能
+    funcWin_DataExport *func_win_data_export = new funcWin_DataExport;
+    connect(func_win_data_export, &funcWin_DataExport::subWindowClosed,
+            this, &mainWindow::showMainWindow);
+
+    this->hide();
+    func_win_data_export->show();
 }
 
 void mainWindow::showMainWindow()

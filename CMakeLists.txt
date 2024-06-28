@@ -28,6 +28,8 @@ add_executable(Proj_Sensor
     ui_show/showwin_pressuresensor.cpp ui_show/showwin_pressuresensor.h ui_show/showwin_pressuresensor.ui
     ui_show/showwin_proximityswitch.cpp ui_show/showwin_proximityswitch.h ui_show/showwin_proximityswitch.ui
 
+    ui_func/funcwin_dataexport.cpp ui_func/funcwin_dataexport.h ui_func/funcwin_dataexport.ui
+
     data_acquire/dataacquireai.cpp data_acquire/dataacquireai.h
     data_acquire/dataacquiredi.cpp data_acquire/dataacquiredi.h
     data_acquire/dataacquireci.cpp data_acquire/dataacquireci.h

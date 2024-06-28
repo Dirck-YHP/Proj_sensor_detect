@@ -88,7 +88,6 @@ void SerialPortCom::writeData()
 void SerialPortCom::slot_serialport_init()
 {
     qDebug() << "启动线程";
-//    serial_port_connect();
     // 创建定时 - Ps: 如果线程中需要定时一定要在线程中Start
     timer_Serialport = new QTimer();
     connect(timer_Serialport, &QTimer::timeout, this, &SerialPortCom::writeData);
