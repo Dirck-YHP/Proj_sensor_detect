@@ -28,8 +28,9 @@ private:
 
 signals:
     void slot_configSerialport();
-
     void dataReceived(QString data);
+
+    void send_data(QString rev_data);
 
 public slots:
     void slot_configSrialport();

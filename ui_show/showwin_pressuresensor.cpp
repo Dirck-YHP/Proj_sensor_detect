@@ -25,20 +25,17 @@ showWin_pressureSensor::showWin_pressureSensor(PressureSensor *pressure_sensor, 
         qDebug() << "first new HydraulicStation and build conn";
     }
 
-//    // 定时发送报文读取液压站的压力值
-//    _timer_hydrau.setInterval(500);
-//    connect(&_timer_hydrau, &QTimer::timeout, this, [=](){
-////        _hydraulic_station->send_msg();     // 发送自定义报文
-//        // 这中间需不需要加上消息是否发送成功的判断？
-//        QString msg = _hydraulic_station->get_msg();    // 接收液压站的返回的压力值
-//        if (msg != "") {    // 如果不为空
-//            ui->textBrowser->append(msg);       // 暂时先单纯打印出来，后续要画波形
-//            ui->lineE_hydra_val->setText(msg);
-//        } else {    // 如果是空的话，则提示用户接收到的数据有问题
-//            qDebug() << "serial data received wrong!";
-//        }
-//    });
-//    _timer_hydrau.start();      // 开启定时
+    // 这个定时器的目的是数值框的显示，因为接收数据频率很高，但是数值框没必要那么高
+    _timer_hydrau.setInterval(500);
+    connect(&_timer_hydrau, &QTimer::timeout, this, [=](){
+        QString msg = _hydraulic_station->get_msg();    // 接收液压站的返回的压力值
+        if (msg != "") {    // 如果不为空
+            ui->textBrowser->append(msg);       // 暂时先单纯打印出来，后续要画波形
+            ui->lineE_hydra_val->setText(msg);
+        } else {    // 如果是空的话，则提示用户接收到的数据有问题
+            qDebug() << "serial data received nothing!";
+        }
+    });
 
     // Set the attribute to delete the window when it is closed
     setAttribute(Qt::WA_DeleteOnClose);
@@ -50,11 +47,18 @@ showWin_pressureSensor::~showWin_pressureSensor()
     delete ui;
 }
 
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      槽函数——“开始测量”/“结束测量”
+  *  @Sample usage:
+ **************************************************************/
 void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
         emit signal_setConfigSerialPort();
+        _timer_hydrau.start();      // 开启定时
 
 //        _pressure_sensor->start_acquire();  // 开始采集
 
@@ -79,11 +83,18 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
     } else {
         ui->btn_start_finish_mea->setText("开始测量");
         emit signal_closeOpen();
+        _timer_hydrau.stop();      // 开启定时
 
 //        _pressure_sensor->stop_acquire();   // 停止采集
     }
 }
 
+/***************************************************************
+  *  @brief     删除液压站对象
+  *  @param     无
+  *  @note      槽函数——“确认”
+  *  @Sample usage:
+ **************************************************************/
 void showWin_pressureSensor::on_btn_ok_clicked()
 {
     if (_hydraulic_station != nullptr) {
@@ -94,17 +105,34 @@ void showWin_pressureSensor::on_btn_ok_clicked()
     this->close();
 }
 
-// 画出压力值
+/***************************************************************
+  *  @brief     画压力值
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
 void showWin_pressureSensor::get_data_and_plot_pressure(QVector<double> data)
 {
 
 }
 
+/***************************************************************
+  *  @brief     检查参数配置页面的用户通道选择结果是否传过来
+  *  @param     无
+  *  @note      测试函数——待删
+  *  @Sample usage:
+ **************************************************************/
 void showWin_pressureSensor::on_pushButton_clicked()
 {
     ui->textBrowser->append(_pressure_sensor->get_channel());
 }
 
+/***************************************************************
+  *  @brief     根据用户的通道选择结果决定对应通道的可见
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
 void showWin_pressureSensor::set_visiable()
 {
     QString selected_channel_str = _pressure_sensor->get_channel();
@@ -137,6 +165,12 @@ void showWin_pressureSensor::set_visiable()
     }
 }
 
+/***************************************************************
+  *  @brief     处理groupbox
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
 void showWin_pressureSensor::setLineEditsForRowEnable(const QString &baseName, int ch_num, bool isEnable)
 {
     QString objectName = baseName + "_" + QString::number(ch_num);

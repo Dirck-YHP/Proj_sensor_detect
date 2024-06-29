@@ -8,7 +8,7 @@ HydraulicStation::HydraulicStation(QObject *parent) : QObject(parent)
     qDebug() << "fisrt new serialport";
 
     serial_port_com->moveToThread(thread_serial_port);
-    // 回收，这边的垃圾回收待优化
+    // 回收
     connect(thread_serial_port, &QThread::finished, serial_port_com, &SerialPortCom::deleteLater);
     connect(thread_serial_port, &QThread::finished, thread_serial_port, &QThread::deleteLater);
     connect (serial_port_com,SIGNAL(destroyed(QObject*)), thread_serial_port,SLOT(quit()));
@@ -24,6 +24,9 @@ HydraulicStation::HydraulicStation(QObject *parent) : QObject(parent)
     // 接收来自ui界面的关闭测量信号，触发 串口关闭
     connect(this, &HydraulicStation::signal_close_seriao_port,
             serial_port_com, &SerialPortCom::slot_closeOpneSrialport);
+
+    // 接收串口发送的数据，液压站这里来进行处理
+    connect(serial_port_com, &SerialPortCom::send_data, this, &HydraulicStation::get_serial_data);
 }
 
 HydraulicStation::~HydraulicStation()
@@ -31,23 +34,47 @@ HydraulicStation::~HydraulicStation()
 
 }
 
+/***************************************************************
+  *  @brief     建立连接
+  *  @param     无
+  *  @note      暂时没用到！！！
+  *  @Sample usage:
+ **************************************************************/
 void HydraulicStation::build_connection()
 {
     serial_port_com->serial_port_connect();
     qDebug() << "serial build connection";
 }
 
+/***************************************************************
+  *  @brief     断开连接
+  *  @param     无
+  *  @note      暂时没用到！！！
+  *  @Sample usage:
+ **************************************************************/
 void HydraulicStation::break_connection()
 {
     serial_port_com->serial_port_break();
     qDebug() << "serial break connection";
 }
 
+/***************************************************************
+  *  @brief     调用串口通信的发送函数，发送数据已固定
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void HydraulicStation::send_msg()
 {
     serial_port_com->serial_snd_msg(SEND_MSG);
 }
 
+/***************************************************************
+  *  @brief     返回本地压力值
+  *  @param     无
+  *  @note      对外接口函数
+  *  @Sample usage:
+ **************************************************************/
 QString HydraulicStation::get_msg()
 {
     // 如果全局变量改变，则返回压力值，如果没变，就返回空，UI界面提示用户没接收到数据
@@ -58,6 +85,12 @@ QString HydraulicStation::get_msg()
         return "";
 }
 
+/***************************************************************
+  *  @brief     接收串口通信发送的数据并进行处理，保存到本地
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void HydraulicStation::get_serial_data(QString rev_data)
 {
     _tik_num++;
@@ -71,17 +104,28 @@ void HydraulicStation::get_serial_data(QString rev_data)
         valueAfterColon = parts.at(1); // 获取冒号后面的部分
     }
 
-
     _hydrau_value = valueAfterColon;
-    qDebug() << _tik_num << ": rev_data: " << rev_data << "hydra: " << _hydrau_value;
+//    qDebug() << _tik_num << ": rev_data: " << rev_data << "hydra: " << _hydrau_value;
 }
 
+/***************************************************************
+  *  @brief     接收界面的配置信号并发送配置信号给串口通信类
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void HydraulicStation::get_config_signal()
 {
     qDebug() << "收到界面的配置信号";
     emit signal_set_config_serial_port();
 }
 
+/***************************************************************
+  *  @brief     接收界面的关闭信号并发送关闭信号给串口通信类
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void HydraulicStation::get_close_signal()
 {
     qDebug() << "收到界面的关闭信号";
