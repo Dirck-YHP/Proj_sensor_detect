@@ -21,7 +21,6 @@ private:
     // end
 
     QString _hydrau_value;
-
     const QString SEND_MSG = "001100";      // 发送给液压站的命令，固定的
 
     int _tik_num = 0;

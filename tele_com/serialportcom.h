@@ -3,14 +3,13 @@
 
 #include <QObject>
 #include <QDebug>
-#include <QRunnable>
 #include <QThread>
 #include <QTimer>
 #include <QSerialPortInfo>
 
 #include <QtSerialPort/QSerialPort>
 
-class SerialPortCom : public QObject//, public QThread
+class SerialPortCom : public QObject
 {
     Q_OBJECT
 public:
@@ -29,19 +28,18 @@ private:
 signals:
     void slot_configSerialport();
     void dataReceived(QString data);
-
     void send_data(QString rev_data);
 
 public slots:
     void slot_configSrialport();
     void slot_closeOpneSrialport();
+    void slot_serialport_init();            // 初始化——创定时器
 
-    void slot_serialport_init();        // 配置
 private slots :
     void slots_readData();
 
 private:
-    const QString COM = "COM2";       // 暂定COM2
+    const QString COM = "COM2";             // 暂定COM2
     const QString SEND_MSG = "001100";      // 发送给液压站的命令，固定的
 
     void writeData();

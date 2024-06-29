@@ -61,7 +61,7 @@ void HydraulicStation::break_connection()
 /***************************************************************
   *  @brief     调用串口通信的发送函数，发送数据已固定
   *  @param     无
-  *  @note
+  *  @note      暂时没用到！！！
   *  @Sample usage:
  **************************************************************/
 void HydraulicStation::send_msg()

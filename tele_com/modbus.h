@@ -7,17 +7,15 @@
 #include <QtSerialPort/QSerialPort>
 #include <QVariant>
 #include <QDebug>
-#include <QRunnable>
 #include <QThread>
+#include <QSerialPortInfo>
 
-class Modbus : public QObject, public QRunnable
+class Modbus : public QObject
 {
     Q_OBJECT
 public:
     Modbus(QObject *parent = nullptr);
     ~Modbus();
-
-    void run() override;
 
 public:
     int put_read_num();     // 将协议读到的值传出去
@@ -40,21 +38,29 @@ private:
     void write_run(int address, int count, int parameter);      // 往地址写
     void read(int address, int count);                      // 从地址读
     void write(int address, int count, int parameter);
+    void read_and_write_Data();
 
+    bool checkPortAvailability(const QString &portName);
 private:
     double _input_angle;
     bool _angle_calibration = false;
 
-    bool STOP = false;
+    bool BEGIN_READ = false;
     bool WRITE = false;
     int _addr;
     int _cnt;
     int _param;
 
     QModbusRtuSerialMaster *_modbusDevice = nullptr;
+    QTimer *timer_modbus;
 
-    QTimer _timer;
+    const QString COM = "COM3";
+
     int _read_num = 0;       // 读到的值
+public slots:
+    void slot_modbus_init();            // 初始化——创定时器
+    void slot_configModbus();
+    void slot_closeOpneModbus();
 
 signals:
     void send_data(int data);

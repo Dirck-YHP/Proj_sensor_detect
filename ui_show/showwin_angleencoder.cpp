@@ -22,19 +22,29 @@ showWin_angleEncoder::showWin_angleEncoder(AngleEncoder *angle_encoder,
         if (_motor == nullptr) {
             _motor = new Motor;
 
-            while (_motor->get_modbus_dev() == nullptr);
+            // 用户电机“运行”之后会发送这个配置信号 给电机
+            connect(this, &showWin_angleEncoder::signal_setConfigModbus,
+                    _motor, &Motor::get_config_signal);
+            // 用户电机“停止”之后会发送这个关闭信号 给电机
+            connect(this, &showWin_angleEncoder::signal_closeOpenModbus,
+                    _motor, &Motor::get_close_signal);
 
-            _motor->build_connection();     // 直接建立连接
-             qDebug() << "first new motor: " << _motor->get_dev_state();
+            connect(_motor, &Motor::send_angle_to_ui,
+                    this, &showWin_angleEncoder::slot_get_angle);
+
+             qDebug() << "first new motor ";
         }
 
-        _timer_motor.setInterval(500);
-        connect(&_timer_motor, &QTimer::timeout, this, [=](){
-                if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
-                    ui->lineE_motor_angle->setText(QString::number(_motor_angle, 'f', 1));
-                }
-        });
-        _timer_motor.start();
+//        // 这个定时器的目的是数值框的显示，因为接收数据的频率很高，但是数值框显示频率没必要那么高
+//        _timer_motor.setInterval(500);
+//        connect(&_timer_motor, &QTimer::timeout, this, [=](){
+//            // 这里接收电机返回的角度值并显示
+
+////                if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
+////                    ui->lineE_motor_angle->setText(QString::number(_motor_angle, 'f', 1));
+////                }
+//        });
+//        _timer_motor.start();
 
     } else {
         ui->btn_run_stop->setVisible(false);
@@ -58,11 +68,8 @@ showWin_angleEncoder::~showWin_angleEncoder()
 void showWin_angleEncoder::on_btn_ok_clicked()
 {
     if (_motor != nullptr) {
-        _motor->break_connection();     // 断开连接
-        qDebug() << "motor break conn succeed";
-
-        QThreadPool::globalInstance()->waitForDone();
         delete _motor;
+        qDebug() << "motor delete succeed";
     }
 
     this->close();
@@ -170,10 +177,11 @@ void showWin_angleEncoder::get_data_and_plot_9401(QVector<double> data)
     ui->lineE_encoder_angle->setText(content);
 }
 
-void showWin_angleEncoder::get_angle(double motor_angle)
+void showWin_angleEncoder::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
 //    qDebug() << "ui : " << _motor_angle;
+    ui->lineE_motor_angle->setText(QString::number(_motor_angle));
 }
 
 // 画图数据处理
@@ -213,22 +221,29 @@ void showWin_angleEncoder::on_btn_run_stop_toggled(bool checked)
         ui->btn_run_stop->setText("停止");
         _motor->IF_MOTOR = true;
 
-        connect(_motor, &Motor::send_angle_to_ui,
-                this, &showWin_angleEncoder::get_angle);
+        emit signal_setConfigModbus();      // 发送配置信号
+
+        qDebug() << "in Win-btn_run";
+        while(_motor->get_modbus_dev() == nullptr);     // 阻塞，等待子线程创建对象
+        while(!(_motor->get_dev_state() == QModbusDevice::ConnectedState));     // 阻塞，等待子线程建立连接
+        qDebug() << "in Win-state is :" << _motor->get_dev_state();
 
         if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
             _motor->enable_motor();
             _motor->run_motor();
         } else {
-            qDebug() << "connect failed!please build connection!";
+            qDebug() << "connect failed! please build connection!";
         }
 
     } else {
         ui->btn_run_stop->setText("运行");
 
-        if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
-            _motor->stop_motor();
-        }
+        qDebug() << "in Win-state is :" << _motor->get_dev_state();
+        // 先发送命令让电机停止运行
+//        _motor->stop_motor();
+
+        // 然后发送关闭信号 断开连接
+        emit signal_closeOpenModbus();
     }
 }
 

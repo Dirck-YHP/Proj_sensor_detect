@@ -2,7 +2,8 @@
 #define MOTOR_H
 
 #include <QObject>
-#include <QThreadPool>
+#include <QThread>
+#include <QDebug>
 
 #include "tele_com/modbus.h"
 
@@ -36,14 +37,24 @@ public:
     bool IF_MOTOR = false;
 
 private:
-    Modbus *_modbus = nullptr;
+    // 线程相关变量
+    Modbus *modbus_com;
+    QThread *thread_modbus;
+    // end
 
     QString _input_angle;
 
 private slots:
     void rev_data_from_modbus(int data);
 
+public slots:
+    void get_config_signal();
+    void get_close_signal();
+
 signals:
+    void signal_set_config_modbus();
+    void signal_close_modbus();
+
     void send_angle_to_ui(double angle);
 };
 

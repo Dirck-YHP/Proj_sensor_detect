@@ -2,35 +2,12 @@
 
 Modbus::Modbus(QObject *parent) : QObject(parent)
 {
+     qDebug() <<  "1 线程ID：" << QThread::currentThreadId();
     _angle_calibration = false;
-
-    setAutoDelete(true);
 }
 
 Modbus::~Modbus()
 {
-}
-
-void Modbus::run()
-{
-    _modbusDevice = new QModbusRtuSerialMaster;
-
-    while (!STOP) {
-        if (WRITE) {
-            write_run(_addr, _cnt, _param);
-            WRITE = false;
-        }
-
-        // 只在连接状态下才读数据
-        if (_modbusDevice->state() == QModbusDevice::ConnectedState) {
-            // 读取数据
-            int read_num = put_read_num();
-            // 发送数据
-            if (read_num != INT_MAX)        // 暂时，后续需要改成线程同步
-                emit send_data(read_num);
-        }
-        QThread::msleep(10);
-    }
 }
 
 int Modbus::put_read_num()
@@ -53,8 +30,10 @@ void Modbus::get_input_angle(QString input_angle)
 
 void Modbus::build_connecttion()
 {
+    _modbusDevice = new QModbusRtuSerialMaster();
+
     // 设置串口参数
-    _modbusDevice->setConnectionParameter(QModbusDevice::SerialPortNameParameter, "COM1");
+    _modbusDevice->setConnectionParameter(QModbusDevice::SerialPortNameParameter, COM);
     _modbusDevice->setConnectionParameter(QModbusDevice::SerialBaudRateParameter, QSerialPort::Baud9600);
     _modbusDevice->setConnectionParameter(QModbusDevice::SerialDataBitsParameter, QSerialPort::Data8);
     _modbusDevice->setConnectionParameter(QModbusDevice::SerialParityParameter, QSerialPort::NoParity);
@@ -67,52 +46,59 @@ void Modbus::build_connecttion()
         // 连接失败，处理错误
         qDebug() << "Connect Error!";
     }
-
-    // 建立完连接之后才让线程池的死循环开始执行
-    STOP = false;
 }
 
 void Modbus::enable_motor()
 {
+    qDebug() << "write: en";
     write(0, 1, 0x101);
-
-//    emit write_param(0, 1, 0x101);
 }
 
 void Modbus::run_motor()
 {
+//    qDebug() << "write:run begin";
     if (!_angle_calibration) {  // 如果不进行角度校准，默认从0开始
         // 设置当前位置为0°
+        qDebug() << "write:run 1 begin";
         write(0, 1, 0x200);
+        qDebug() << "write:run 1 end";
     }
 
 //        // 绝对位移
 //        write(0, 1, 0x301);
 
     // 相对位移
+    qDebug() << "write:run 2 begin";
     write(0, 1, 0x302);
+    qDebug() << "write:run 2 end";
 
     int parameter = _input_angle * 12800 / 360;
+    qDebug() << "write:run 3 begin";
     write(1, 2, parameter);
+    qDebug() << "write:run 3 end";
+
+//    qDebug() << "write:run end";
+
+    // 确保写命令执行完之后再开始读取角度
+    BEGIN_READ = true;
 }
 
 
 
 void Modbus::disable_motor()
 {
+    qDebug() << "write:disable";
     write(0, 1, 0x100);
 }
 
 void Modbus::break_connection()
 {
     _modbusDevice->disconnectDevice();
-
-    // 断开连接之后才让线程池的死循环不再执行
-    STOP = true;
 }
 
 void Modbus::stop_motor()
 {
+    qDebug() << "write:stop";
     write(0, 1, 0x401);
 }
 
@@ -139,8 +125,6 @@ QModbusRtuSerialMaster *Modbus::get_modbus_dev()
 
 void Modbus::write_run(int address, int count, int parameter)
 {
-    qDebug() << address << count << parameter;
-
     // 创建一个写入请求
     QModbusDataUnit writeRequest(QModbusDataUnit::HoldingRegisters, address, count);
     for(int i = 0; i < count; i++){
@@ -151,25 +135,23 @@ void Modbus::write_run(int address, int count, int parameter)
 
     // 发送请求
     if (auto *reply = _modbusDevice->sendWriteRequest(writeRequest, 1)) {
-        qDebug() << "reply1";
-        if (!reply->isFinished()) {
-            qDebug() << "reply2";
-
-            connect(reply, &QModbusReply::finished, this, [reply]() {
-                // 请求完成，处理结果
-                if (reply->error() == QModbusDevice::NoError) {
-                    // 请求成功
-                    qDebug() << "Success Write!";
-                } else {
-                    // 请求出错，处理错误
-                    qDebug() << "Error Write!";
-                }
-                // 删除已完成的回复
-                reply->deleteLater();
-            });
-        } else {
-            delete reply;
-        }
+//        if (!reply->isFinished()) {
+//            connect(reply, &QModbusReply::finished, this, [reply,this]() {
+//                // 请求完成，处理结果
+//                if (reply->error() == QModbusDevice::NoError) {
+//                    // 请求成功
+////                    qDebug() << "Success Write!";
+////                    WRITE = false;
+//                } else {
+//                    // 请求出错，处理错误
+////                    qDebug() << "Error Write!";
+//                }
+//                // 删除已完成的回复
+//                reply->deleteLater();
+//            });
+//        } else {
+//            delete reply;
+//        }
     } else {
         // 发送请求失败，处理错误
         qDebug() << "Error Write Request!";
@@ -185,7 +167,7 @@ void Modbus::read(int address, int count)
     if (reply) {
         if (!reply->isFinished()) {
             connect(reply, &QModbusReply::finished, this, [=](){
-                _read_num = INT_MAX;
+                _read_num = 0;
                 // 请求完成，处理结果
                 if (reply->error() == QModbusDevice::NoError) {
                     const QModbusDataUnit result = reply->result();
@@ -194,10 +176,10 @@ void Modbus::read(int address, int count)
                         _read_num += val;
                         if(i != count - 1) _read_num = _read_num << 16;
                     }
-                    qDebug() << "Success Read!" ;
+//                    qDebug() << "Success Read!" ;
                 } else {
                     // 请求出错，处理错误
-                    qDebug() << "Error Read!" << reply->errorString();
+//                    qDebug() << "Error Read!" << reply->errorString();
                 }
                 // 删除已完成的回复
                 reply->deleteLater();
@@ -219,5 +201,96 @@ void Modbus::write(int address, int count, int parameter)
     WRITE = true;
 
     while (WRITE);      // 阻塞
+    qDebug() << "阻塞结束";
 }
 
+void Modbus::read_and_write_Data()
+{
+    if (WRITE) {
+        write_run(_addr, _cnt, _param);
+        WRITE = false;
+    }
+
+    if (BEGIN_READ) {
+        // 读取数据
+        int read_num = put_read_num();
+        // 发送数据
+        emit send_data(read_num);
+    } else {
+        qDebug() << "waiting for writing......";
+    }
+
+}
+
+void Modbus::slot_modbus_init()
+{
+    qDebug() << "启动线程";
+    // 创建定时 - Ps: 如果线程中需要定时一定要在线程中Start
+    timer_modbus = new QTimer();
+    connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_and_write_Data);
+    qDebug() << "定时器配置完成。";
+    qDebug() << "init conn cur thread: " << QThread::currentThreadId();
+}
+
+void Modbus::slot_configModbus()
+{
+    qDebug() << "modbus cfg cur thread: " << QThread::currentThreadId();
+    build_connecttion();
+
+    bool if_port_connected = checkPortAvailability(COM);
+    if (if_port_connected) {
+        qDebug() << "检查：串口已连接";
+        timer_modbus->start(10);
+    } else {
+        qDebug() << "检查：串口连接失败";
+    }
+}
+
+void Modbus::slot_closeOpneModbus()
+{
+    qDebug() << "close modbus current thread: " << QThread::currentThreadId();
+
+    // 关闭modbus
+//    break_connection();
+    stop_motor();
+
+    BEGIN_READ = false;
+    // 关闭定时器
+    timer_modbus->stop();
+
+    qDebug() << put_modbusdevice_state();
+
+    _modbusDevice->deleteLater();
+    _modbusDevice = NULL;
+    delete _modbusDevice;
+
+}
+
+/***************************************************************
+  *  @brief     检查指定端口是否已经被占用
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
+bool Modbus::checkPortAvailability(const QString &portName) {
+    // 获取系统中所有串口的信息
+    QList<QSerialPortInfo> portList = QSerialPortInfo::availablePorts();
+
+    // 遍历所有串口信息
+    foreach (const QSerialPortInfo &portInfo, portList) {
+        if (portInfo.portName() == portName) {
+            // 如果找到匹配的串口名称，检查其是否可用
+            if (portInfo.isBusy()) {
+                qDebug() << portName << "is used.";
+                return true;
+            } else {
+                qDebug() << portName << "is not used.";
+                return false;
+            }
+        }
+    }
+
+    // 如果没有找到匹配的串口
+    qDebug() << portName << "not found.";
+    return false;
+}

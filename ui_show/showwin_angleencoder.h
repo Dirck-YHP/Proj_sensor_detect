@@ -34,7 +34,11 @@ private slots:
     void get_data_and_plot_9403(QVector<QVector<double>> data);
     void get_data_and_plot_9401(QVector<double> data);
 
-    void get_angle(double motor_angle);
+    void slot_get_angle(double motor_angle);
+
+signals:
+    void signal_setConfigModbus();
+    void signal_closeOpenModbus();
 
 private:
     Ui::showWin_angleEncoder *ui;
