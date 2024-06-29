@@ -11,7 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets PrintSupport SerialPort SerialBus)
+find_package(Qt5 REQUIRED COMPONENTS Widgets PrintSupport SerialPort SerialBus Core Network)
 
 add_executable(Proj_Sensor
     main.cpp
@@ -74,5 +74,7 @@ target_link_libraries(Proj_Sensor PRIVATE Qt5::Widgets
     Qt5::PrintSupport
     Qt5::SerialPort
     Qt5::SerialBus
+    Qt5::Core
+    Qt5::Network
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/NIDAQmx.lib)
 

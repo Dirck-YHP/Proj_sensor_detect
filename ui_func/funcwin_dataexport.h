@@ -19,7 +19,6 @@ public:
 
 private slots:
     void on_btn_ok_clicked();
-
     void on_btn_back_mainW_clicked();
 
 signals:
@@ -27,7 +26,7 @@ signals:
 
 private:
     Ui::funcWin_DataExport *ui;
-    DataExport *_data_export;
+    DataExport *_data_export = nullptr;
 
     QString _ip_addr;
     QString _port;

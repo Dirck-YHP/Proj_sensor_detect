@@ -22,6 +22,9 @@
      <height>41</height>
     </rect>
    </property>
+   <property name="text">
+    <string>10.116.81.63</string>
+   </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
@@ -44,6 +47,9 @@
      <width>161</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="text">
+    <string>6666</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
