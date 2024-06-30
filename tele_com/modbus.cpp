@@ -2,14 +2,16 @@
 
 Modbus::Modbus(QObject *parent) : QObject(parent)
 {
-     qDebug() <<  "1 线程ID：" << QThread::currentThreadId();
+     qDebug() <<  "Modbus构造。cur thread：" << QThread::currentThreadId();
     _angle_calibration = false;
 }
 
-Modbus::~Modbus()
-{
-}
-
+/***************************************************************
+  *  @brief     读命令——读电机当前绝对位置的值
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 int Modbus::put_read_num()
 {
     // 读电机当前绝对位置的值
@@ -18,18 +20,37 @@ int Modbus::put_read_num()
     return _read_num;
 }
 
+/***************************************************************
+  *  @brief     返回当前连接状态
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 QModbusDevice::State Modbus::put_modbusdevice_state()
 {
     return _modbusDevice->state();
 }
 
+/***************************************************************
+  *  @brief     获取用户输入的目标角度
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::get_input_angle(QString input_angle)
 {
     _input_angle = input_angle.toDouble();
 }
 
+/***************************************************************
+  *  @brief     命令——建立连接
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::build_connecttion()
 {
+    qDebug() << "0 BUILD cur thread: " << QThread::currentThreadId();
     _modbusDevice = new QModbusRtuSerialMaster();
 
     // 设置串口参数
@@ -48,62 +69,88 @@ void Modbus::build_connecttion()
     }
 }
 
+/***************************************************************
+  *  @brief     写命令——电机使能
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::enable_motor()
 {
-    qDebug() << "write: en";
-    write(0, 1, 0x101);
+    qDebug() << "1 ENABLE cur thread: " << QThread::currentThreadId();
+    write_run(0, 1, 0x101);
 }
 
+/***************************************************************
+  *  @brief     写命令——电机运行
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::run_motor()
 {
-//    qDebug() << "write:run begin";
+    qDebug() << "2 RUN cur thread: " << QThread::currentThreadId();
     if (!_angle_calibration) {  // 如果不进行角度校准，默认从0开始
         // 设置当前位置为0°
-        qDebug() << "write:run 1 begin";
-        write(0, 1, 0x200);
-        qDebug() << "write:run 1 end";
+        write_run(0, 1, 0x200);
     }
 
 //        // 绝对位移
 //        write(0, 1, 0x301);
 
     // 相对位移
-    qDebug() << "write:run 2 begin";
-    write(0, 1, 0x302);
-    qDebug() << "write:run 2 end";
+    write_run(0, 1, 0x302);
 
     int parameter = _input_angle * 12800 / 360;
-    qDebug() << "write:run 3 begin";
-    write(1, 2, parameter);
-    qDebug() << "write:run 3 end";
-
-//    qDebug() << "write:run end";
+    write_run(1, 2, parameter);
 
     // 确保写命令执行完之后再开始读取角度
     BEGIN_READ = true;
+    qDebug() << "2 RUN FINISH";
 }
 
-
-
+/***************************************************************
+  *  @brief     写命令——电机失能
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::disable_motor()
 {
-    qDebug() << "write:disable";
-    write(0, 1, 0x100);
+    qDebug() << "DISABLE cur thread: " << QThread::currentThreadId();
+    write_run(0, 1, 0x100);
 }
 
+/***************************************************************
+  *  @brief     命令——断开连接
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::break_connection()
 {
+    qDebug() << "5 BREAK cur thread: " << QThread::currentThreadId();
     _modbusDevice->disconnectDevice();
 }
 
+/***************************************************************
+  *  @brief     写命令——电机停止
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::stop_motor()
 {
-    qDebug() << "write:stop";
-    write(0, 1, 0x401);
+    qDebug() << "4 STOP cur thread: " << QThread::currentThreadId();
+    write_run(0, 1, 0x401);
 }
 
-
-
+/***************************************************************
+  *  @brief     角度校准，待定！！！
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::angle_cali()
 {
     _angle_calibration = true;
@@ -111,18 +158,30 @@ void Modbus::angle_cali()
     // 失能状态下，首先写入位置参数
     disable_motor();     // 先失能
 
-    write(0, 1, 0x302); // 写入位置参数
-    write(0, 1, 0x200);     // 设置当前位置
+    write_run(0, 1, 0x302); // 写入位置参数
+    write_run(0, 1, 0x200);     // 设置当前位置
 
     enable_motor();         // 再使能
     _angle_calibration = false;
 }
 
+/***************************************************************
+  *  @brief     返回_modbusDev对象
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 QModbusRtuSerialMaster *Modbus::get_modbus_dev()
 {
     return _modbusDevice;
 }
 
+/***************************************************************
+  *  @brief     写命令，子线程中执行
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::write_run(int address, int count, int parameter)
 {
     // 创建一个写入请求
@@ -152,12 +211,19 @@ void Modbus::write_run(int address, int count, int parameter)
 //        } else {
 //            delete reply;
 //        }
+        qDebug() << "Succeed Write!";
     } else {
         // 发送请求失败，处理错误
         qDebug() << "Error Write Request!";
     }
 }
 
+/***************************************************************
+  *  @brief     读命令，子线程中执行
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::read(int address, int count)
 {
     // 创建一个读取请求
@@ -193,24 +259,14 @@ void Modbus::read(int address, int count)
     }
 }
 
-void Modbus::write(int address, int count, int parameter)
+/***************************************************************
+  *  @brief     执行读操作
+  *  @param     无
+  *  @note      槽函数——由定时器触发的读函数
+  *  @Sample usage:
+ **************************************************************/
+void Modbus::read_Data()
 {
-    _addr = address;
-    _cnt = count;
-    _param = parameter;
-    WRITE = true;
-
-    while (WRITE);      // 阻塞
-    qDebug() << "阻塞结束";
-}
-
-void Modbus::read_and_write_Data()
-{
-    if (WRITE) {
-        write_run(_addr, _cnt, _param);
-        WRITE = false;
-    }
-
     if (BEGIN_READ) {
         // 读取数据
         int read_num = put_read_num();
@@ -219,51 +275,88 @@ void Modbus::read_and_write_Data()
     } else {
         qDebug() << "waiting for writing......";
     }
-
 }
 
+/***************************************************************
+  *  @brief     在Motor中connect，创建定时器，并建立连接
+  *  @param     无
+  *  @note      槽函数——定时器配置
+  *  @Sample usage:
+ **************************************************************/
 void Modbus::slot_modbus_init()
 {
     qDebug() << "启动线程";
-    // 创建定时 - Ps: 如果线程中需要定时一定要在线程中Start
-    timer_modbus = new QTimer();
-    connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_and_write_Data);
-    qDebug() << "定时器配置完成。";
-    qDebug() << "init conn cur thread: " << QThread::currentThreadId();
-}
-
-void Modbus::slot_configModbus()
-{
-    qDebug() << "modbus cfg cur thread: " << QThread::currentThreadId();
+    // 建立连接
     build_connecttion();
 
-    bool if_port_connected = checkPortAvailability(COM);
-    if (if_port_connected) {
-        qDebug() << "检查：串口已连接";
-        timer_modbus->start(10);
-    } else {
-        qDebug() << "检查：串口连接失败";
-    }
+    // 创建定时 - Ps: 如果线程中需要定时一定要在线程中Start
+    timer_modbus = new QTimer();
+    connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_Data);
+    qDebug() << "定时器配置完成。cur thread: " << QThread::currentThreadId();
 }
 
-void Modbus::slot_closeOpneModbus()
+/***************************************************************
+  *  @brief     在Motor中connect，断开连接，删除对象
+  *  @param     无
+  *  @note      槽函数——定时器配置
+  *  @Sample usage:
+ **************************************************************/
+void Modbus::slot_modbus_delete()
 {
-    qDebug() << "close modbus current thread: " << QThread::currentThreadId();
-
-    // 关闭modbus
-//    break_connection();
-    stop_motor();
-
-    BEGIN_READ = false;
-    // 关闭定时器
-    timer_modbus->stop();
-
-    qDebug() << put_modbusdevice_state();
+    // 断开连接
+    qDebug() << "before break: " << put_modbusdevice_state();
+    break_connection();
+    qDebug() << "after break: " << put_modbusdevice_state();
 
     _modbusDevice->deleteLater();
     _modbusDevice = NULL;
     delete _modbusDevice;
+}
 
+/***************************************************************
+  *  @brief     在Motor中connect。建立modbus连接，判断端口，启动定时器，电机使能和运行
+  *  @param     无
+  *  @note      槽函数——modbus配置
+  *  @Sample usage:
+ **************************************************************/
+void Modbus::slot_configModbus()
+{
+    bool if_port_connected = checkPortAvailability(COM);
+    if (if_port_connected) {
+        qDebug() << "检查：串口已连接";
+        timer_modbus->start(20);
+    } else {
+        qDebug() << "检查：串口连接失败";
+    }
+    qDebug() << "Modbus配置完成。cur thread: " << QThread::currentThreadId();
+
+    // 电机使能
+    enable_motor();
+
+    // 电机运行
+    run_motor();
+}
+
+/***************************************************************
+  *  @brief     在Motor中connect。停止电机，关闭定时器
+  *  @param     无
+  *  @note      槽函数——modbus关闭
+  *  @Sample usage:
+ **************************************************************/
+void Modbus::slot_closeOpneModbus()
+{
+    qDebug() << "now in slot close!";
+
+    // 停止电机
+    stop_motor();
+
+    // 停止读取数据
+    BEGIN_READ = false;
+
+    // 关闭定时器
+    timer_modbus->stop();
+
+    qDebug() << "Modbus关闭。current thread: " << QThread::currentThreadId();
 }
 
 /***************************************************************
@@ -281,10 +374,8 @@ bool Modbus::checkPortAvailability(const QString &portName) {
         if (portInfo.portName() == portName) {
             // 如果找到匹配的串口名称，检查其是否可用
             if (portInfo.isBusy()) {
-                qDebug() << portName << "is used.";
                 return true;
             } else {
-                qDebug() << portName << "is not used.";
                 return false;
             }
         }

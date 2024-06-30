@@ -22,13 +22,14 @@ showWin_angleEncoder::showWin_angleEncoder(AngleEncoder *angle_encoder,
         if (_motor == nullptr) {
             _motor = new Motor;
 
-            // 用户电机“运行”之后会发送这个配置信号 给电机
+            // 用户点击“运行”之后会发送这个配置信号 给电机
             connect(this, &showWin_angleEncoder::signal_setConfigModbus,
                     _motor, &Motor::get_config_signal);
-            // 用户电机“停止”之后会发送这个关闭信号 给电机
+            // 用户点击“停止”之后会发送这个关闭信号 给电机
             connect(this, &showWin_angleEncoder::signal_closeOpenModbus,
                     _motor, &Motor::get_close_signal);
 
+            // 电机将接收到的数据发送到ui
             connect(_motor, &Motor::send_angle_to_ui,
                     this, &showWin_angleEncoder::slot_get_angle);
 
@@ -62,9 +63,17 @@ showWin_angleEncoder::showWin_angleEncoder(AngleEncoder *angle_encoder,
 showWin_angleEncoder::~showWin_angleEncoder()
 {
     qDebug() << "encoder window destroyed";
+    qDebug() << "------------------------";
+
     delete ui;
 }
 
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      槽函数——ok键按下
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::on_btn_ok_clicked()
 {
     if (_motor != nullptr) {
@@ -75,6 +84,12 @@ void showWin_angleEncoder::on_btn_ok_clicked()
     this->close();
 }
 
+/***************************************************************
+  *  @brief     这里目前只涉及画图？
+  *  @param     无
+  *  @note      槽函数——开始测量/结束测量键
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
@@ -124,7 +139,12 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
     }
 }
 
-// 接收到来自传感器的数据，然后显示出来
+/***************************************************************
+  *  @brief     接收9205的数据并plot
+  *  @param     无
+  *  @note      槽函数——
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::get_data_and_plot_9205(QVector<double> data)
 {
     int length = data.size() / channel_num;     // 每通道数据 数
@@ -145,6 +165,12 @@ void showWin_angleEncoder::get_data_and_plot_9205(QVector<double> data)
     ui->plot_angle->replot();
 }
 
+/***************************************************************
+  *  @brief     接收9403的数据并plot
+  *  @param     无
+  *  @note      槽函数——
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::get_data_and_plot_9403(QVector<QVector<double> > data)
 {
     data = add_data_to_queue(data);     // 设置队列，让波形固定范围滑动
@@ -170,6 +196,12 @@ void showWin_angleEncoder::get_data_and_plot_9403(QVector<QVector<double> > data
     ui->plot_current->replot();
 }
 
+/***************************************************************
+  *  @brief     接收9401的数据并在数值框中显示
+  *  @param     无
+  *  @note      槽函数——
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::get_data_and_plot_9401(QVector<double> data)
 {
     QString content = QString::number(data[0]) + "°";
@@ -177,6 +209,12 @@ void showWin_angleEncoder::get_data_and_plot_9401(QVector<double> data)
     ui->lineE_encoder_angle->setText(content);
 }
 
+/***************************************************************
+  *  @brief     接收电机发送来的角度并在数值框中显示
+  *  @param     无
+  *  @note      槽函数——
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
@@ -184,8 +222,12 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
     ui->lineE_motor_angle->setText(QString::number(_motor_angle));
 }
 
-// 画图数据处理
-// 将二维数组限制在一个queue里，然后转成二维数组再传出去
+/***************************************************************
+  *  @brief     将二维数组限制在一个queue里，然后转成二维数组再传出去
+  *  @param     无
+  *  @note      功能函数——画图数据处理
+  *  @Sample usage:
+ **************************************************************/
 QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector<double> > data)
 {
     for (int i = 0; i < data.size(); i++) {
@@ -209,48 +251,51 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
 
 
 /*******************************电机************************************/
+/***************************************************************
+  *  @brief     接收参数配置页面电机目标角度
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::update_motor_tar_angle(const QString &text)
 {
     _motor->set_target_angle(text);
     ui->lineE_test->setText(_motor->get_target_angle() + "°");
 }
 
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      槽函数——电机“运行”/“停止”
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::on_btn_run_stop_toggled(bool checked)
 {
     if (checked) {
         ui->btn_run_stop->setText("停止");
-        _motor->IF_MOTOR = true;
+        qDebug() << "UI 运行 cur id" << QThread::currentThreadId();
 
-        emit signal_setConfigModbus();      // 发送配置信号
-
-        qDebug() << "in Win-btn_run";
-        while(_motor->get_modbus_dev() == nullptr);     // 阻塞，等待子线程创建对象
-        while(!(_motor->get_dev_state() == QModbusDevice::ConnectedState));     // 阻塞，等待子线程建立连接
-        qDebug() << "in Win-state is :" << _motor->get_dev_state();
-
-        if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
-            _motor->enable_motor();
-            _motor->run_motor();
-        } else {
-            qDebug() << "connect failed! please build connection!";
-        }
+        // 发送配置信号
+        emit signal_setConfigModbus();
 
     } else {
         ui->btn_run_stop->setText("运行");
+        qDebug() << "UI 停止 cur id" << QThread::currentThreadId();
 
-        qDebug() << "in Win-state is :" << _motor->get_dev_state();
-        // 先发送命令让电机停止运行
-//        _motor->stop_motor();
-
-        // 然后发送关闭信号 断开连接
+        // 发送关闭信号
         emit signal_closeOpenModbus();
     }
 }
 
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      槽函数——电机“立即停止”键
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::on_btn_stop_now_clicked()
 {
-    _motor->stop_motor();
-    _motor->disable_motor();
+//    _motor->disable_motor();
 
     ui->btn_run_stop->setChecked(false);
 }

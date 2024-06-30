@@ -15,7 +15,6 @@ class Modbus : public QObject
     Q_OBJECT
 public:
     Modbus(QObject *parent = nullptr);
-    ~Modbus();
 
 public:
     int put_read_num();     // 将协议读到的值传出去
@@ -36,9 +35,8 @@ public:
     QModbusRtuSerialMaster *get_modbus_dev();
 private:
     void write_run(int address, int count, int parameter);      // 往地址写
-    void read(int address, int count);                      // 从地址读
-    void write(int address, int count, int parameter);
-    void read_and_write_Data();
+    void read(int address, int count);                          // 从地址读
+    void read_Data();
 
     bool checkPortAvailability(const QString &portName);
 private:
@@ -46,19 +44,17 @@ private:
     bool _angle_calibration = false;
 
     bool BEGIN_READ = false;
-    bool WRITE = false;
-    int _addr;
-    int _cnt;
-    int _param;
 
     QModbusRtuSerialMaster *_modbusDevice = nullptr;
     QTimer *timer_modbus;
 
     const QString COM = "COM3";
 
-    int _read_num = 0;       // 读到的值
+    int _read_num = 0;                  // 读到的值
 public slots:
     void slot_modbus_init();            // 初始化——创定时器
+    void slot_modbus_delete();
+
     void slot_configModbus();
     void slot_closeOpneModbus();
 

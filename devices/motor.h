@@ -33,9 +33,6 @@ public:
 
     QModbusDevice::State get_dev_state();   // 获取电机当前状态
     int get_read_num() const;             // 获取协议读到的值
-
-    bool IF_MOTOR = false;
-
 private:
     // 线程相关变量
     Modbus *modbus_com;
@@ -56,6 +53,8 @@ signals:
     void signal_close_modbus();
 
     void send_angle_to_ui(double angle);
+
+    void signal_delete();
 };
 
 #endif // MOTOR_H

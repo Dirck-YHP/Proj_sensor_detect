@@ -50,12 +50,12 @@
    </property>
    <item>
     <property name="text">
-     <string>角位移传感器</string>
+     <string>角位移编码器</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>角位移编码器</string>
+     <string>角位移传感器</string>
     </property>
    </item>
    <item>
