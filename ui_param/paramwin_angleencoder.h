@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include "sensors/angleencoder.h"
-#include "ui_show/showwin_measureresis.h"
 #include "ui_show/showwin_angleencoder.h"
 
 namespace Ui {
@@ -21,7 +20,6 @@ public:
 private:
     Ui::paramWin_angleEncoder *ui;
     AngleEncoder *angle_encoder;
-    showWin_measureResis *show_win_measure_r;
     showWin_angleEncoder *show_win_angle_encoder;
 
     bool IF_NEED_MOTOR = true;

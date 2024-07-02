@@ -210,19 +210,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox_measure_r">
-   <property name="geometry">
-    <rect>
-     <x>390</x>
-     <y>310</y>
-     <width>111</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>测电阻</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>

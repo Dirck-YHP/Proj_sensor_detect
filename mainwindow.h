@@ -6,7 +6,7 @@
 #include "ui_param/paramwin_angleencoder.h"
 #include "ui_param/paramwin_proximityswitch.h"
 #include "ui_param/paramwin_pressuresensor.h"
-
+#include "ui_param/paramwin_mea_resis.h"
 
 #include "ui_func/funcwin_dataexport.h"
 

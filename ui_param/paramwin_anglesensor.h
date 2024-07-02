@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QDebug>
 #include "sensors/anglesensor.h"
-#include "ui_show/showwin_measureresis.h"
 #include "ui_show/showwin_anglesensor.h"
 
 namespace Ui {
@@ -34,7 +33,6 @@ private slots:
 private:
     Ui::paramWin_angleSensor *ui;
     AngleSensor *angle_sensor;
-    showWin_measureResis *show_win_measure_r;
     showWin_angleSensor *show_win_angle_sensor;
 
 signals:

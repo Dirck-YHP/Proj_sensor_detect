@@ -50,6 +50,13 @@ void mainWindow::on_btn_start_clicked()
 
         this->hide();
         param_win_pressure_sensor->show();
+    } else if (ui->cbox_choose_sensor->currentText() == "电阻") {
+        paramWin_mea_resis *param_win_mea_r = new paramWin_mea_resis;
+        connect(param_win_mea_r, &paramWin_mea_resis::subWindowClosed,
+                this, &mainWindow::showMainWindow);
+
+        this->hide();
+        param_win_mea_r->show();
     }
 }
 

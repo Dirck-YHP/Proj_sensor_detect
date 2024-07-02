@@ -35,23 +35,19 @@ void paramWin_angleEncoder::on_btn_ok_clicked()
     angle_encoder->set_pul_per_cir(ui->lineE_pulse_per_cir->text());
     angle_encoder->set_channel(ui->lineE_channel->text());
 
-    if (ui->checkBox_measure_resis->isChecked()) {  // 如果选中了测电阻，则弹出测电阻的窗口
-        show_win_measure_r = new showWin_measureResis;
-        show_win_measure_r->show();
-    } else {
-        if (!ui->checkBox_no_need_device->isChecked()) {    // 不需要工装
-            IF_NEED_MOTOR = true;
+    if (!ui->checkBox_no_need_device->isChecked()) {    // 不需要工装
+        IF_NEED_MOTOR = true;
 
-        } else {    // 需要工装
-            IF_NEED_MOTOR = false;
-        }
-        show_win_angle_encoder = new showWin_angleEncoder(angle_encoder, IF_NEED_MOTOR);
-        show_win_angle_encoder->show();
-
-        // 连接参数窗口的电机目标输入和显示窗口的输出
-        connect(this, &paramWin_angleEncoder::motor_target_angle_changed,
-                show_win_angle_encoder, &showWin_angleEncoder::update_motor_tar_angle);
+    } else {    // 需要工装
+        IF_NEED_MOTOR = false;
     }
+    show_win_angle_encoder = new showWin_angleEncoder(angle_encoder, IF_NEED_MOTOR);
+    show_win_angle_encoder->show();
+
+    // 连接参数窗口的电机目标输入和显示窗口的输出
+    connect(this, &paramWin_angleEncoder::motor_target_angle_changed,
+            show_win_angle_encoder, &showWin_angleEncoder::update_motor_tar_angle);
+
 }
 
 void paramWin_angleEncoder::on_checkBox_measure_resis_stateChanged(int arg1)
@@ -82,13 +78,11 @@ void paramWin_angleEncoder::on_checkBox_no_need_device_stateChanged(int arg1)
             << ui->label_6;
 
     if (arg1 == Qt::Unchecked) {    // 如果需要工装，则电机相关可配置
-        ui->checkBox_measure_resis->setEnabled(true);
 
         foreach(QWidget *motor_param, motor_params) {
             motor_param->setEnabled(true);
         }
     } else if (arg1 == Qt::Checked) {   // 如果不需要工装，则电机参数不可配置
-        ui->checkBox_measure_resis->setEnabled(false);
 
         foreach(QWidget *motor_param, motor_params) {
             motor_param->setEnabled(false);

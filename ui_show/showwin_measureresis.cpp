@@ -1,9 +1,10 @@
 #include "showwin_measureresis.h"
 #include "ui_showwin_measureresis.h"
 
-showWin_measureResis::showWin_measureResis(QWidget *parent) :
+showWin_measureResis::showWin_measureResis(Resis *mea_resis, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::showWin_measureResis)
+    ui(new Ui::showWin_measureResis),
+    _resis(mea_resis)
 {
     ui->setupUi(this);
 }

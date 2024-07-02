@@ -285,19 +285,6 @@
     <string>退出</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox_measure_resis">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>290</y>
-     <width>111</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>测电阻</string>
-   </property>
-  </widget>
   <widget class="QCheckBox" name="checkBox_no_need_device">
    <property name="geometry">
     <rect>

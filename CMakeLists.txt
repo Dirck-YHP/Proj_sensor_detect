@@ -21,6 +21,7 @@ add_executable(Proj_Sensor
     ui_param/paramwin_angleencoder.cpp ui_param/paramwin_angleencoder.h ui_param/paramwin_angleencoder.ui
     ui_param/paramwin_proximityswitch.cpp ui_param/paramwin_proximityswitch.h ui_param/paramwin_proximityswitch.ui
     ui_param/paramwin_pressuresensor.cpp ui_param/paramwin_pressuresensor.h ui_param/paramwin_pressuresensor.ui
+    ui_param/paramwin_mea_resis.cpp ui_param/paramwin_mea_resis.h ui_param/paramwin_mea_resis.ui
 
     ui_show/showwin_measureresis.cpp ui_show/showwin_measureresis.h ui_show/showwin_measureresis.ui
     ui_show/showwin_anglesensor.cpp ui_show/showwin_anglesensor.h ui_show/showwin_anglesensor.ui
@@ -43,6 +44,7 @@ add_executable(Proj_Sensor
     sensors/angleencoder.cpp sensors/angleencoder.h
     sensors/pressuresensor.cpp sensors/pressuresensor.h
     sensors/proximityswitch.cpp sensors/proximityswitch.h
+    sensors/resis.cpp sensors/resis.h
 
     assist_func/assist.cpp assist_func/assist.h
 

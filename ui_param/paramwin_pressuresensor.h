@@ -4,7 +4,6 @@
 #include <QWidget>
 
 #include "sensors/pressuresensor.h"
-#include "ui_show/showwin_measureresis.h"
 #include "ui_show/showwin_pressuresensor.h"
 
 namespace Ui {
@@ -22,7 +21,6 @@ public:
 private:
     Ui::paramWin_pressureSensor *ui;
     PressureSensor *_pressure_sensor;
-    showWin_measureResis *show_win_measure_r;
     showWin_pressureSensor *show_win_press_sensor;
 
 signals:

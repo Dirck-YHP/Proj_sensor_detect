@@ -32,11 +32,7 @@ void paramWin_proximitySwitch::on_btn_ok_clicked()
     _proxi_switch->set_using_time(ui->cBox_use_time->currentText());
     _proxi_switch->set_sensing_matirial((ui->cBox_material->currentText()));
 
-    if (ui->checkBox_measure_resis->isChecked()) {  // 如果选中了测电阻，则弹出测电阻的窗口
-        _show_win_measure_r = new showWin_measureResis;
-        _show_win_measure_r->show();
-    } else {
-        _show_win_prox_switch = new showWin_proximitySwitch(_proxi_switch);
-        _show_win_prox_switch->show();
-    }
+    _show_win_prox_switch = new showWin_proximitySwitch(_proxi_switch);
+    _show_win_prox_switch->show();
+
 }

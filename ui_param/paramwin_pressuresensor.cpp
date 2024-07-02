@@ -31,13 +31,10 @@ void paramWin_pressureSensor::on_btn_ok_clicked()
     _pressure_sensor->set_range(ui->lineE_4mA->text(), ui->lineE_20mA->text());
     _pressure_sensor->set_channel(check_channel_choosed());
 
-    if (ui->checkBox_measure_r->isChecked()) {
-        show_win_measure_r = new showWin_measureResis;
-        show_win_measure_r->show();
-    } else {
-        show_win_press_sensor = new showWin_pressureSensor(_pressure_sensor);
-        show_win_press_sensor->show();
-    }
+
+    show_win_press_sensor = new showWin_pressureSensor(_pressure_sensor);
+    show_win_press_sensor->show();
+
 }
 
 void paramWin_pressureSensor::on_checkBox_measure_r_stateChanged(int arg1)

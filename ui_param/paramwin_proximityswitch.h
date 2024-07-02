@@ -4,7 +4,6 @@
 #include <QWidget>
 
 #include "sensors/proximityswitch.h"
-#include "ui_show/showwin_measureresis.h"
 #include "ui_show/showwin_proximityswitch.h"
 
 namespace Ui {
@@ -22,7 +21,6 @@ public:
 private:
     Ui::paramWin_proximitySwitch *ui;
     ProximitySwitch *_proxi_switch;
-    showWin_measureResis *_show_win_measure_r;
     showWin_proximitySwitch *_show_win_prox_switch;
 
 signals:

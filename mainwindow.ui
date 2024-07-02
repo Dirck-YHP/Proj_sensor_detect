@@ -68,6 +68,11 @@
      <string>压力传感器</string>
     </property>
    </item>
+   <item>
+    <property name="text">
+     <string>电阻</string>
+    </property>
+   </item>
   </widget>
   <widget class="QPushButton" name="btn_data_export">
    <property name="geometry">
