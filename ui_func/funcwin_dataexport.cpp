@@ -106,7 +106,7 @@ void funcWin_DataExport::on_btn_send_clicked()
 }
 
 /***************************************************************
-  *  @brief     接收数据
+  *  @brief     接收client的信息用来确认
   *  @param     无
   *  @note      槽函数
   *  @Sample usage:
@@ -119,31 +119,46 @@ void funcWin_DataExport::RcvData()
     }
 }
 
+/***************************************************************
+  *  @brief     检测到连接，触发文件发送函数
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
 void funcWin_DataExport::HaveNewConnection()
 {
+    // 接收到ip和端口号
     tcpSocket = tcpServer->nextPendingConnection();
     QString ip = tcpSocket->peerAddress().toString();
     quint16 port = tcpSocket->peerPort();
     qDebug() << ip << " " << port;
 
     QString str = "Connected!";
-    connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(RcvData()));
-    QMessageBox::information(this,"Info",str,QMessageBox::Ok);
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(RcvData()));
+    QMessageBox::information(this, "Info", str, QMessageBox::Ok);
 }
 
+/***************************************************************
+  *  @brief     文件发送
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
 void funcWin_DataExport::SendFile()
 {
+    // 分size发送文件
     qint64 len = 0;
     do{
         static quint32 cnt = 0;
         char buf[64*1024] = {0};
         len = 0;
-        len = file.read(buf,sizeof(buf));
-        len = tcpSocket->write(buf,len);
+        len = file.read(buf, sizeof(buf));
+        len = tcpSocket->write(buf, len);
         sendSize += len;
-        qDebug()<<cnt++;
+        qDebug() << cnt++;
     } while(len > 0);
 
+    // 文件发送完成
     if (sendSize == fileSize) {
         ui->textE->setText(QString::fromUtf8("Finish sending file,please click connect on client.\n"));
         file.close();
