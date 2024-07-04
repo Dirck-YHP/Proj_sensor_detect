@@ -45,7 +45,7 @@ void funcWin_DataExport::on_btn_ok_clicked()
 {
 
 //    qDebug() << "ip_addr: " << ui->lineE_ip->text() << " port: " << ui->lineE_port->text();
-    _data_export->socket_connect();
+//    _data_export->socket_connect();
 }
 
 /***************************************************************
