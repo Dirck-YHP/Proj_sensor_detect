@@ -35,16 +35,19 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
             ui->textBrowser->append(msg);       // 暂时先单纯打印出来，后续要画波形
             ui->lineE_hydra_val->setText(msg);
         } else {    // 如果是空的话，则提示用户接收到的数据有问题
-            qDebug() << "serial data received nothing!";
+//            qDebug() << "serial data received nothing!";
         }
     });
 
     // 文件保存相关
     if (_file_save_dir != "") {
-        _timer_savefile.setInterval(50);
+        FILE_SAVE = true;
+        _data_save = new DataSave;
+        _timer_savefile.setInterval(500);       // 20ms一个数据点，500ms写入到文件一次，25个点
         connect(&_timer_savefile, &QTimer::timeout, this, &showWin_pressureSensor::save_data);
     } else {
-        qDebug() << "do not save file!";
+        FILE_SAVE = false;
+        qDebug() << "do not save file!——" << FILE_SAVE;
     }
 
     // Set the attribute to delete the window when it is closed
@@ -67,47 +70,74 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
+
+        /************************ 液压站相关 ************************/
         emit signal_setConfigSerialPort();
-        _timer_hydrau.start();      // 开启定时
+        _timer_hydrau.start();                  // 开启定时：这个是限制ui数值框显示
+        connect(_hydraulic_station, &HydraulicStation::send_press_to_ui,
+                this, &showWin_pressureSensor::slot_plot_press_from_hydraSta);
 
+        /************************ 压力传感器 ************************/
 //        _pressure_sensor->start_acquire();  // 开始采集
-
         // 先获取参数配置页面勾选了哪几个通道,这里需要注意有没有去掉电压电流的通道
 //        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
 
-        // 根据通道数来确定要画多少个波形
-//        ui->plot_pressure->clearGraphs();
-//        ui->plot_pressure->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-//        ui->plot_pressure->xAxis->setLabel("time/s");
-//        ui->plot_pressure->yAxis->setLabel("Y");
-//        ui->plot_pressure->yAxis->setRange(-10, 10);
-
-//        for (int i = 0; i < channel_num; i++) {
-//            ui->plot_pressure->addGraph();
-//        }
-
-        // 设置文件保存相关参数
-        QString currentDateTime = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
-        QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
-        file.setFileName(file_name);
-        if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
-            return;
-
-        QTextStream out(&file);
-        out.setCodec("UTF-8");
-        out << QString("采集类型：")  << _pressure_sensor->get_label().toUtf8()
-            << QString("，采集范围：(") << _pressure_sensor->get_range().first << ", " << _pressure_sensor->get_range().second << ")"
-            << QString("，采集通道：") << _pressure_sensor->get_channel().toUtf8() << "\n";
-
 //        // 建立连接
 //        connect(_pressure_sensor, &PressureSensor::send_ni9205_to_ui,
-//                this, &showWin_pressureSensor::get_data_and_plot_pressure);
+//                this, &showWin_pressureSensor::slot_plot_press_from_sensor);
+
+        /************************ 画图相关 ************************/
+        ui->plot_pressure->clearGraphs();
+        ui->plot_pressure->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+        ui->plot_pressure->xAxis->setLabel("time/s");
+        ui->plot_pressure->yAxis->setLabel("Y");
+        ui->plot_pressure->yAxis->setRange(-10, 10);
+
+        channel_num = 1;        // 暂时测试，默认为1
+        // Graph数量 = 压力传感器的通道数(channel_num) + 液压站(1)
+        for (int i = 0; i < 1; i++) {
+            ui->plot_pressure->addGraph();
+        }
+
+        /********************** 文件保存相关 **********************/
+        if (FILE_SAVE) {
+            QString currentDateTime = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
+            file.setFileName(file_name);
+            if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
+                return;
+
+            QTextStream out(&file);
+            out.setCodec("UTF-8");
+            out << QString("采集类型：")  << _pressure_sensor->get_label().toUtf8()
+                << QString("，采集范围：(") << _pressure_sensor->get_range().first << ", " << _pressure_sensor->get_range().second << ")"
+                << QString("，采集通道：") << _pressure_sensor->get_channel().toUtf8() << "\n";
+
+            _timer_savefile.start();    // 开启定时器，开始保存数据
+
+        }
+
 
     } else {
         ui->btn_start_finish_mea->setText("开始测量");
+
+        /************************ 液压站相关 ************************/
         emit signal_closeOpen();
-        _timer_hydrau.stop();      // 开启定时
+        _timer_hydrau.stop();
+
+        /********************** 文件保存相关 **********************/
         _timer_savefile.stop();
+        qDebug() << "data_buf_size_when_close: " << save_data_buf_hydra.size();
+        if (!save_data_buf_hydra.empty()) {
+            QTextStream out(&file);
+            out.setCodec("UTF-8");
+            // 遍历数据并写入文件
+            for (const SensorData& dataPoint : save_data_buf_hydra) {
+                out << time_stamp << "," << dataPoint.value << "\n";
+                time_stamp++;
+            }
+            qDebug() << "finish file writing last!!! ";
+        }
         file.close();
 
 //        _pressure_sensor->stop_acquire();   // 停止采集
@@ -127,16 +157,21 @@ void showWin_pressureSensor::on_btn_ok_clicked()
         qDebug() << "HydraulicStation and delete succeed!";
     }
 
+    if (_data_save != nullptr) {
+        delete _data_save;
+        qDebug() << "data_save and delete succeed!";
+    }
+
     this->close();
 }
 
 /***************************************************************
-  *  @brief     画压力值
+  *  @brief     画来自压力传感器的压力值
   *  @param     无
   *  @note      槽函数
   *  @Sample usage:
  **************************************************************/
-void showWin_pressureSensor::get_data_and_plot_pressure(QVector<double> data)
+void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
 {
 
 }
@@ -150,6 +185,35 @@ void showWin_pressureSensor::get_data_and_plot_pressure(QVector<double> data)
 void showWin_pressureSensor::on_pushButton_clicked()
 {
     ui->textBrowser->append(_pressure_sensor->get_channel());
+}
+
+/***************************************************************
+  *  @brief     画来自液压站的压力值
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
+void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
+{
+    int length = data.size() / channel_num;     // 每通道数据 数
+    QVector<double> x(length);
+    int point_count = ui->plot_pressure->graph(0)->dataCount();
+
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x[i] = i + point_count;
+    }
+
+    // 画图，一共channel_num条曲线
+    for (int i = 0; i < channel_num; i++) {
+        ui->plot_pressure->graph(i)->addData(x,
+            QVector<double>(data.begin() + i*length, data.begin() + i*length + length), true);
+    }
+    ui->plot_pressure->rescaleAxes();       // 自适应大小
+    ui->plot_pressure->replot();
+
+    /********************文件保存*********************/
+    _data_save->collectData(&save_data_buf_hydra, data[0]);
 }
 
 /***************************************************************
@@ -208,15 +272,24 @@ void showWin_pressureSensor::setLineEditsForRowEnable(const QString &baseName, i
     }
 }
 
+/***************************************************************
+  *  @brief     保存数据
+  *  @param     无
+  *  @note      槽函数，500ms写入一次
+  *  @Sample usage:
+ **************************************************************/
 void showWin_pressureSensor::save_data()
 {
     QTextStream out(&file);
     out.setCodec("UTF-8");
-    QSharedPointer<QCPDataContainer<QCPGraphData>>data = ui->plot_pressure->graph(0)->data();
     // 遍历数据并写入文件
-    for (QCPGraphData &dataPoint : *data.data())
-    {
-        out << dataPoint.key << "," << dataPoint.value << "\n";
+    for (const SensorData& dataPoint : save_data_buf_hydra) {
+        out << time_stamp << "," << dataPoint.value << "\n";
+        time_stamp++;
     }
+    qDebug() << "data_buf_size: " << save_data_buf_hydra.size();
+    qDebug() << "finish writing file once";
+    save_data_buf_hydra.clear();                // 清空缓冲区
+    qDebug() << "data_buf_size_after_clear: " << save_data_buf_hydra.size();
 }
 

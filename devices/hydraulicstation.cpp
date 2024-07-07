@@ -93,10 +93,6 @@ QString HydraulicStation::get_msg()
  **************************************************************/
 void HydraulicStation::get_serial_data(QString rev_data)
 {
-    _tik_num++;
-    if (_tik_num == 10)
-        _tik_num = 0;
-
     // 这里加上对data的处理，取出压力值
     QStringList parts = rev_data.split(':'); // 使用冒号作为分隔符分割字符串
     QString valueAfterColon = "";
@@ -106,6 +102,17 @@ void HydraulicStation::get_serial_data(QString rev_data)
 
     _hydrau_value = valueAfterColon;
 //    qDebug() << _tik_num << ": rev_data: " << rev_data << "hydra: " << _hydrau_value;
+
+    vec_rev_data.push_back(_hydrau_value.toDouble());
+    _tik_num++;
+    if (_tik_num >= 1) {                   // 接收到50个信号，也就是50*20ms发送一次数据
+        _tik_num = 0;
+//        qDebug() << "vec_size: " << vec_rev_data.size();
+
+        emit send_press_to_ui(vec_rev_data);
+        vec_rev_data.clear();
+    }
+
 }
 
 /***************************************************************

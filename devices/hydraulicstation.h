@@ -25,6 +25,7 @@ private:
 
     int _tik_num = 0;
     int _pre_tik_num = 0;
+    QVector<double> vec_rev_data;
 
 public:
     void build_connection();
@@ -41,6 +42,8 @@ public slots:
 signals:
     void signal_set_config_serial_port();
     void signal_close_seriao_port();
+
+    void send_press_to_ui(QVector<double> data);
 };
 
 #endif // HYDRAULICSTATION_H

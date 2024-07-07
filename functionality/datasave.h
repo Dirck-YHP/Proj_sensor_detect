@@ -6,6 +6,11 @@
 #include <QDateTime>
 #include <QTextStream>
 
+struct SensorData {
+    qint64 timestamp = 0;       // 使用 qint64 存储时间戳
+    double value;           // 假设传感器数据是 double 类型
+};
+
 class DataSave : public QObject
 {
     Q_OBJECT
@@ -16,7 +21,8 @@ private:
     QFile file;
 
 public:
-    void dataSave(QString dir, QString acqType, QString acqChannel);
+    void collectData(QVector<SensorData> *dataBuffer, double dataValue);
+
 signals:
 
 };
