@@ -119,7 +119,6 @@ void SerialPortCom::slots_readData()
 {
     QString rev_data = serial_rev_msg();
     emit send_data(rev_data);
-//    qDebug() << "read_data: " << rev_data << "cur thread: " << QThread::currentThreadId();
 }
 
 /***************************************************************
@@ -130,8 +129,8 @@ void SerialPortCom::slots_readData()
  **************************************************************/
 void SerialPortCom::writeData()
 {
-    qDebug() << "snd thread: " << QThread::currentThreadId();
-    serial_snd_msg(SEND_MSG);
+//    qDebug() << "snd thread: " << QThread::currentThreadId();
+//    serial_snd_msg(SEND_MSG);
 }
 
 /***************************************************************

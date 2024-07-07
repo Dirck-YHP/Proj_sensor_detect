@@ -32,7 +32,7 @@ void paramWin_pressureSensor::on_btn_ok_clicked()
     _pressure_sensor->set_channel(check_channel_choosed());
 
 
-    show_win_press_sensor = new showWin_pressureSensor(_pressure_sensor);
+    show_win_press_sensor = new showWin_pressureSensor(m_file_save_dir, _pressure_sensor);
     show_win_press_sensor->show();
 
 }
@@ -70,4 +70,15 @@ QString paramWin_pressureSensor::check_channel_choosed() {
         }
     }
     return channel_choosed;
+}
+
+
+void paramWin_pressureSensor::on_cBox_file_save_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked) {
+        m_file_save_dir = QFileDialog::getExistingDirectory(this, "Save file", "../", QFileDialog::ShowDirsOnly);
+        qDebug() << m_file_save_dir;
+    } else if (arg1 == Qt::Unchecked) {
+        m_file_save_dir = "";
+    }
 }
