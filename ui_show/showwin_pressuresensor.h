@@ -54,7 +54,7 @@ private:
     QString _file_save_dir;
     QTimer _timer_savefile;
     QFile file;
-    DataSave *_data_save;
+    DataSave *_data_save = nullptr;
     bool FILE_SAVE = false;
     QVector<SensorData> save_data_buf_hydra;        // 来自液压站的要保存的数据
     QVector<SensorData> save_data_buf_sensor;       // 来自传感器的要保存的数据

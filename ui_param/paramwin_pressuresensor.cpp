@@ -13,17 +13,35 @@ paramWin_pressureSensor::~paramWin_pressureSensor()
     delete ui;
 }
 
+/***************************************************************
+  *  @brief     按键
+  *  @param     无
+  *  @note      槽函数——返回主界面
+  *  @Sample usage:
+ **************************************************************/
 void paramWin_pressureSensor::on_btn_back_mainW_clicked()
 {
     emit subWindowClosed();
     this->close();
 }
 
+/***************************************************************
+  *  @brief     退出
+  *  @param     无
+  *  @note      槽函数——退出
+  *  @Sample usage:
+ **************************************************************/
 void paramWin_pressureSensor::on_btn_exit_clicked()
 {
     qApp->quit();
 }
 
+/***************************************************************
+  *  @brief     按键“确认”
+  *  @param     无
+  *  @note      槽函数——打开上层ui
+  *  @Sample usage:
+ **************************************************************/
 void paramWin_pressureSensor::on_btn_ok_clicked()
 {
     _pressure_sensor = new PressureSensor;
@@ -37,18 +55,12 @@ void paramWin_pressureSensor::on_btn_ok_clicked()
 
 }
 
-void paramWin_pressureSensor::on_checkBox_measure_r_stateChanged(int arg1)
-{
-    if (arg1 == Qt::Checked) {      // 如果测电阻，则工装及电机不可用
-        ui->gridGroupBox->setEnabled(false);
-        ui->label_7->setEnabled(false);
-
-    } else if (arg1 == Qt::Unchecked) { // 如果不测电阻，则可用
-        ui->gridGroupBox->setEnabled(true);
-        ui->label_7->setEnabled(true);
-    }
-}
-
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      功能函数：检查哪些通道被选中
+  *  @Sample usage:
+ **************************************************************/
 QString paramWin_pressureSensor::check_channel_choosed() {
     QString channel_choosed;
     // 从 1 到 6 循环检查每个通道
@@ -72,7 +84,12 @@ QString paramWin_pressureSensor::check_channel_choosed() {
     return channel_choosed;
 }
 
-
+/***************************************************************
+  *  @brief     是否保存数据
+  *  @param     无
+  *  @note      槽函数——改变m_file_save_dir的值
+  *  @Sample usage:
+ **************************************************************/
 void paramWin_pressureSensor::on_cBox_file_save_stateChanged(int arg1)
 {
     if (arg1 == Qt::Checked) {
@@ -81,4 +98,17 @@ void paramWin_pressureSensor::on_cBox_file_save_stateChanged(int arg1)
     } else if (arg1 == Qt::Unchecked) {
         m_file_save_dir = "";
     }
+}
+
+/***************************************************************
+  *  @brief     数据回放
+  *  @param     无
+  *  @note      槽函数——是否 导入历史数据
+  *  @Sample usage:
+ **************************************************************/
+void paramWin_pressureSensor::on_btn_load_data_clicked()
+{
+    SensorType type = SensorType::PressureSensor;
+    func_win_data_review = new funcWin_DataReview(type);
+    func_win_data_review->show();
 }

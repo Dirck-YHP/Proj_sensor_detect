@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>数据导出</string>
   </property>
   <widget class="QPushButton" name="btn_ok">
    <property name="geometry">

@@ -6,6 +6,7 @@
 
 #include "sensors/pressuresensor.h"
 #include "ui_show/showwin_pressuresensor.h"
+#include "ui_func/funcwin_datareview.h"
 
 namespace Ui {
 class paramWin_pressureSensor;
@@ -23,6 +24,7 @@ private:
     Ui::paramWin_pressureSensor *ui;
     PressureSensor *_pressure_sensor;
     showWin_pressureSensor *show_win_press_sensor;
+    funcWin_DataReview *func_win_data_review;
     QString m_file_save_dir;
 
 signals:
@@ -35,8 +37,8 @@ private slots:
     void on_btn_back_mainW_clicked();
     void on_btn_exit_clicked();
     void on_btn_ok_clicked();
-    void on_checkBox_measure_r_stateChanged(int arg1);
     void on_cBox_file_save_stateChanged(int arg1);
+    void on_btn_load_data_clicked();
 };
 
 #endif // PARAMWIN_PRESSURESENSOR_H
