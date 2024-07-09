@@ -371,16 +371,6 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineE_test">
-   <property name="geometry">
-    <rect>
-     <x>260</x>
-     <y>610</y>
-     <width>131</width>
-     <height>61</height>
-    </rect>
-   </property>
-  </widget>
  </widget>
  <customwidgets>
   <customwidget>

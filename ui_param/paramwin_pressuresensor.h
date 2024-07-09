@@ -24,6 +24,7 @@ private:
     Ui::paramWin_pressureSensor *ui;
     PressureSensor *_pressure_sensor;
     showWin_pressureSensor *show_win_press_sensor;
+
     funcWin_DataReview *func_win_data_review;
     QString m_file_save_dir;
 

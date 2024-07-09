@@ -103,19 +103,6 @@
     <string>传感器类型</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_file_dir">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>130</y>
-     <width>141</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>文件保存路径</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="btn_load_data">
    <property name="geometry">
     <rect>
@@ -301,6 +288,19 @@
    </property>
    <property name="text">
     <string>通道选择</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cBox_file_save">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>130</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>文件保存</string>
    </property>
   </widget>
  </widget>

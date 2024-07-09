@@ -119,24 +119,3 @@ void funcWin_DataReview::on_btn_choose_file_clicked()
         QMessageBox::information(this, "操作", "您取消了文件选择");
     }
 }
-
-/***************************************************************
-  *  @brief     画来自液压站的压力值
-  *  @param     0708：目前data改成了size为 1
-  *  @note      槽函数
-  *  @Sample usage:
- **************************************************************/
-void funcWin_DataReview::plot_from_file(int grapg_idx, QVector<double> xData, QVector<double> data)
-{
-//    int length = data.size();
-//    QVector<double> x(length);
-//    int point_count = ui->custom_plot->graph(0)->dataCount();
-
-//    for (int i = 0; i < length; i++) {
-//        x[i] = i + point_count;
-//    }
-
-    ui->custom_plot->graph(grapg_idx)->addData(xData, data, true);
-
-
-}

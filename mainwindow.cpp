@@ -13,15 +13,25 @@ mainWindow::~mainWindow()
     delete ui;
 }
 
+/***************************************************************
+  *  @brief     软件退出
+  *  @param     无
+  *  @note      槽函数——
+  *  @Sample usage:
+ **************************************************************/
 void mainWindow::on_btn_exit_clicked()
 {
     qApp->quit();
 }
 
+/***************************************************************
+  *  @brief     ok键按下
+  *  @param     无
+  *  @note      槽函数——根据选择弹出对应窗口
+  *  @Sample usage:
+ **************************************************************/
 void mainWindow::on_btn_start_clicked()
 {
-       // 隐藏当前窗口，而不是销毁
-
     if (ui->cbox_choose_sensor->currentText() == "角位移传感器") {
         paramWin_angleSensor *param_win_angle_sensor = new paramWin_angleSensor;
         connect(param_win_angle_sensor, &paramWin_angleSensor::subWindowClosed,
@@ -60,6 +70,12 @@ void mainWindow::on_btn_start_clicked()
     }
 }
 
+/***************************************************************
+  *  @brief     数据导出
+  *  @param     无
+  *  @note      槽函数——弹出数据导出窗口
+  *  @Sample usage:
+ **************************************************************/
 void mainWindow::on_btn_data_export_clicked()
 {
     // 数据导出功能
@@ -71,6 +87,12 @@ void mainWindow::on_btn_data_export_clicked()
     func_win_data_export->show();
 }
 
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      槽函数——参数配置窗口关闭时重新显示主窗口
+  *  @Sample usage:
+ **************************************************************/
 void mainWindow::showMainWindow()
 {
     this->show();

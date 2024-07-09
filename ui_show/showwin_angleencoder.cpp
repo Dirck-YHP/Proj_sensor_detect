@@ -260,7 +260,6 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
 void showWin_angleEncoder::update_motor_tar_angle(const QString &text)
 {
     _motor->set_target_angle(text);
-    ui->lineE_test->setText(_motor->get_target_angle() + "°");
 }
 
 /***************************************************************

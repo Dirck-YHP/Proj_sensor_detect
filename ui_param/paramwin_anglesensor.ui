@@ -233,19 +233,6 @@
     <string>导入历史数据</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_file_dir">
-   <property name="geometry">
-    <rect>
-     <x>340</x>
-     <y>180</y>
-     <width>141</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>文件保存路径</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="btn_back_mainW">
    <property name="geometry">
     <rect>
@@ -346,6 +333,19 @@
    </property>
    <property name="text">
     <string>6,7</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cBox_file_save">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>200</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>文件保存</string>
    </property>
   </widget>
  </widget>
