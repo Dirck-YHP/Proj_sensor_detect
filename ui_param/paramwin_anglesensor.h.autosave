@@ -33,6 +33,8 @@ private slots:
 
     void on_cBox_file_save_stateChanged(int arg1);
 
+    void on_btn_load_data_clicked();
+    
 private:
     Ui::paramWin_angleSensor *ui;
     AngleSensor *angle_sensor;

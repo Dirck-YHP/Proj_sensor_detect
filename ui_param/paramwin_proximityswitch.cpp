@@ -36,3 +36,32 @@ void paramWin_proximitySwitch::on_btn_ok_clicked()
     _show_win_prox_switch->show();
 
 }
+
+/***************************************************************
+  *  @brief     是否保存数据
+  *  @param     无
+  *  @note      槽函数——改变m_file_save_dir的值
+  *  @Sample usage:
+ **************************************************************/
+void paramWin_proximitySwitch::on_cBox_file_save_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked) {
+        m_file_save_dir = QFileDialog::getExistingDirectory(this, "Save file", "../", QFileDialog::ShowDirsOnly);
+        qDebug() << m_file_save_dir;
+    } else if (arg1 == Qt::Unchecked) {
+        m_file_save_dir = "";
+    }
+}
+
+/***************************************************************
+  *  @brief     数据回放
+  *  @param     无
+  *  @note      槽函数——是否 导入历史数据
+  *  @Sample usage:
+ **************************************************************/
+void paramWin_proximitySwitch::on_btn_load_data_clicked()
+{
+    SensorType type = SensorType::ProximitySwitch;
+    func_win_data_review = new funcWin_DataReview(type);
+    func_win_data_review->show();
+}
