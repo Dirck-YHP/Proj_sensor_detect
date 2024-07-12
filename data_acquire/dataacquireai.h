@@ -23,19 +23,18 @@ public:
     void __init__(QString channel);
 
 signals:
-    void send_data(QVector<double> data);
+    void send_data(QVector<double> data);       // 将采集到的数据发送给上层
 
 public:
     void get_channel(QString channel);
     void stop_acquire();
-//    int get_numSampsPerChan();
 
 private:
     TaskHandle _task;
     QString _channel;
     float64 _sample_rate = 1000.0;
     uint64_t _sampsPerChanToAcquire = 1000;
-    int32 _numSampsPerChan = 50;
+    int32 _numSampsPerChan = 50;                // 每通道采样数
     uInt32 _channel_num;
     bool STOP = false;
 

@@ -1,6 +1,11 @@
 #include "lowpassfilter.h"
 
-
+/***************************************************************
+  *  @brief     更新缓冲区数据
+  *  @param     无
+  *  @note      线程池start之后自动执行该函数
+  *  @Sample usage:
+ **************************************************************/
 double LowpassFilter::update(double input)
 {
     // 将新的输入添加到环形缓冲区中
@@ -15,6 +20,12 @@ double LowpassFilter::update(double input)
     return output;
 }
 
+/***************************************************************
+  *  @brief     滤波
+  *  @param     无
+  *  @note      进行滤波：汉明窗
+  *  @Sample usage:
+ **************************************************************/
 QVector<double> createLowpassFilter(int M, double fc, double fs)
 {
     QVector<double> h(M + 1);

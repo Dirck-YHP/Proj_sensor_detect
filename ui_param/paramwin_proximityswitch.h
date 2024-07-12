@@ -35,6 +35,7 @@ private slots:
     void on_btn_back_mainW_clicked();
     void on_btn_ok_clicked();
     void on_cBox_file_save_stateChanged(int arg1);
+    void on_btn_load_data_clicked();
 };
 
 #endif // PARAMWIN_PROXIMITYSWITCH_H

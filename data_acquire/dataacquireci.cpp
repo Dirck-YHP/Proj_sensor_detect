@@ -5,6 +5,12 @@ DataAcquireCI::DataAcquireCI()
     setAutoDelete(true);
 }
 
+/***************************************************************
+  *  @brief     初始化采集卡配置
+  *  @param     无
+  *  @note      目前通道是老板子上，后续需要更改
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireCI::__init__(uInt32 pulses_per_rev) {
     // 创建任务
     DAQmxCreateTask("NI9401", &_task);
@@ -20,6 +26,12 @@ void DataAcquireCI::__init__(uInt32 pulses_per_rev) {
     STOP = false;
 }
 
+/***************************************************************
+  *  @brief     停止采集
+  *  @param     无
+  *  @note      结束采集卡的任务
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireCI::stop_acquire()
 {
     STOP = true;
@@ -28,12 +40,23 @@ void DataAcquireCI::stop_acquire()
     DAQmxClearTask(_task);
 }
 
+/***************************************************************
+  *  @brief     每圈脉冲数
+  *  @param     无
+  *  @note      获取用户输入的每圈脉冲数
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireCI::get_pulses_per_rev(uInt32 pulses_per_rev)
 {
     _pulses_per_rev = pulses_per_rev;
 }
 
-
+/***************************************************************
+  *  @brief     采集
+  *  @param     无
+  *  @note      线程池start之后自动执行该函数
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireCI::run() {
     // 初始化配置
     __init__(_pulses_per_rev);
@@ -41,10 +64,10 @@ void DataAcquireCI::run() {
     while (!STOP) {
         DAQmxReadCounterF64(_task, -1, -1, data, DATA_SIZE, &_sampsPerChanRead, NULL);
 
-//        data[0] = 2;
-
+        // 发送信号到上层【一维数组】
         emit send_data(QVector<double>(data, data + _sampsPerChanRead));
     }
 
+    // 延时1ms
     QThread::usleep(1000);
 }

@@ -42,6 +42,7 @@ private slots:
     void on_btn_ok_clicked();   // 确认
     void on_checkBox_no_need_device_stateChanged(int arg1); // 是否需要工装
     void on_cBox_file_save_stateChanged(int arg1);
+    void on_btn_load_data_clicked();
 };
 
 #endif // PARAMWIN_ANGLEENCODER_H

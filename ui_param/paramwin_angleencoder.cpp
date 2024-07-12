@@ -62,7 +62,7 @@ void paramWin_angleEncoder::on_btn_ok_clicked()
     }
 
     /********************* 显示窗口 *******************/
-    show_win_angle_encoder = new showWin_angleEncoder(angle_encoder, IF_NEED_MOTOR);
+    show_win_angle_encoder = new showWin_angleEncoder(m_file_save_dir, angle_encoder, IF_NEED_MOTOR);
     show_win_angle_encoder->show();
 
     // 连接参数窗口的电机目标输入和显示窗口的输出
@@ -110,4 +110,17 @@ void paramWin_angleEncoder::on_cBox_file_save_stateChanged(int arg1)
     } else if (arg1 == Qt::Unchecked) {
         m_file_save_dir = "";
     }
+}
+
+/***************************************************************
+  *  @brief     数据回放
+  *  @param     无
+  *  @note      槽函数—— 导入历史数据
+  *  @Sample usage:
+ **************************************************************/
+void paramWin_angleEncoder::on_btn_load_data_clicked()
+{
+    SensorType type = SensorType::AngleEncoder;
+    func_win_data_review = new funcWin_DataReview(type);
+    func_win_data_review->show();
 }

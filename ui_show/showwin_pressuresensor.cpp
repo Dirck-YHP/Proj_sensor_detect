@@ -126,6 +126,7 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
         _timer_hydrau.stop();
 
         /********************** 文件保存相关 **********************/
+        // 保存缓冲区中残余的数据
         _timer_savefile.stop();
         qDebug() << "data_buf_size_when_close: " << save_data_buf_hydra.size();
         if (!save_data_buf_hydra.empty()) {

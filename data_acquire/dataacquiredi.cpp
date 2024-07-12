@@ -5,6 +5,12 @@ DataAcquireDI::DataAcquireDI()
     setAutoDelete(true);
 }
 
+/***************************************************************
+  *  @brief     初始化采集卡配置
+  *  @param     无
+  *  @note      目前数字信号的通道还是老版，需改
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireDI::__init__()
 {
     // 创建任务
@@ -27,6 +33,12 @@ void DataAcquireDI::__init__()
 
 }
 
+/***************************************************************
+  *  @brief     停止采集
+  *  @param     无
+  *  @note      结束采集卡的任务
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireDI::stop_acquire()
 {
     STOP = true;
@@ -35,6 +47,12 @@ void DataAcquireDI::stop_acquire()
     DAQmxClearTask(_task);
 }
 
+/***************************************************************
+  *  @brief     采集
+  *  @param     无
+  *  @note      线程池start之后自动执行该函数
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireDI::run() {
     // 初始化配置
     __init__();
@@ -44,6 +62,7 @@ void DataAcquireDI::run() {
         DAQmxReadDigitalLines(_task, _numSampsPerChan, -1, DAQmx_Val_GroupByChannel,
                               data, DATA_SIZE, &_sampsPerChanRead, &_numBytesPerSamp, NULL);
 
+        // 将数据存到该二维数组中，size:(CHANNEL_NUM, _sampsPerChanRead)
         QVector<QVector<double>> data_final(CHANNEL_NUM, QVector<double>(_sampsPerChanRead, 0));
         for (int i = 0; i < CHANNEL_NUM; i++) {
             for (int j = 0; j < _sampsPerChanRead; j++) {
@@ -51,9 +70,10 @@ void DataAcquireDI::run() {
             }
         }
 
-        // 发送数据
+        // 发送信号
         emit send_data(data_final);
 
+        // 延时100us（高频）
         QThread::usleep(100);
     }
 }

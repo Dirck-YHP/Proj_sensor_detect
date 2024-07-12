@@ -105,7 +105,7 @@ void HydraulicStation::get_serial_data(QString rev_data)
 
     vec_rev_data.push_back(_hydrau_value.toDouble());
     _tik_num++;
-    if (_tik_num >= 1) {                   // 接收到50个信号，也就是50*20ms发送一次数据
+    if (_tik_num >= 1) {                   // 接收到1个信号就发送，也就是20ms发送一次数据
         _tik_num = 0;
 //        qDebug() << "vec_size: " << vec_rev_data.size();
 

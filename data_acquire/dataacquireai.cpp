@@ -9,6 +9,12 @@ DataAcquireAI::DataAcquireAI(QObject *parent) : QObject(parent)
     _channel = "";
 }
 
+/***************************************************************
+  *  @brief     采集
+  *  @param     无
+  *  @note      线程池start之后自动执行该函数
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireAI::run()
 {
     // 初始化配置
@@ -34,6 +40,12 @@ void DataAcquireAI::run()
     }
 }
 
+/***************************************************************
+  *  @brief     初始化采集卡配置
+  *  @param     无
+  *  @note      将用户输入的通道映射成实际板子上的通道
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireAI::__init__(QString channel)
 {
     QVector<int> idx;
@@ -67,11 +79,23 @@ void DataAcquireAI::__init__(QString channel)
     }
 }
 
+/***************************************************************
+  *  @brief     获取通道（未拆分的字符串）
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireAI::get_channel(QString channel)
 {
     _channel = channel;
 }
 
+/***************************************************************
+  *  @brief     停止采集
+  *  @param     无
+  *  @note      结束采集卡的任务
+  *  @Sample usage:
+ **************************************************************/
 void DataAcquireAI::stop_acquire()
 {
     STOP = true;
@@ -80,6 +104,12 @@ void DataAcquireAI::stop_acquire()
     DAQmxClearTask(_task);
 }
 
+/***************************************************************
+  *  @brief     将通道字符串转成数组
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
 QVector<int> DataAcquireAI::str_to_int(QString channel)
 {
     QVector<int> ans;
@@ -88,7 +118,12 @@ QVector<int> DataAcquireAI::str_to_int(QString channel)
     return ans;
 }
 
-// 根据通道来确定采集的量程（硬件层面就确定好）
+/***************************************************************
+  *  @brief     确定最值
+  *  @param     无
+  *  @note      根据通道来确定采集的量程（硬件层面就确定好）
+  *  @Sample usage:
+ **************************************************************/
 double DataAcquireAI::choose_min_max(int channel)
 {
     double U = 0.0;

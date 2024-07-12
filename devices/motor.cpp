@@ -21,15 +21,15 @@ Motor::Motor(QObject *parent) : QObject(parent)
     // 启动线程
     thread_modbus->start();
 
-    // 接收来自ui界面的开始测量信号，触发 modbus的配置
+    // 接收来自ui界面的开始测量信号时，发送信号给modbus，触发其配置槽函数
     connect(this, &Motor::signal_set_config_modbus,
             modbus_com, &Modbus::slot_configModbus);
 
-    // 接收来自ui界面的关闭测量信号，触发 modbus关闭
+    // 接收来自ui界面的关闭测量信号，发送信号给modbus，触发其关闭槽函数
     connect(this, &Motor::signal_close_modbus,
             modbus_com, &Modbus::slot_closeOpneModbus);
 
-    // 接收Modbus发送的数据，Motor这里来进行处理
+    // 接收Modbus发送的数据信号，Motor这里转换成角度
     connect(modbus_com, &Modbus::send_data, this, &Motor::rev_data_from_modbus);
 }
 
@@ -52,7 +52,7 @@ Motor::~Motor()
  **************************************************************/
 void Motor::set_target_angle(QString motor_target_angle)
 {
-    _input_angle = motor_target_angle;      // 测试代码，后面删
+    _input_angle = motor_target_angle;                  // 测试代码，后面删
     modbus_com->get_input_angle(motor_target_angle);
 }
 

@@ -298,7 +298,7 @@ void Modbus::slot_modbus_init()
 /***************************************************************
   *  @brief     在Motor中connect，断开连接，删除对象
   *  @param     无
-  *  @note      槽函数——定时器配置
+  *  @note      槽函数——负责断开连接并删除对象
   *  @Sample usage:
  **************************************************************/
 void Modbus::slot_modbus_delete()

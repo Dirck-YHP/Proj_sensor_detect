@@ -27,9 +27,6 @@ private:
     double* data = new double[DATA_SIZE];
     int32 _sampsPerChanRead;
 
-public:
-    const int CHANNEL_NUM = 6;
-
 signals:
     void send_data(QVector<double> data);
 };
