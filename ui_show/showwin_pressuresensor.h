@@ -32,7 +32,6 @@ private slots:
 
     // 测试用，接收到来自传感器的数据然后显示出来
     void slot_plot_press_from_sensor(QVector<double> data);
-    void on_pushButton_clicked();
 
     void slot_plot_press_from_hydraSta(QVector<double> data);
     void save_data();

@@ -97,6 +97,11 @@ void showWin_angleEncoder::on_btn_ok_clicked()
         qDebug() << "motor delete succeed";
     }
 
+    if (_data_save != nullptr) {
+        delete _data_save;
+        qDebug() << "data_save and delete succeed!";
+    }
+
     this->close();
 }
 

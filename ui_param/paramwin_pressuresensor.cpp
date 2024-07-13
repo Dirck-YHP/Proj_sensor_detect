@@ -49,10 +49,8 @@ void paramWin_pressureSensor::on_btn_ok_clicked()
     _pressure_sensor->set_range(ui->lineE_4mA->text(), ui->lineE_20mA->text());
     _pressure_sensor->set_channel(check_channel_choosed());
 
-
     show_win_press_sensor = new showWin_pressureSensor(m_file_save_dir, _pressure_sensor);
     show_win_press_sensor->show();
-
 }
 
 /***************************************************************

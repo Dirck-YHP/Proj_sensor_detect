@@ -2,6 +2,7 @@
 #define PARAMWIN_PROXIMITYSWITCH_H
 
 #include <QWidget>
+#include <QMessageBox>
 
 #include "sensors/proximityswitch.h"
 #include "ui_show/showwin_proximityswitch.h"
@@ -18,6 +19,8 @@ class paramWin_proximitySwitch : public QWidget
 public:
     explicit paramWin_proximitySwitch(QWidget *parent = nullptr);
     ~paramWin_proximitySwitch();
+
+    QString check_channel_choosed();
 
 private:
     Ui::paramWin_proximitySwitch *ui;

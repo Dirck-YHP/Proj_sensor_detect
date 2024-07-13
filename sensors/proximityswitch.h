@@ -18,6 +18,7 @@ private:
     QString _sensing_distance;  // 感应距离
     QString _using_time;        // 使用时间
     QString _sensing_matirial;  // 感应材料
+    QString _channel;           // 通道
 
     DataAcquireAI *data_acquire_ai;     // NI 9205
 
@@ -33,6 +34,9 @@ public:
 
     void set_sensing_matirial(QString sensing_matirial);
     QString get_sensing_matirial() const;
+
+    void set_channel(QString channel);
+    QString get_channel() const;
 
     void start_acquire();
     void stop_acquire();

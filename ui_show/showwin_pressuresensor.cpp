@@ -33,7 +33,6 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
     connect(&_timer_hydrau, &QTimer::timeout, this, [=](){
         QString msg = _hydraulic_station->get_msg();    // 接收液压站的返回的压力值
         if (msg != "") {    // 如果不为空
-            ui->textBrowser->append(msg);       // 暂时先单纯打印出来，后续要画波形
             ui->lineE_hydra_val->setText(msg);
         } else {    // 如果是空的话，则提示用户接收到的数据有问题
 //            qDebug() << "serial data received nothing!";
