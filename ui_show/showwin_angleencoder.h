@@ -43,7 +43,7 @@ private slots:
 
     void slot_get_angle(double motor_angle);    // 接收电机发过来的角度数据
 
-    void save_data();
+    void save_data();                           // 保存数据
 
 signals:
     void signal_setConfigModbus();              // 点击“开始”时发送的配置信号
@@ -53,10 +53,10 @@ private:
     Ui::showWin_angleEncoder *ui;
     AngleEncoder *_angle_encoder;
 
+    // 电机
     Motor *_motor = nullptr;
     QTimer _timer_motor;        // 显示数值框显示频率的定时器【暂时没用】
     bool _if_need_motor;        // 是否需要电机，由外界传入
-
     double _motor_angle;        // 电机的角度
 
     // 文件保存

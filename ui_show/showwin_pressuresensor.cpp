@@ -74,7 +74,7 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
         ui->btn_start_finish_mea->setText("结束测量");
 
         /************************ 液压站相关 ************************/
-        emit signal_setConfigSerialPort();
+        emit signal_setConfigSerialPort();      // 发送配置信号
         _timer_hydrau.start();                  // 开启定时：这个是限制ui数值框显示
         connect(_hydraulic_station, &HydraulicStation::send_press_to_ui,
                 this, &showWin_pressureSensor::slot_plot_press_from_hydraSta);
@@ -88,7 +88,7 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 //        connect(_pressure_sensor, &PressureSensor::send_ni9205_to_ui,
 //                this, &showWin_pressureSensor::slot_plot_press_from_sensor);
 
-        /************************ 画图相关 ************************/
+        /********************** 画图参数配置 **********************/
         ui->plot_pressure->clearGraphs();
         ui->plot_pressure->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
         ui->plot_pressure->xAxis->setLabel("time/s");
@@ -111,7 +111,7 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 
             QTextStream out(&file);
             out.setCodec("UTF-8");
-            out << QString("采集类型：")  << _pressure_sensor->get_label().toUtf8()
+            out << QString("传感器类型：")  << _pressure_sensor->get_label().toUtf8()
                 << QString("，采集范围：") << _pressure_sensor->get_range().first << "~" << _pressure_sensor->get_range().second
                 << QString("，采集通道：") << _pressure_sensor->get_channel().toUtf8() << "\n";
 
@@ -146,9 +146,9 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 }
 
 /***************************************************************
-  *  @brief     删除液压站对象
+  *  @brief     按键：确认
   *  @param     无
-  *  @note      槽函数——“确认”
+  *  @note      槽函数——删除液压站对象及数据保存对象
   *  @Sample usage:
  **************************************************************/
 void showWin_pressureSensor::on_btn_ok_clicked()
@@ -175,17 +175,6 @@ void showWin_pressureSensor::on_btn_ok_clicked()
 void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
 {
 
-}
-
-/***************************************************************
-  *  @brief     检查参数配置页面的用户通道选择结果是否传过来
-  *  @param     无
-  *  @note      测试函数——待删
-  *  @Sample usage:
- **************************************************************/
-void showWin_pressureSensor::on_pushButton_clicked()
-{
-    ui->textBrowser->append(_pressure_sensor->get_channel());
 }
 
 /***************************************************************
@@ -229,7 +218,7 @@ void showWin_pressureSensor::set_visiable()
     QString selected_channel_str = _pressure_sensor->get_channel();
     QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
 
-    for (int ch_num = 1; ch_num <= 6; ch_num++) {
+    for (int ch_num = 1; ch_num <= 5; ch_num++) {
         if (selected_channel_arr.contains(ch_num)) {
             QString baseName = "lineE_"; // 基础名称
             setLineEditsForRowEnable(baseName + "pres_val", ch_num, true);

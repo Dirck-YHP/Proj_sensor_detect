@@ -21,18 +21,10 @@ public:
 
 private slots:
     void on_btn_ok_clicked();
-
-    void on_checkBox_measure_resis_stateChanged(int arg1);
-
     void on_checkBox_no_need_device_stateChanged(int arg1);
-
     void on_btn_exit_clicked();
-
     void on_btn_back_mainW_clicked();
-
-
     void on_cBox_file_save_stateChanged(int arg1);
-
     void on_btn_load_data_clicked();
 
 private:
@@ -43,8 +35,11 @@ private:
     funcWin_DataReview *func_win_data_review;
     QString m_file_save_dir;
 
+    bool IF_NEED_MOTOR = true;
+
 signals:
     void subWindowClosed();
+    void motor_target_angle_changed(const QString &text);
 };
 
 #endif // PARAMWIN_ANGLESENSOR_H

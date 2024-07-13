@@ -85,9 +85,9 @@ showWin_angleEncoder::~showWin_angleEncoder()
 }
 
 /***************************************************************
-  *  @brief
+  *  @brief     ok键按下
   *  @param     无
-  *  @note      槽函数——ok键按下
+  *  @note      槽函数——删除motor对象
   *  @Sample usage:
  **************************************************************/
 void showWin_angleEncoder::on_btn_ok_clicked()
@@ -111,11 +111,11 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
 
-        // 三张采集卡都开始采集
+        /********************** 三张卡开始采集 **********************/
         _angle_encoder->start_acquire();
 
         // 开始画图，先测试，不考虑下面的控件命名，编码器的9205后续不需要画图了，9401需要和电机的角度画在一起
-        /********************** ni 9205相关 **********************/
+        /********************** 角度图参数配置 **********************/
         // 获取通道数，用来画图
         channel_num = Assist::extractNumbers(_angle_encoder->get_channel()).size();
         ui->plot_angle->clearGraphs();
@@ -128,10 +128,12 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
             ui->plot_angle->addGraph();
         }
 
+        /********************** ni 9205相关 **********************/
         connect(_angle_encoder, &AngleEncoder::send_ni9205_to_ui,
                 this, &showWin_angleEncoder::get_data_and_plot_9205);
 
-       /********************** ni 9403相关 **********************/
+
+        /********************** 脉冲图参数配置 **********************/
         ui->plot_current->clearGraphs();
         ui->plot_current->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
         ui->plot_current->xAxis->setLabel("time/s");
@@ -142,6 +144,7 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
             ui->plot_current->addGraph();
         }
 
+        /********************** ni 9403相关 **********************/
         connect(_angle_encoder, &AngleEncoder::send_ni9403_to_ui,
                 this, &showWin_angleEncoder::get_data_and_plot_9403);
 
@@ -359,6 +362,7 @@ void showWin_angleEncoder::on_btn_stop_now_clicked()
     ui->btn_run_stop->setChecked(false);
 }
 
+/*******************************文件保存************************************/
 /***************************************************************
   *  @brief     保存数据
   *  @param     无

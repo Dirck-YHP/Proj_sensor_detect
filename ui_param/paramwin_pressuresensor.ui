@@ -133,7 +133,7 @@
     </size>
    </property>
    <property name="text">
-    <string>通道选择</string>
+    <string>路数选择</string>
    </property>
   </widget>
   <widget class="QComboBox" name="cBox_pressure_sensor_type">
@@ -215,7 +215,7 @@
     <rect>
      <x>50</x>
      <y>280</y>
-     <width>301</width>
+     <width>401</width>
      <height>101</height>
     </rect>
    </property>
@@ -223,45 +223,38 @@
     <property name="horizontalSpacing">
      <number>6</number>
     </property>
+    <item row="0" column="2">
+     <widget class="QCheckBox" name="checkBox_ch_3">
+      <property name="text">
+       <string>3</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QCheckBox" name="checkBox_ch_4">
+      <property name="text">
+       <string>4</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="1">
      <widget class="QCheckBox" name="checkBox_ch_2">
       <property name="text">
-       <string>通道2</string>
+       <string>2</string>
       </property>
      </widget>
     </item>
     <item row="0" column="0">
      <widget class="QCheckBox" name="checkBox_ch_1">
       <property name="text">
-       <string>通道1</string>
+       <string>1</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="checkBox_ch_4">
-      <property name="text">
-       <string>通道4</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
+    <item row="0" column="4">
      <widget class="QCheckBox" name="checkBox_ch_5">
       <property name="text">
-       <string>通道5</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QCheckBox" name="checkBox_ch_6">
-      <property name="text">
-       <string>通道6</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QCheckBox" name="checkBox_ch_3">
-      <property name="text">
-       <string>通道3</string>
+       <string>5</string>
       </property>
      </widget>
     </item>
