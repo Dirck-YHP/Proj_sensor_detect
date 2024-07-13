@@ -19,9 +19,7 @@ public:
 
 private slots:
     void on_btn_back_mainW_clicked();
-
     void on_btn_exit_clicked();
-
     void on_btn_ok_clicked();
 
 signals:

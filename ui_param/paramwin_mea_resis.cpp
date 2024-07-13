@@ -13,30 +13,54 @@ paramWin_mea_resis::~paramWin_mea_resis()
     delete ui;
 }
 
+/***************************************************************
+  *  @brief     按键
+  *  @param     无
+  *  @note      槽函数——返回主界面
+  *  @Sample usage:
+ **************************************************************/
 void paramWin_mea_resis::on_btn_back_mainW_clicked()
 {
     emit subWindowClosed();
     this->close();
 }
 
+/***************************************************************
+  *  @brief     退出
+  *  @param     无
+  *  @note      槽函数——退出
+  *  @Sample usage:
+ **************************************************************/
 void paramWin_mea_resis::on_btn_exit_clicked()
 {
     qApp->quit();
 }
 
+/***************************************************************
+  *  @brief     按键“确认”
+  *  @param     无
+  *  @note      槽函数——打开上层ui
+  *  @Sample usage:
+ **************************************************************/
 void paramWin_mea_resis::on_btn_ok_clicked()
 {
-    Resis *_resis = new Resis;
+    _resis = new Resis;
     _resis->set_channel(check_channel_choosed());
 
     show_win_measure_r = new showWin_measureResis(_resis);
     show_win_measure_r->show();
 }
 
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      功能函数：检查哪些通道被选中
+  *  @Sample usage:
+ **************************************************************/
 QString paramWin_mea_resis::check_channel_choosed() {
     QString channel_choosed;
     // 从 1 到 6 循环检查每个通道
-    for (int i = 1; i <= 6; ++i) {
+    for (int i = 1; i <= 5; ++i) {
         // 构建每个 QCheckBox 的 objectName
         QString checkBoxName = QString("checkBox_ch_%1").arg(i);
 
