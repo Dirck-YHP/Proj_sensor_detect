@@ -15,6 +15,7 @@ public:
 
 private:
     QString _channel;           // 通道
+    QString channel_final;
 
     DataAcquireAI *data_acquire_ai;     // NI 9205的数据
 

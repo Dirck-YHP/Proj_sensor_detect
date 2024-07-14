@@ -56,8 +56,6 @@ add_executable(Proj_Sensor
     devices/variableresis.cpp devices/variableresis.h
     devices/hydraulicstation.cpp devices/hydraulicstation.h
 
-    functionality/measureresis.cpp functionality/measureresis.h
-    functionality/electricitycalc.cpp functionality/electricitycalc.h
     functionality/datasave.cpp functionality/datasave.h
     functionality/dataexport.cpp functionality/dataexport.h
 )

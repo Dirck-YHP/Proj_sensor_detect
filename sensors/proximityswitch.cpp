@@ -138,7 +138,7 @@ void ProximitySwitch::start_acquire()
     data_acquire_ai = new DataAcquireAI;
 
     // 供电电压：(0) + 接近开关通道：(15,16),...,(23,24) + 滑动变阻器：(25) + 电池电量：(31)
-    QString channel_final = chToStr(CH_SUPV) + "," +
+    channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
                             chToStr(CH_VR_DIS) + "," +
                             chToStr(CH_BAT);
@@ -170,6 +170,8 @@ void ProximitySwitch::stop_acquire()
  **************************************************************/
 void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 {
+    // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
+
     // 目前还没做转化，直接发送原始数据
     data[0]++;
     emit send_ni9205_to_ui(true);

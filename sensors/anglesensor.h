@@ -18,6 +18,7 @@ private:
     QString _label;             // 标签
     QPair<int, int> _range;     // 范围
     QString _channel;           // 通道
+    QString channel_final;
 
     DataAcquireAI *data_acquire_ai;     // NI 9205的数据
 

@@ -19,6 +19,7 @@ private:
     QString _label;             // 标签
     QString _pulse_per_rev;     // 每圈脉冲数
     QString _channel;           // 通道
+    QString channel_final;
 
     DataAcquireAI *data_acquire_ai;     // NI 9205
     DataAcquireDI *data_acquire_di;     // NI 9403

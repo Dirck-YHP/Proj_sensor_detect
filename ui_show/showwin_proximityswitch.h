@@ -5,7 +5,7 @@
 #include <QTimer>
 
 #include "sensors/proximityswitch.h"
-#include "devices/variableresis.h"
+//#include "devices/variableresis.h"        // 已停用
 
 // file save
 #include <QFile>
@@ -43,7 +43,7 @@ public:
 private:
     Ui::showWin_proximitySwitch *ui;
     ProximitySwitch *_proxi_switch;
-    VariableResis *_variable_resis;
+//    VariableResis *_variable_resis;
 
     int REPEAT_TIMES = 10;          // 重复测量次数
     bool _if_rep_mea = false;       // 是否开始重复测量

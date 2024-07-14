@@ -104,7 +104,7 @@ void PressureSensor::start_acquire()
     data_acquire_ai = new DataAcquireAI;
 
     // 供电电压(0) + 压力传感器(26),...,(30) + 电池电量(31)
-    QString channel_final = chToStr(CH_SUPV) + "," +
+    channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
                             chToStr(CH_BAT);
     qDebug() << "fi: " << channel_final;
@@ -136,6 +136,8 @@ void PressureSensor::stop_acquire()
  **************************************************************/
 void PressureSensor::rev_data_from_ni9205(QVector<double> data)
 {
+    // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
+
     // 目前还没做转化，直接发送原始数据
     emit send_ni9205_to_ui(data);
 }

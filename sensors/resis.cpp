@@ -58,7 +58,7 @@ void Resis::start_acquire()
     data_acquire_ai = new DataAcquireAI;
 
     // 电阻：(10),...,(14) + 电池电量(31)
-    QString channel_final = get_channel() + "," +
+    channel_final = get_channel() + "," +
                             chToStr(CH_BAT);
     qDebug() << "fi: " << channel_final;
 
@@ -90,6 +90,8 @@ void Resis::stop_acquire()
  **************************************************************/
 void Resis::rev_data_from_ni9205(QVector<double> data)
 {
+    // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
+
     // 目前还没做转化，直接发送原始数据
     emit send_ni9205_to_ui(data);
 }

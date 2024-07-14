@@ -52,10 +52,11 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
 //        connect(_variable_resis, &VariableResis::send_ni9205_to_ui,
 //                this, &showWin_proximitySwitch::get_data_and_plot_distance);
 
+        /************************ 接近开关 + 滑动变阻器 ************************/
         // 由于滑动变阻器也是通过9205采集数据计算得到距离，而全局只能存在一个数据采集类的对象
         // 所以将滑动变阻器类和接近开关类结合到一起
         // 即接近开关下发通道时在最后加上滑动变阻器对应通道
-        /************************ 接近开关 + 滑动变阻器 ************************/
+
         _proxi_switch->start_acquire();
 
         // 需要一系列槽函数：供电电压、供电电流、信号电压、信号电流、是否触发、滑动变阻器距离、电池电量

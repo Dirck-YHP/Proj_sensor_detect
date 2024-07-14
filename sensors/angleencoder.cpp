@@ -85,7 +85,7 @@ void AngleEncoder::start_acquire()
     data_acquire_ai = new DataAcquireAI;
 
     // 供电电压(0) + 角位移编码器 A+(3) B+(5) supc(9) + 电池电量(31)
-    QString channel_final = chToStr(CH_SUPV) + "," +
+    channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
                             chToStr(CH_BAT);
     qDebug() << "fi: " << channel_final;
@@ -135,7 +135,7 @@ void AngleEncoder::stop_acquire()
  **************************************************************/
 void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
 {
-    //
+    // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
 
 
     emit send_ni9205_to_ui(data);

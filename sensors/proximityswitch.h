@@ -19,6 +19,7 @@ private:
     QString _using_time;        // 使用时间
     QString _sensing_matirial;  // 感应材料
     QString _channel;           // 通道
+    QString channel_final;
 
     DataAcquireAI *data_acquire_ai;     // NI 9205
 
