@@ -96,12 +96,23 @@ QString ProximitySwitch::get_sensing_matirial() const
 /***************************************************************
   *  @brief     设置通道：这里需要将用户选择的路 转换成 通道
   *  @param     无
-  *  @note      功能函数
+  *  @note      功能函数：在这里做映射
+  *             将用户在ui选择的 路1~5 映射为 实际物理通道
   *  @Sample usage:
  **************************************************************/
 void ProximitySwitch::set_channel(QString channel)
 {
-    _channel = channel;
+    if (channel == "1") {
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_1) + "," + chToStr(CH_PS_SUPC_1);
+    } else if (channel == "2") {
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_2) + "," + chToStr(CH_PS_SUPC_2);
+    } else if (channel == "3") {
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_3) + "," + chToStr(CH_PS_SUPC_3);
+    } else if (channel == "4") {
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_4) + "," + chToStr(CH_PS_SUPC_4);
+    } else if (channel == "5") {
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_5) + "," + chToStr(CH_PS_SUPC_5);
+    }
 }
 
 /***************************************************************
@@ -125,8 +136,14 @@ void ProximitySwitch::start_acquire()
 {
     //--------------------------NI 9205--------------------------------------
     data_acquire_ai = new DataAcquireAI;
-    QString channel_temp = "6";         // 暂定一个通道，需要好几个通道，分别读取触发、电压和电流
-    data_acquire_ai->get_channel(channel_temp);    // 把传感器获取到的通道传给数据采集
+
+    // 供电电压：(0) + 接近开关通道：(15,16),...,(23,24) + 滑动变阻器：(25) + 电池电量：(31)
+    QString channel_final = chToStr(CH_SUPV) + "," +
+                            get_channel() + "," +
+                            chToStr(CH_VR_DIS) + "," +
+                            chToStr(CH_BAT);
+
+    data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
@@ -147,7 +164,8 @@ void ProximitySwitch::stop_acquire()
 /***************************************************************
   *  @brief     接收ni9205的数据并处理（涉及多路转换）
   *  @param     无
-  *  @note      根据通道转判断化成是否触发的信号
+  *  @note      根据通道判断转化成：
+  *             供电电压：(0) + 接近开关通道：(15,16),...,(23,24) + 滑动变阻器：(25) + 电池电量：(31)
   *  @Sample usage:
  **************************************************************/
 void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)

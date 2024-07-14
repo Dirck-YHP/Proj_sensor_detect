@@ -22,7 +22,7 @@ private:
     TaskHandle _task;
     int32 _numSampsPerChan = 500;               // 每通道采样数
     float64 _sample_rate = 1e4;                 // 采样率
-    uint64_t _sampsPerChanToAcquire = 1000;     //
+    uint64_t _sampsPerChanToAcquire = 1000;     // 定时器 缓冲区大小
     bool STOP = false;
 
     const int DATA_SIZE = 5000;                 // 数据大小，目前初始化成一个较大的数

@@ -31,7 +31,7 @@ public:
     void set_pul_per_cir(QString pul_per_rev);
     QString get_pul_per_cir() const;
 
-    void set_channel(QString channel);
+    void set_channel();
     QString get_channel() const;
 
     void start_acquire();

@@ -59,7 +59,7 @@ void paramWin_mea_resis::on_btn_ok_clicked()
  **************************************************************/
 QString paramWin_mea_resis::check_channel_choosed() {
     QString channel_choosed;
-    // 从 1 到 6 循环检查每个通道
+    // 从 1 到 5 循环检查每个通道
     for (int i = 1; i <= 5; ++i) {
         // 构建每个 QCheckBox 的 objectName
         QString checkBoxName = QString("checkBox_ch_%1").arg(i);

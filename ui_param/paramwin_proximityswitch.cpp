@@ -50,6 +50,8 @@ void paramWin_proximitySwitch::on_btn_ok_clicked()
         return;
     }
 
+    qDebug() << "choosed: " << chl;
+
     _proxi_switch = new ProximitySwitch;
     _proxi_switch->set_label(ui->cBox_prox_switch_type->currentText());
     _proxi_switch->set_sensing_dis((ui->cBox_distance->currentText()));

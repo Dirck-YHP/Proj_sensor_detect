@@ -77,7 +77,7 @@ void showWin_measureResis::set_visible()
     QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
 
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num)) {
+        if (selected_channel_arr.contains(ch_num + 9)) {
             QString lineEdit_name = "lineE_show_resis_" + QString::number(ch_num);
             QLineEdit *lineEdit = this->findChild<QLineEdit*>(lineEdit_name);
             lineEdit->setEnabled(true);

@@ -60,7 +60,7 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>260</x>
+     <x>270</x>
      <y>450</y>
      <width>251</width>
      <height>31</height>
@@ -73,31 +73,31 @@
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>550</y>
-     <width>251</width>
+     <x>20</x>
+     <y>530</y>
+     <width>191</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>信号回路电压：</string>
+    <string>信号回路电压 A：</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineE_supply_voltage">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>130</x>
      <y>450</y>
      <width>71</width>
      <height>31</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineE_signal_current">
+  <widget class="QLineEdit" name="lineE_signal_current_A">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>600</y>
+     <x>130</x>
+     <y>570</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -106,7 +106,7 @@
   <widget class="QLineEdit" name="lineE_motor_circle">
    <property name="geometry">
     <rect>
-     <x>400</x>
+     <x>360</x>
      <y>570</y>
      <width>81</width>
      <height>31</height>
@@ -126,11 +126,11 @@
     <string>电机转动圈数：</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineE_signal_voltage">
+  <widget class="QLineEdit" name="lineE_signal_voltage_A">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>550</y>
+     <x>130</x>
+     <y>530</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -139,21 +139,21 @@
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>600</y>
-     <width>201</width>
+     <x>20</x>
+     <y>570</y>
+     <width>161</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>信号回路电流：</string>
+    <string>信号回路电流 A：</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineE_supply_current">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>500</y>
+     <x>130</x>
+     <y>490</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -176,8 +176,8 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>500</y>
-     <width>241</width>
+     <y>490</y>
+     <width>191</width>
      <height>31</height>
     </rect>
    </property>
@@ -188,7 +188,7 @@
   <widget class="QLineEdit" name="lineE_encoder_angle">
    <property name="geometry">
     <rect>
-     <x>400</x>
+     <x>360</x>
      <y>450</y>
      <width>81</width>
      <height>31</height>
@@ -200,7 +200,7 @@
     <rect>
      <x>30</x>
      <y>450</y>
-     <width>251</width>
+     <width>191</width>
      <height>31</height>
     </rect>
    </property>
@@ -211,7 +211,7 @@
   <widget class="QLineEdit" name="lineE_motor_angle">
    <property name="geometry">
     <rect>
-     <x>400</x>
+     <x>360</x>
      <y>510</y>
      <width>81</width>
      <height>31</height>
@@ -221,8 +221,8 @@
   <widget class="QPushButton" name="btn_ok">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>670</y>
+     <x>420</x>
+     <y>710</y>
      <width>131</width>
      <height>51</height>
     </rect>
@@ -234,8 +234,8 @@
   <widget class="QPushButton" name="btn_start_finish_mea">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>670</y>
+     <x>90</x>
+     <y>710</y>
      <width>131</width>
      <height>51</height>
     </rect>
@@ -342,7 +342,7 @@
   <widget class="QPushButton" name="btn_stop_now">
    <property name="geometry">
     <rect>
-     <x>530</x>
+     <x>490</x>
      <y>550</y>
      <width>81</width>
      <height>51</height>
@@ -358,7 +358,7 @@
   <widget class="QPushButton" name="btn_run_stop">
    <property name="geometry">
     <rect>
-     <x>530</x>
+     <x>490</x>
      <y>450</y>
      <width>81</width>
      <height>51</height>
@@ -369,6 +369,52 @@
    </property>
    <property name="checkable">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineE_signal_voltage_B">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>610</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineE_signal_current_B">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>650</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_14">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>610</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>信号回路电压 B：</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_15">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>650</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>信号回路电流 B：</string>
    </property>
   </widget>
  </widget>

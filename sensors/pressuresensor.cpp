@@ -58,7 +58,28 @@ QPair<int, int> PressureSensor::get_range() const
  **************************************************************/
 void PressureSensor::set_channel(QString channel)
 {
-    _channel = channel;
+    qDebug() << "way choosed: " << channel;
+    QVector<int> selected_channel_arr  = Assist::extractNumbers(channel);
+
+    _channel = "";
+    bool isFirst = true; // 用于判断是否是第一个元素，避免在字符串开头添加逗号
+
+    for (int i = 1; i <= 5; ++i) {
+        if (selected_channel_arr.contains(i)) {
+            if (!isFirst) {
+                _channel.append(",");
+            }
+
+            if (i == 1) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_1));
+            if (i == 2) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_2));
+            if (i == 3) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_3));
+            if (i == 4) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_4));
+            if (i == 5) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_5));
+
+            isFirst = false;
+        }
+    }
+
 }
 
 /***************************************************************
@@ -81,7 +102,14 @@ QString PressureSensor::get_channel() const
 void PressureSensor::start_acquire()
 {
     data_acquire_ai = new DataAcquireAI;
-    data_acquire_ai->get_channel(get_channel());
+
+    // 供电电压(0) + 压力传感器(26),...,(30) + 电池电量(31)
+    QString channel_final = chToStr(CH_SUPV) + "," +
+                            get_channel() + "," +
+                            chToStr(CH_BAT);
+    qDebug() << "fi: " << channel_final;
+
+    data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
@@ -103,6 +131,7 @@ void PressureSensor::stop_acquire()
   *  @brief     接收ni9205的数据并处理（涉及多路转换）
   *  @param     无
   *  @note      根据通道分别转化成压力1、供电/信号回路的电压电流并发送给上层
+  *             供电电压(0) + 压力传感器(26),...,(30) + 电池电量(31)
   *  @Sample usage:
  **************************************************************/
 void PressureSensor::rev_data_from_ni9205(QVector<double> data)

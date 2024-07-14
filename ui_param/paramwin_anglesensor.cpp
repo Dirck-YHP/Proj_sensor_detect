@@ -29,7 +29,7 @@ void paramWin_angleSensor::on_btn_ok_clicked()
     angle_sensor = new AngleSensor;
     angle_sensor->set_label(ui->cBox_angle_sensor_type->currentText());     // 读取标签
     angle_sensor->set_range(ui->lineE_4mA->text(), ui->lineE_20mA->text()); // 读取量程
-    angle_sensor->set_channel(ui->lineE_channel->text());                   // 读取通道（临时）
+    angle_sensor->set_channel();
 
     /********************* 是否需要工装 *******************/
     if (!ui->checkBox_no_need_device->isChecked()) {

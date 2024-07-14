@@ -55,9 +55,11 @@ QString AngleEncoder::get_pul_per_cir() const
   *  @note      功能函数
   *  @Sample usage:
  **************************************************************/
-void AngleEncoder::set_channel(QString channel)
+void AngleEncoder::set_channel()
 {
-    _channel = channel;
+    _channel = chToStr(CH_AE_SIGV_SIGC_A) + "," +
+               chToStr(CH_AE_SIGV_SIGC_B) + "," +
+               chToStr(CH_AE_SUPC);
 }
 
 /***************************************************************
@@ -81,8 +83,15 @@ void AngleEncoder::start_acquire()
 {
     //--------------------------NI 9205--------------------------------------
     data_acquire_ai = new DataAcquireAI;
-    data_acquire_ai->get_channel(get_channel());            // 把传感器获取到的通道传给数据采集
-    QThreadPool::globalInstance()->start(data_acquire_ai);  // 丢进线程池
+
+    // 供电电压(0) + 角位移编码器 A+(3) B+(5) supc(9) + 电池电量(31)
+    QString channel_final = chToStr(CH_SUPV) + "," +
+                            get_channel() + "," +
+                            chToStr(CH_BAT);
+    qDebug() << "fi: " << channel_final;
+
+    data_acquire_ai->get_channel(channel_final);
+    QThreadPool::globalInstance()->start(data_acquire_ai);
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
             this, &AngleEncoder::rev_data_from_ni9205);
@@ -120,7 +129,8 @@ void AngleEncoder::stop_acquire()
 /***************************************************************
   *  @brief     接收ni9205的数据并处理
   *  @param     无
-  *  @note      根据通道分别转化成供电/信号回路的电压电流并发送给上层
+  *  @note      根据通道判断转化成：
+  *             供电电压(0) + 角位移编码器 A+(3) B+(5) supc(9) + 电池电量(31)
   *  @Sample usage:
  **************************************************************/
 void AngleEncoder::rev_data_from_ni9205(QVector<double> data)

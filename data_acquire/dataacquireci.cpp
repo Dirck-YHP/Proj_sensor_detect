@@ -68,6 +68,6 @@ void DataAcquireCI::run() {
         emit send_data(QVector<double>(data, data + _sampsPerChanRead));
     }
 
-    // 延时1ms
-    QThread::usleep(1000);
+    // 延时20ms
+    QThread::msleep(20);
 }

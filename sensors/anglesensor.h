@@ -2,6 +2,7 @@
 #define ANGLESENSOR_H
 
 #include <QObject>
+#include <QDebug>
 #include <QThreadPool>
 
 #include "data_acquire/dataacquireai.h"
@@ -28,7 +29,7 @@ public:
     void set_range(QString angle_4mA, QString angle_20mA);
     QPair<int, int> get_range() const;
 
-    void set_channel(QString channel);
+    void set_channel();
     QString get_channel() const;
 
     void start_acquire();

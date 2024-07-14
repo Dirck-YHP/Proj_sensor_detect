@@ -52,7 +52,7 @@ void paramWin_angleEncoder::on_btn_ok_clicked()
     angle_encoder = new AngleEncoder;
     angle_encoder->set_label(ui->cBox_angle_sensor_type->currentText());
     angle_encoder->set_pul_per_cir(ui->lineE_pulse_per_cir->text());
-    angle_encoder->set_channel(ui->lineE_channel->text());
+    angle_encoder->set_channel();
 
     /********************* 是否需要工装 *******************/
     if (!ui->checkBox_no_need_device->isChecked()) {

@@ -56,9 +56,10 @@ QPair<int, int> AngleSensor::get_range() const
   *  @note      功能函数
   *  @Sample usage:
  **************************************************************/
-void AngleSensor::set_channel(QString channel)
+void AngleSensor::set_channel()
 {
-    _channel = channel;
+    _channel = chToStr(CH_AS_SIGV_SIGC_ANGLE) + "," +
+               chToStr(CH_AS_SUPC);
 }
 
 /***************************************************************
@@ -81,7 +82,14 @@ QString AngleSensor::get_channel() const
 void AngleSensor::start_acquire()
 {
     data_acquire_ai = new DataAcquireAI;
-    data_acquire_ai->get_channel(get_channel());            // 把传感器获取到的通道传给数据采集
+
+    // 供电电压(0) + 角位移传感器(1,2) + 电池电量(31)
+    QString channel_final = chToStr(CH_SUPV) + "," +
+                            get_channel() + "," +
+                            chToStr(CH_BAT);
+    qDebug() << "fi: " << channel_final;
+
+    data_acquire_ai->get_channel(channel_final);            // 把传感器获取到的通道传给数据采集
     QThreadPool::globalInstance()->start(data_acquire_ai);  // 丢进线程池
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
@@ -102,7 +110,9 @@ void AngleSensor::stop_acquire()
 /***************************************************************
   *  @brief     接收ni9205的数据并处理
   *  @param     无
-  *  @note      根据通道分别转化成角度、供电/信号回路的电压电流并发送给上层
+  *  @note      根据通道分别转化成:
+  *           供电电压(0) + 角位移传感器(1,2) + 电池电量(31)
+  *             角度、供电/信号回路的电压电流并发送给上层
   *  @Sample usage:
  **************************************************************/
 void AngleSensor::rev_data_from_ni9205(QVector<double> data)

@@ -79,13 +79,13 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
                 this, &showWin_pressureSensor::slot_plot_press_from_hydraSta);
 
         /************************ 压力传感器 ************************/
-//        _pressure_sensor->start_acquire();  // 开始采集
+        _pressure_sensor->start_acquire();  // 开始采集
         // 先获取参数配置页面勾选了哪几个通道,这里需要注意有没有去掉电压电流的通道
 //        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
 
-//        // 建立连接
-//        connect(_pressure_sensor, &PressureSensor::send_ni9205_to_ui,
-//                this, &showWin_pressureSensor::slot_plot_press_from_sensor);
+        // 建立连接
+        connect(_pressure_sensor, &PressureSensor::send_ni9205_to_ui,
+                this, &showWin_pressureSensor::slot_plot_press_from_sensor);
 
         /********************** 画图参数配置 **********************/
         ui->plot_pressure->clearGraphs();
@@ -218,7 +218,7 @@ void showWin_pressureSensor::set_visiable()
     QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
 
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num)) {
+        if (selected_channel_arr.contains(ch_num + 25)) {
             QString baseName = "lineE_"; // 基础名称
             setLineEditsForRowEnable(baseName + "pres_val", ch_num, true);
             setLineEditsForRowEnable(baseName + "signal_current", ch_num, true);

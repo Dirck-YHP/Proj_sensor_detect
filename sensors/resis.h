@@ -2,6 +2,7 @@
 #define RESIS_H
 
 #include <QObject>
+#include <QDebug>
 #include <QThreadPool>
 
 #include "data_acquire/dataacquireai.h"

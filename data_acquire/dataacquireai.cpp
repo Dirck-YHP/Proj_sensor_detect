@@ -36,7 +36,7 @@ void DataAcquireAI::run()
         if(_sampsPerChanRead > 0) emit send_data(QVector<double>(data, data + _sampsPerChanRead * _channel_num));
         else L_ERROR("没有采集到数据！");
 
-        QThread::msleep(10);
+        QThread::msleep(20);
     }
 }
 
@@ -155,4 +155,56 @@ double DataAcquireAI::choose_min_max(int channel)
     }
 
     return U;
+}
+
+/***************************************************************
+  *  @brief     将枚举类型转换成字符串
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
+QString chToStr(CHANNEL_9205 channel)
+{
+    switch (channel) {
+        case CH_SUPV: return QStringLiteral("0");
+
+        case CH_AS_SIGV_SIGC_ANGLE: return QStringLiteral("1");
+        case CH_AS_SUPC: return QStringLiteral("2");
+
+        case CH_AE_SIGV_SIGC_A:  return QStringLiteral("3");
+        case CH_AE_SIGV_SIGC_A_: return QStringLiteral("4");
+        case CH_AE_SIGV_SIGC_B:  return QStringLiteral("5");
+        case CH_AE_SIGV_SIGC_B_: return QStringLiteral("6");
+        case CH_AE_SIGV_SIGC_C:  return QStringLiteral("7");
+        case CH_AE_SIGV_SIGC_C_: return QStringLiteral("8");
+        case CH_AE_SUPC: return QStringLiteral("9");
+
+        case CH_R_1: return QStringLiteral("10");
+        case CH_R_2: return QStringLiteral("11");
+        case CH_R_3: return QStringLiteral("12");
+        case CH_R_4: return QStringLiteral("13");
+        case CH_R_5: return QStringLiteral("14");
+
+        case CH_PS_SIGV_SIGC_PUL_1: return QStringLiteral("15");
+        case CH_PS_SUPC_1: return QStringLiteral("16");
+        case CH_PS_SIGV_SIGC_PUL_2: return QStringLiteral("17");
+        case CH_PS_SUPC_2: return QStringLiteral("18");
+        case CH_PS_SIGV_SIGC_PUL_3: return QStringLiteral("19");
+        case CH_PS_SUPC_3: return QStringLiteral("20");
+        case CH_PS_SIGV_SIGC_PUL_4: return QStringLiteral("21");
+        case CH_PS_SUPC_4: return QStringLiteral("22");
+        case CH_PS_SIGV_SIGC_PUL_5: return QStringLiteral("23");
+        case CH_PS_SUPC_5: return QStringLiteral("24");
+
+        case CH_VR_DIS: return QStringLiteral("25");
+
+        case CH_PRES_SIGV_SIGC_PRE_1: return QStringLiteral("26");
+        case CH_PRES_SIGV_SIGC_PRE_2: return QStringLiteral("27");
+        case CH_PRES_SIGV_SIGC_PRE_3: return QStringLiteral("28");
+        case CH_PRES_SIGV_SIGC_PRE_4: return QStringLiteral("29");
+        case CH_PRES_SIGV_SIGC_PRE_5: return QStringLiteral("30");
+
+        case CH_BAT: return QStringLiteral("31");
+    }
+
 }
