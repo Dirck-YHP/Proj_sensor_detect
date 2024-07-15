@@ -123,23 +123,16 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
         ui->plot_angle->yAxis->setLabel("Y");
         ui->plot_angle->yAxis->setRange(-10, 10);
 
-        channel_num = 2;        // 暂时测试，默认为2
+        channel_num = 2;
         // Graph数量 = 角位移传感器角度(1) + 电机(1)
         for (int i = 0; i < channel_num; i++) {
             ui->plot_angle->addGraph();
         }
 
-        /********************** 接收传感器发送的角度 **********************/
-        connect(_angle_sensor, &AngleSensor::send_angle_to_ui,
-                this, &showWin_angleSensor::get_data_and_plot_angle);
+        /***************** 接收传感器发送的电压电流角度 *******************/
+        connect(_angle_sensor, &AngleSensor::send_vol_cur_angle_to_ui,
+                this, &showWin_angleSensor::slot_get_vol_cur_angle_and_show);
 
-        /********************** 接收传感器发送的电压 **********************/
-        connect(_angle_sensor, &AngleSensor::send_voltage_to_ui,
-               this, &showWin_angleSensor::get_data_and_plot_vlotage);
-
-        /********************** 接收传感器发送的电流 **********************/
-        connect(_angle_sensor, &AngleSensor::send_current_to_ui,
-                this, &showWin_angleSensor::get_data_and_plot_current);
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
@@ -188,9 +181,53 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
   *  @note      槽函数——数值框+画图
   *  @Sample usage:
  **************************************************************/
-void showWin_angleSensor::get_data_and_plot_angle(QVector<double> angle)
+void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
 {
-    int length = angle.size();     // 每通道数据 数
+    /****************************** 旧板 *************************************/
+//    int length = angle.size();     // 每通道数据 数
+//    QVector<double> x(length);
+//    int point_count = ui->plot_angle->graph(0)->dataCount();
+
+//    // 确定画图的横轴
+//    for (int i = 0; i < length; i++) {
+//        x[i] = i + point_count;
+//    }
+
+//    // 画图，一共条曲线
+//    for (int i = 0; i < 1; i++) {
+//        ui->plot_angle->graph(i)->addData(x,
+//            QVector<double>(angle.begin() + i*length, angle.begin() + i*length + length), true);
+//    }
+//    ui->plot_angle->rescaleAxes();       // 自适应大小
+//    ui->plot_angle->replot();
+
+
+    /****************************** 新板 *************************************/
+    // 接收到的data中数据顺序如下：
+    // 供电电压、信号电压、信号电流、供电电流、角度、电池电量
+    qDebug() << "处理之后的数据大小为：" << data.size();
+    /*********************** 供电电压 *****************************/
+    double sup_vol = data[0];
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol));
+
+    /*********************** 信号电压 *****************************/
+    double sig_vol = data[1];
+    ui->lineE_signal_voltage->setText(QString::number(sig_vol));
+
+    /*********************** 信号电流 *****************************/
+    double sig_cur = data[2];
+    ui->lineE_signal_current->setText(QString::number(sig_cur));
+
+    /*********************** 供电电流 *****************************/
+    double sup_cur = data[3];
+    ui->lineE_supply_current->setText(QString::number(sup_cur));
+
+    /*********************** 传感器角度 ***************************/
+    double angle_sensor = data[4];
+    /************* 角度数值框显示 **************/
+    ui->lineE_sensor_angle->setText(QString::number(angle_sensor));
+    /************* 角度画图 *******************/
+    int length = 1;
     QVector<double> x(length);
     int point_count = ui->plot_angle->graph(0)->dataCount();
 
@@ -199,40 +236,25 @@ void showWin_angleSensor::get_data_and_plot_angle(QVector<double> angle)
         x[i] = i + point_count;
     }
 
-    // 画图，一共条曲线
-    for (int i = 0; i < 1; i++) {
-        ui->plot_angle->graph(i)->addData(x,
-            QVector<double>(angle.begin() + i*length, angle.begin() + i*length + length), true);
-    }
+    // 画图，一次画一个点
+    ui->plot_angle->graph(0)->addData(x, QVector<double>(angle_sensor), true);
     ui->plot_angle->rescaleAxes();       // 自适应大小
     ui->plot_angle->replot();
 
+    /*********************** 电池电量 *****************************/
+    double bat = data[5];
+    ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
+    ui->pBar_battery->setMinimum(0);                   // 最小值
+    ui->pBar_battery->setMaximum(24);                   // 最大值
+    ui->pBar_battery->setValue(bat);                  // 当前进度
+    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+                    / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
+
     /********************文件保存*********************/
     // 数据首先都放到缓冲区中
-    double angle_sensor = angle[0];
     _data_save->collectData(&save_data_buf_angle_sensor, angle_sensor);
-}
-
-/***************************************************************
-  *  @brief     接收传感器的电流
-  *  @param     无
-  *  @note      槽函数——数值框显示即可
-  *  @Sample usage:
- **************************************************************/
-void showWin_angleSensor::get_data_and_plot_current(QVector<double> current)
-{
-    current[0]++;   // 防warning代码
-}
-
-/***************************************************************
-  *  @brief     接收传感器的电压
-  *  @param     无
-  *  @note      槽函数——数值框显示即可
-  *  @Sample usage:
- **************************************************************/
-void showWin_angleSensor::get_data_and_plot_vlotage(QVector<double> voltage)
-{
-    voltage[0]++;   // 防warning代码
 }
 
 

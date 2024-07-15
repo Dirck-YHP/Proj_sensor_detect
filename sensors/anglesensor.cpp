@@ -111,21 +111,54 @@ void AngleSensor::stop_acquire()
   *  @brief     接收ni9205的数据并处理
   *  @param     无
   *  @note      根据通道分别转化成:
-  *           供电电压(0) + 角位移传感器(1,2) + 电池电量(31)
+  *           供电电压(0) + 角位移传感器(1) (2) + 电池电量(31)
   *             角度、供电/信号回路的电压电流并发送给上层
   *  @Sample usage:
  **************************************************************/
 void AngleSensor::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
+    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
+    if (data.size() != channel_final.length()) {
+        qDebug() << "in AE:通道和接收数据的size不一致！";
+        return;
+    }
 
-    emit send_angle_to_ui(data);
-    emit send_current_to_ui(data);
-    emit send_voltage_to_ui(data);
+    // 供电电压：
+    double sup_vol = data[0];
+
+    // 信号电压、信号电流、角度
+    double sig_vol = data[1];
+    double sig_cur = sig_vol / 1;
+    double angle = map_from_cur_to_angle(sig_cur);
+
+    // 供电电流
+    double sup_cur = data[2] / 1;
+
+    // 电池电量
+    double bat = data[3] * 3;
+
+    // 组合成一个vector发出去，data中数据顺序如下：
+    // 供电电压、信号电压、信号电流、供电电流、角度、电池电量
+    QVector<double> data_after_process = {sup_vol,
+                                          sig_vol, sig_cur,
+                                          sup_cur,
+                                          angle, bat};
+
+    emit send_vol_cur_angle_to_ui(data_after_process);
 }
 
 
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      功能函数：实现电流到角度的映射
+  *  @Sample usage:
+ **************************************************************/
+double AngleSensor::map_from_cur_to_angle(double current)
+{
 
+}
 
 
 

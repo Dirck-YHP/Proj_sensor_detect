@@ -121,21 +121,21 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 
         // 开始画图，先测试，不考虑下面的控件命名，编码器的9205后续不需要画图了，9401需要和电机的角度画在一起
         /********************** 角度图参数配置 **********************/
-        // 获取通道数，用来画图
-        channel_num = Assist::extractNumbers(_angle_encoder->get_channel()).size();
+//        channel_num = Assist::extractNumbers(_angle_encoder->get_channel()).size();
         ui->plot_angle->clearGraphs();
         ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
         ui->plot_angle->xAxis->setLabel("time/s");
         ui->plot_angle->yAxis->setLabel("Y");
         ui->plot_angle->yAxis->setRange(-10, 10);
 
-        for (int i = 0; i < channel_num; i++) {
+        // 两条曲线：编码器角度 + 电机角度
+        for (int i = 0; i < 2; i++) {
             ui->plot_angle->addGraph();
         }
 
         /********************** ni 9205相关 **********************/
-        connect(_angle_encoder, &AngleEncoder::send_ni9205_to_ui,
-                this, &showWin_angleEncoder::get_data_and_plot_9205);
+        connect(_angle_encoder, &AngleEncoder::send_vol_cur_to_ui,
+                this, &showWin_angleEncoder::slot_get_vol_cur_and_show);
 
 
         /********************** 脉冲图参数配置 **********************/
@@ -150,12 +150,12 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         }
 
         /********************** ni 9403相关 **********************/
-        connect(_angle_encoder, &AngleEncoder::send_ni9403_to_ui,
-                this, &showWin_angleEncoder::get_data_and_plot_9403);
+        connect(_angle_encoder, &AngleEncoder::send_pulse_to_ui,
+                this, &showWin_angleEncoder::slot_get_pulse_and_plot);
 
         /********************** ni 9401相关 **********************/
-        connect(_angle_encoder, &AngleEncoder::send_ni9401_to_ui,
-                this, &showWin_angleEncoder::get_data_and_plot_9401);
+        connect(_angle_encoder, &AngleEncoder::send_angle_to_ui,
+                this, &showWin_angleEncoder::slot_get_angle_and_plot);
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
@@ -204,24 +204,65 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
   *  @note      槽函数——接收编码器类发送的供电/信号回路的电压、电流，后续无需画图，只需数值框
   *  @Sample usage:
  **************************************************************/
-void showWin_angleEncoder::get_data_and_plot_9205(QVector<double> data)
+void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
 {
-    int length = data.size() / channel_num;     // 每通道数据 数
-    QVector<double> x(length);
-    int point_count = ui->plot_angle->graph(0)->dataCount();
+    /****************************** 旧板 *************************************/
+//    int length = data.size() / channel_num;     // 每通道数据 数
+//    QVector<double> x(length);
+//    int point_count = ui->plot_angle->graph(0)->dataCount();
 
-    // 确定画图的横轴
-    for (int i = 0; i < length; i++) {
-        x[i] = i + point_count;
-    }
+//    // 确定画图的横轴
+//    for (int i = 0; i < length; i++) {
+//        x[i] = i + point_count;
+//    }
 
-    // 画图，一共channel_num条曲线
-    for (int i = 0; i < channel_num; i++) {
-        ui->plot_angle->graph(i)->addData(x,
-            QVector<double>(data.begin() + i*length, data.begin() + i*length + length), true);
-    }
-    ui->plot_angle->rescaleAxes();       // 自适应大小
-    ui->plot_angle->replot();
+//    // 画图，一共channel_num条曲线
+//    for (int i = 0; i < channel_num; i++) {
+//        ui->plot_angle->graph(i)->addData(x,
+//            QVector<double>(data.begin() + i*length, data.begin() + i*length + length), true);
+//    }
+//    ui->plot_angle->rescaleAxes();       // 自适应大小
+//    ui->plot_angle->replot();
+
+    /****************************** 新板 *************************************/
+    // 接收到的data中数据顺序如下：
+    // 供电电压、A项信号电压、A项信号电流、B项信号电压、B项信号电流、供电电流、电池电量
+    qDebug() << "处理之后的数据大小为：" << data.size();
+    /*********************** 供电电压 *****************************/
+    double sup_vol = data[0];
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol));
+
+    /*********************** A项信号电压 *****************************/
+    double sig_vol_A = data[1];
+    ui->lineE_signal_voltage_A->setText(QString::number(sig_vol_A));
+
+    /*********************** A项信号电流 *****************************/
+    double sig_cur_A = data[2];
+    ui->lineE_signal_current_A->setText(QString::number(sig_cur_A));
+
+    /*********************** B项信号电压 *****************************/
+    double sig_vol_B = data[3];
+    ui->lineE_signal_voltage_A->setText(QString::number(sig_vol_B));
+
+    /*********************** B项信号电流 *****************************/
+    double sig_cur_B = data[4];
+    ui->lineE_signal_current_A->setText(QString::number(sig_cur_B));
+
+    /*********************** 供电电流 *****************************/
+    double sup_cur = data[5];
+    ui->lineE_supply_current->setText(QString::number(sup_cur));
+
+    /*********************** 电池电量 *****************************/
+    double bat = data[6];
+    ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
+    ui->pBar_battery->setMinimum(0);                   // 最小值
+    ui->pBar_battery->setMaximum(24);                   // 最大值
+    ui->pBar_battery->setValue(bat);                  // 当前进度
+    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+                    / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
+
 }
 
 /***************************************************************
@@ -230,7 +271,7 @@ void showWin_angleEncoder::get_data_and_plot_9205(QVector<double> data)
   *  @note      槽函数——
   *  @Sample usage:
  **************************************************************/
-void showWin_angleEncoder::get_data_and_plot_9403(QVector<QVector<double> > data)
+void showWin_angleEncoder::slot_get_pulse_and_plot(QVector<QVector<double> > data)
 {
     data = add_data_to_queue(data);     // 设置队列，让波形固定范围滑动
 
@@ -261,13 +302,30 @@ void showWin_angleEncoder::get_data_and_plot_9403(QVector<QVector<double> > data
   *  @note      槽函数——
   *  @Sample usage:
  **************************************************************/
-void showWin_angleEncoder::get_data_and_plot_9401(QVector<double> data)
+void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
 {
-    QString content = QString::number(data[0]) + "°";
+    QString angle = QString::number(data[0]) + "°";
 
-    ui->lineE_encoder_angle->setText(content);
+    /******************** 角度数值框显示 *********************/
+    ui->lineE_encoder_angle->setText(angle);
 
-    /********************文件保存*********************/
+    /********************** 角度画图 ***********************/
+    int length = 1;
+    QVector<double> x(length);
+    int point_count = ui->plot_angle->graph(0)->dataCount();
+
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x[i] = i + point_count;
+    }
+
+    // 画图，一次画一个点
+    ui->plot_angle->graph(0)->addData(x, QVector<double>(angle.toDouble()), true);
+
+    ui->plot_angle->rescaleAxes();       // 自适应大小
+    ui->plot_angle->replot();
+
+    /******************** 文件保存 *********************/
     // 数据首先都放到缓冲区中
     double angle_encoder = data[0];
     _data_save->collectData(&save_data_buf_angle_encoder, angle_encoder);
@@ -312,9 +370,26 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
 //    qDebug() << "ui : " << _motor_angle;
+    /******************** 角度数值框显示 *********************/
     ui->lineE_motor_angle->setText(QString::number(_motor_angle));
 
-    /********************文件保存*********************/
+    /******************** 角度画图 *********************/
+    int length = 1;
+    QVector<double> x(length);
+    int point_count = ui->plot_angle->graph(1)->dataCount();
+
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x[i] = i + point_count;
+    }
+
+    // 画图，一次画一个点
+    ui->plot_angle->graph(0)->addData(x, QVector<double>(_motor_angle), true);
+
+    ui->plot_angle->rescaleAxes();       // 自适应大小
+    ui->plot_angle->replot();
+
+    /******************** 文件保存 *********************/
     // 数据首先都放到缓冲区中
     _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
 }

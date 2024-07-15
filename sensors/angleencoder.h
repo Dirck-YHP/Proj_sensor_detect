@@ -45,9 +45,9 @@ private slots:
     void rev_data_from_ni9401(QVector<double> data);
 
 signals:
-    void send_ni9205_to_ui(QVector<double> data);
-    void send_ni9403_to_ui(QVector<QVector<double>> data_final);
-    void send_ni9401_to_ui(QVector<double> data);
+    void send_vol_cur_to_ui(QVector<double> data);
+    void send_pulse_to_ui(QVector<QVector<double>> data_final);
+    void send_angle_to_ui(QVector<double> data);
 };
 
 #endif // ANGLEENCODER_H

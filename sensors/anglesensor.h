@@ -22,7 +22,6 @@ private:
 
     DataAcquireAI *data_acquire_ai;     // NI 9205的数据
 
-
 public:
     void set_label(QString label);
     QString get_label() const;
@@ -36,14 +35,13 @@ public:
     void start_acquire();
     void stop_acquire();
 
+    double map_from_cur_to_angle(double current);
+
 public slots:
     void rev_data_from_ni9205(QVector<double> data);
 
 signals:
-    void send_angle_to_ui(QVector<double> data);
-    void send_voltage_to_ui(QVector<double> data);
-    void send_current_to_ui(QVector<double> data);
-
+    void send_vol_cur_angle_to_ui(QVector<double> data);
 };
 
 #endif // ANGLESENSOR_H

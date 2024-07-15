@@ -37,16 +37,13 @@ private slots:
     void on_btn_start_finish_mea_toggled(bool checked);
 
     // 接收到来自传感器的数据然后显示出来
-    void get_data_and_plot_angle(QVector<double> angle);        // 画角度（传感器+电机）
-    void get_data_and_plot_current(QVector<double> current);    // 画电流
-    void get_data_and_plot_vlotage(QVector<double> voltage);    // 画电压
+    void slot_get_vol_cur_angle_and_show(QVector<double> angle);
+
 
     void slot_get_angle(double motor_angle);    // 接收电机发过来的角度数据
-
     void save_data();                           // 保存数据
 
     void on_btn_run_stop_toggled(bool checked);
-
     void on_btn_stop_now_clicked();
 
 public slots:

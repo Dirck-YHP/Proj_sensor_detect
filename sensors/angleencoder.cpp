@@ -130,15 +130,45 @@ void AngleEncoder::stop_acquire()
   *  @brief     接收ni9205的数据并处理
   *  @param     无
   *  @note      根据通道判断转化成：
-  *             供电电压(0) + 角位移编码器 A+(3) B+(5) supc(9) + 电池电量(31)
+  *             供电电压(0) + 角位移编码器 A+(3) B+(5) + supc(9) + 电池电量(31)
   *  @Sample usage:
  **************************************************************/
 void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
+    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
+    if (data.size() != channel_final.length()) {
+        qDebug() << "in AE:通道和接收数据的size不一致！";
+        return;
+    }
 
+    // 供电电压：
+    double sup_vol = data[0];
 
-    emit send_ni9205_to_ui(data);
+    // 信号电压A+
+    // 信号电流A+ = 信号电压A+ / 5kΩ
+    double sig_vol_A = data[1];
+    double sig_cur_A = sig_vol_A / 5000;
+
+    // 信号电压B+
+    // 信号电流A+ = 信号电压A+ / 5kΩ
+    double sig_vol_B = data[2];
+    double sig_cur_B = sig_vol_B / 5000;
+
+    // 供电电流 = 电压 / 电阻(1Ω)
+    double sup_cur = data[3] / 1;
+
+    // 电池电量
+    double bat = data[4] * 3;
+
+    // 组合成一个vector发出去，data中数据顺序如下：
+    // 供电电压、A项信号电压、A项信号电流、B项信号电压、B项信号电流、供电电流、电池电量
+    QVector<double> data_after_process = {sup_vol,
+                                          sig_vol_A, sig_cur_A,
+                                          sig_vol_B, sig_cur_B,
+                                          sup_cur, bat};
+    // 发送
+    emit send_vol_cur_to_ui(data_after_process);
 }
 
 /***************************************************************
@@ -149,7 +179,7 @@ void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
  **************************************************************/
 void AngleEncoder::rev_data_from_ni9403(QVector<QVector<double> > data_final)
 {
-    emit send_ni9403_to_ui(data_final);
+    emit send_pulse_to_ui(data_final);
 }
 
 /***************************************************************
@@ -160,7 +190,7 @@ void AngleEncoder::rev_data_from_ni9403(QVector<QVector<double> > data_final)
  **************************************************************/
 void AngleEncoder::rev_data_from_ni9401(QVector<double> data)
 {
-    emit send_ni9401_to_ui(data);
+    emit send_angle_to_ui(data);
 }
 
 
