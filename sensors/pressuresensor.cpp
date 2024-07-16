@@ -137,7 +137,44 @@ void PressureSensor::stop_acquire()
 void PressureSensor::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
+    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
+    if (data.size() != channel_final.length()) {
+        qDebug() << "in AE:通道和接收数据的size不一致！";
+        return;
+    }
 
-    // 目前还没做转化，直接发送原始数据
-    emit send_ni9205_to_ui(data);
+    int len = data.size();
+    QVector<double> data_after_process;
+    // 供电电压
+    double sup_vol = data[0];
+    data_after_process.append(sup_vol);
+
+    // 信号电压、信号电流=供电电流、压力值 * (len - 2)
+    for (int i = 1; i < len - 1; i++) {
+        double sig_vol = data[i];
+        double sig_cur = sig_vol / 1;
+        double press = map_from_cur_to_press(sig_cur);
+        data_after_process.append(sig_vol);
+        data_after_process.append(sig_cur);
+        data_after_process.append(press);
+    }
+
+    // 电池电量
+    double bat = data[len - 1];
+    data_after_process.append(bat);
+
+    // 组合成一个vector发出去，data中数据顺序如下：
+    // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
+    emit send_vol_cur_pres_to_ui(data_after_process);
+}
+
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      功能函数：实现电流到压力的映射
+  *  @Sample usage:
+ **************************************************************/
+double PressureSensor::map_from_cur_to_press(double current)
+{
+
 }

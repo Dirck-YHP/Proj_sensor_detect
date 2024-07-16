@@ -62,6 +62,10 @@ private:
 private:
     void set_visiable();
     void setLineEditsForRowEnable(const QString &baseName, int ch_num, bool isEnable);
+
+    void show_vol_cur_press(QVector<double> data);
+    void setLineEditsForRowValue(const QString &baseName, int ch_num, double data);
+
 };
 
 #endif // SHOWWIN_PRESSURESENSOR_H

@@ -84,7 +84,7 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 //        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
 
         // 建立连接
-        connect(_pressure_sensor, &PressureSensor::send_ni9205_to_ui,
+        connect(_pressure_sensor, &PressureSensor::send_vol_cur_pres_to_ui,
                 this, &showWin_pressureSensor::slot_plot_press_from_sensor);
 
         /********************** 画图参数配置 **********************/
@@ -94,9 +94,10 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
         ui->plot_pressure->yAxis->setLabel("Y");
         ui->plot_pressure->yAxis->setRange(-10, 10);
 
-        channel_num = 1;        // 暂时测试，默认为1
-        // Graph数量 = 压力传感器的通道数(channel_num) + 液压站(1)
-        for (int i = 0; i < 1; i++) {
+        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
+        qDebug() << "pre_channel_choosed: " << channel_num;
+        // Graph数量 = 选择的压力传感器个数(channel_num) + 液压站(1)
+        for (int i = 0; i < channel_num + 1; i++) {
             ui->plot_pressure->addGraph();
         }
 
@@ -173,18 +174,37 @@ void showWin_pressureSensor::on_btn_ok_clicked()
  **************************************************************/
 void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
 {
+    /****************************** 新板 *************************************/
+    // 接收到的data中数据顺序如下：
+    // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
+    qDebug() << "处理之后的数据大小为：" << data.size();
+
+    /*********************** 数值框显示 *****************************/
+    show_vol_cur_press(data);
+
+    /*********************** 压力值画图 ****************************/
+    // 根据用户选择确定通道然后画图
+
+    /*********************** 文件保存 *****************************/
 
 }
 
 /***************************************************************
   *  @brief     画来自液压站的压力值
+  *
   *  @param     0708：目前data改成了size为 1
   *  @note      槽函数
   *  @Sample usage:
  **************************************************************/
 void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
 {
-    int length = data.size() / channel_num;     // 每通道数据 数
+    QString pressure = QString::number(data[0]) + "Pa...?";
+
+    /******************** 压力数值框显示 *********************/
+    ui->lineE_hydra_val->setText(pressure);
+
+    /********************* 压力画图 **********************/
+    int length = 1;
     QVector<double> x(length);
     int point_count = ui->plot_pressure->graph(0)->dataCount();
 
@@ -193,11 +213,9 @@ void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
         x[i] = i + point_count;
     }
 
-    // 画图，一共channel_num条曲线
-    for (int i = 0; i < channel_num; i++) {
-        ui->plot_pressure->graph(i)->addData(x,
-            QVector<double>(data.begin() + i*length, data.begin() + i*length + length), true);
-    }
+    // 画图，一次画一个点
+    ui->plot_pressure->graph(0)->addData(x, QVector<double>(pressure.toDouble()), true);
+
     ui->plot_pressure->rescaleAxes();       // 自适应大小
     ui->plot_pressure->replot();
 
@@ -255,6 +273,67 @@ void showWin_pressureSensor::setLineEditsForRowEnable(const QString &baseName, i
 
     if (lineEdit) {
         lineEdit->setEnabled(isEnable); // 设置为可见
+    } else {
+        qDebug() << "LineEdit not found:" << objectName;
+    }
+}
+
+/***************************************************************
+  *  @brief     各个参数数值框显示
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
+void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
+{
+    QString selected_channel_str = _pressure_sensor->get_channel();
+    QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
+
+    int start_idx = 0;
+    int len = selected_channel_arr.size();
+
+    for (int ch_num = 1; ch_num <= 5; ch_num++) {
+        if (selected_channel_arr.contains(ch_num + 25)) {
+            QString baseName = "lineE_"; // 基础名称
+            // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
+            /*********************** 供电电压 *****************************/
+            double sup_vol = data[0];
+            setLineEditsForRowValue(baseName + "supply_voltage", ch_num, sup_vol);
+
+            /*********************** 信号电压 *****************************/
+            double sig_vol = data[1 + start_idx * len];
+            setLineEditsForRowValue(baseName + "signal_voltage", ch_num, sig_vol);
+
+            /*********************** 信号电流 *****************************/
+            double sig_cur = data[2 + start_idx * len];
+            setLineEditsForRowValue(baseName + "signal_current", ch_num, sig_cur);
+
+            /*********************** 供电电流 *****************************/
+            double sup_cur = data[2 + start_idx * len];
+            setLineEditsForRowValue(baseName + "supply_current", ch_num, sup_cur);
+
+            /*********************** 压力值 *****************************/
+            double pressure = data[3 + start_idx * len];
+            setLineEditsForRowValue(baseName + "pres_val", ch_num, pressure);
+
+            start_idx++;
+        }
+    }
+}
+
+/***************************************************************
+  *  @brief     处理groupbox
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
+void showWin_pressureSensor::setLineEditsForRowValue(const QString &baseName, int ch_num, double value)
+{
+    QString objectName = baseName + "_" + QString::number(ch_num);
+    QLineEdit *lineEdit = ui->gridGroupBox->findChild<QLineEdit*>(objectName);
+
+    if (lineEdit) {
+        lineEdit->setText(QString::number(value));
     } else {
         qDebug() << "LineEdit not found:" << objectName;
     }

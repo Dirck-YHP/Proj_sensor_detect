@@ -34,12 +34,14 @@ public:
     void start_acquire();
     void stop_acquire();
 
+    double map_from_cur_to_press(double current);
+
 private slots:
     // 这个函数负责接收来自采集卡的原始数据并做处理，然后发出去
     void rev_data_from_ni9205(QVector<double> data);
 
 signals:
-    void send_ni9205_to_ui(QVector<double> data);
+    void send_vol_cur_pres_to_ui(QVector<double> data);
 };
 
 #endif // PRESSURESENSOR_H
