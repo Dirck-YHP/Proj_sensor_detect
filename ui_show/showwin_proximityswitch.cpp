@@ -60,8 +60,8 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
         _proxi_switch->start_acquire();
 
         // 需要一系列槽函数：供电电压、供电电流、信号电压、信号电流、是否触发、滑动变阻器距离、电池电量
-        connect(_proxi_switch, &ProximitySwitch::send_ni9205_to_ui,
-                this, &showWin_proximitySwitch::get_data_and_plot_pulse);
+        connect(_proxi_switch, &ProximitySwitch::send_vol_cur_pul_dis_to_ui,
+                this, &showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show);
 
         /********************** 画图参数配置 **********************/
         ui->plot_distance->clearGraphs();
@@ -157,7 +157,7 @@ void showWin_proximitySwitch::get_data_and_plot_distance(QVector<double> data)
   *  @note      槽函数
   *  @Sample usage:
  **************************************************************/
-void showWin_proximitySwitch::get_data_and_plot_pulse(bool if_Pulse)
+void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> data)
 {
     // 在这里判断上升下降沿
     bool if_changed = (if_Pulse != _if_pulse);

@@ -30,7 +30,7 @@ private slots:
 
     // 测试用，接收到来自传感器的数据然后显示出来
     void get_data_and_plot_distance(QVector<double> data);
-    void get_data_and_plot_pulse(bool if_Pulse);
+    void slot_get_vol_cur_pul_dis_and_show(QVector<double> data);
 
     void on_btn_ok_clicked();
 

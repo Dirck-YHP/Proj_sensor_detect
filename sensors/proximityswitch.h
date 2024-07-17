@@ -42,13 +42,14 @@ public:
     void start_acquire();
     void stop_acquire();
 
+    double map_from_cur_to_varDis(double current);
+
 private slots:
     // 这个函数负责接收来自采集卡的原始数据并做处理，然后发出去
     void rev_data_from_ni9205(QVector<double> data);
 
 signals:
-     // 这里需要做转化，原始电压信号——>是否“触发”，发送的是“是否触发”的信号
-    void send_ni9205_to_ui(bool if_pulse);
+    void send_vol_cur_pul_dis_to_ui(QVector<double> data);
 
 };
 

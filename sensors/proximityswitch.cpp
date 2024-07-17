@@ -171,8 +171,50 @@ void ProximitySwitch::stop_acquire()
 void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
+    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
+    if (data.size() != channel_final.length()) {
+        qDebug() << "in AE:通道和接收数据的size不一致！";
+        return;
+    }
+
+    // 供电电压
+    double sup_vol = data[0];
+
+    // 信号电压、信号电流、是否触发
+    double sig_vol = data[1];
+    double sig_cur = sig_vol / 5000;
+    double if_pulse = (sig_vol > 3) ? 1 : 0;
+
+    // 供电电流
+    double sup_cur = data[2] / 5000;
+
+    // 滑动变阻器计算距离
+    double cur = data[3] / 1;
+    double distance_var = map_from_cur_to_varDis(cur);
+
+    // 电池电量
+    double bat = data[3] * 3;
+
+    // 组合成一个vector发出去，data中数据顺序如下：
+    // 供电电压、信号电压、信号电流、供电电流、是否触发、滑动变阻器距离、电池电量
+    QVector<double> data_after_process = {sup_vol,
+                                         sig_vol, sig_cur,
+                                         sup_cur,
+                                         if_pulse, distance_var,
+                                         bat};
 
     // 目前还没做转化，直接发送原始数据
     data[0]++;
-    emit send_ni9205_to_ui(true);
+    emit send_vol_cur_pul_dis_to_ui(data_after_process);
+}
+
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      功能函数：实现电流到滑动变阻器距离的映射
+  *  @Sample usage:
+ **************************************************************/
+double ProximitySwitch::map_from_cur_to_varDis(double current)
+{
+
 }
