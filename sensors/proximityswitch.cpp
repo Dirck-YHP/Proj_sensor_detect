@@ -183,7 +183,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
     // 信号电压、信号电流、是否触发
     double sig_vol = data[1];
     double sig_cur = sig_vol / 5000;
-    double if_pulse = (sig_vol > 3) ? 1 : 0;
+    double if_pulse = (sig_vol > THREAD_VOL_TO_PUL) ? 1 : 0;
 
     // 供电电流
     double sup_cur = data[2] / 5000;

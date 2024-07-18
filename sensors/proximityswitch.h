@@ -23,6 +23,8 @@ private:
 
     DataAcquireAI *data_acquire_ai;     // NI 9205
 
+    const int THREAD_VOL_TO_PUL = 3;
+
 public:
     void set_label(QString label);  // 设置传感器类型
     QString get_label() const;

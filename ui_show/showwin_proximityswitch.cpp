@@ -71,6 +71,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
         ui->plot_distance->yAxis->setRange(-10, 10);
 
         // 添加图，两个，一个画距离，一个画触发信号
+        // 可能一张图就够了，根据是否触发判断当前这个点要不要画的特殊一点
         for (int i = 0; i < 2; i++) {
             ui->plot_distance->addGraph();
         }
@@ -152,21 +153,61 @@ void showWin_proximitySwitch::get_data_and_plot_distance(QVector<double> data)
 }
 
 /***************************************************************
-  *  @brief     画来自接近开关的 是否触发 的“点”
+  *  @brief
   *  @param     无
-  *  @note      槽函数
+  *  @note      槽函数：
+  *         供电电压、信号电压、信号电流、供电电流、是否触发、滑动变阻器距离、电池电量
   *  @Sample usage:
  **************************************************************/
 void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> data)
 {
+    /*********************** 供电电压 ************************/
+    double sup_vol = data[0];
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol));
+
+    /*********************** 信号电压 ************************/
+    double sig_vol = data[1];
+    ui->lineE_signal_voltage->setText(QString::number(sig_vol));
+
+    /*********************** 信号电流 ************************/
+    double sig_cur = data[2];
+    ui->lineE_signal_current->setText(QString::number(sig_cur));
+
+    /*********************** 供电电流 ************************/
+    double sup_cur = data[3];
+    ui->lineE_supply_current->setText(QString::number(sup_cur));
+
+    /*********************** 是否触发 ************************/
+    bool if_Pulse = data[4];
     // 在这里判断上升下降沿
     bool if_changed = (if_Pulse != _if_pulse);
     _if_pulse = if_Pulse;       // 保存触发状态
 
-    /********************** 画“触发点” **********************/
-    if (if_changed) {
+    /********************* 滑动变阻器距离 **********************/
+    _distance = data[5];
+    /*************** 画距离 ****************/
+    int length = 1;
+    QVector<double> x(length);
+    int point_count = ui->plot_distance->graph(0)->dataCount();
 
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x[i] = i + point_count;
     }
+
+    /*************** 画 “触发点” ****************/
+    if (if_changed) {
+        ui->plot_distance->graph(0)->setPen(QPen(Qt::red));
+    } else {
+        ui->plot_distance->graph(0)->setPen(QPen(Qt::blue));
+    }
+
+    ui->plot_distance->graph(0)->addData(x, QVector<double>(_distance), true);
+    ui->plot_distance->rescaleAxes();       // 自适应大小
+    ui->plot_distance->replot();
+
+    /*************** 数值框显示 ****************/
+    ui->lineE_sensing_dis->setText(QString::number(_distance));
 
     /********************** 重复精度测量 **********************/
     if (_if_rep_mea) {      // 如果用户点击了“重复精度测量”
@@ -196,9 +237,21 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
         }
     }
 
+    /*********************** 电池电量 ************************/
+    double bat = data[6];
+    ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
+    ui->pBar_battery->setMinimum(0);                   // 最小值
+    ui->pBar_battery->setMaximum(24);                   // 最大值
+    ui->pBar_battery->setValue(bat);                  // 当前进度
+    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+                    / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
+
     /******************** 文件保存 *********************/
     // 数据首先都放到缓冲区中
     _data_save->collectData(&save_data_buf_if_pulse, if_changed);
+    _data_save->collectData(&save_data_buf_variaresis, _distance);
 }
 
 /***************************************************************
