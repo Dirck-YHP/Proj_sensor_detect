@@ -79,11 +79,8 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
                 this, &showWin_pressureSensor::slot_plot_press_from_hydraSta);
 
         /************************ 压力传感器 ************************/
-        _pressure_sensor->start_acquire();  // 开始采集
-        // 先获取参数配置页面勾选了哪几个通道,这里需要注意有没有去掉电压电流的通道
-//        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
+        _pressure_sensor->start_acquire();      // 开始采集
 
-        // 建立连接
         connect(_pressure_sensor, &PressureSensor::send_vol_cur_pres_to_ui,
                 this, &showWin_pressureSensor::slot_plot_press_from_sensor);
 
@@ -141,7 +138,8 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
         }
         file.close();
 
-//        _pressure_sensor->stop_acquire();   // 停止采集
+        /*********************** 压力传感器相关 **********************/
+        _pressure_sensor->stop_acquire();   // 停止采集
     }
 }
 
@@ -169,7 +167,8 @@ void showWin_pressureSensor::on_btn_ok_clicked()
 /***************************************************************
   *  @brief     画来自压力传感器的压力值
   *  @param     无
-  *  @note      槽函数
+  *  @note      槽函数:
+  *          供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
   *  @Sample usage:
  **************************************************************/
 void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
@@ -177,16 +176,47 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
-    qDebug() << "处理之后的数据大小为：" << data.size();
+    int total_len = data.size();
+    qDebug() << "处理之后的数据大小为：" << total_len;
 
     /*********************** 数值框显示 *****************************/
     show_vol_cur_press(data);
 
     /*********************** 压力值画图 ****************************/
     // 根据用户选择确定通道然后画图
+    int length = 1;
+    QVector<double> x(length);
+    int point_count = ui->plot_pressure->graph(0)->dataCount();
+
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x[i] = i + point_count;
+    }
+
+    // 画图，一次画一个点
+    for (int i = 0; i < (total_len - 2)/ 3; i++) {
+        ui->plot_pressure->graph(i)->addData(x, QVector<double>(data[3 + 3 * i]), true);
+
+        /*********************** 文件保存 *****************************/
+        _data_save->collectData(&save_data_buf_sensor[i], data[3 + 3 * i]);
+    }
+
+    ui->plot_pressure->rescaleAxes();       // 自适应大小
+    ui->plot_pressure->replot();
+
+    /*********************** 电池电量 *****************************/
+    double bat = data[total_len - 1];
+    ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
+    ui->pBar_battery->setMinimum(0);                   // 最小值
+    ui->pBar_battery->setMaximum(24);                   // 最大值
+    ui->pBar_battery->setValue(bat);                  // 当前进度
+    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+                    / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 
     /*********************** 文件保存 *****************************/
-
+//    _data_save->collectData(&save_data_buf_sensor, angle_sensor);
 }
 
 /***************************************************************
