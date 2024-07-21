@@ -10,6 +10,8 @@
 
 #include "ui_func/funcwin_dataexport.h"
 
+#include "assist_func/assist.h"
+
 namespace Ui {
 class mainWindow;
 }

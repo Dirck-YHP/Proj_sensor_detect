@@ -43,7 +43,7 @@ void showWin_measureResis::on_btn_start_finish_mea_toggled(bool checked)
         _resis->start_acquire();
 
         /********************** 接收电阻值并显示 **********************/
-        connect(_resis, &Resis::send_ni9205_to_ui,
+        connect(_resis, &Resis::send_resis_to_ui,
                 this, &showWin_measureResis::slot_get_resis_and_show);
 
     } else {

@@ -6,6 +6,9 @@ mainWindow::mainWindow(QWidget *parent) :
     ui(new Ui::mainWindow)
 {
     ui->setupUi(this);
+
+    // 板子上电，待测
+    Assist::board_init();
 }
 
 mainWindow::~mainWindow()

@@ -22,7 +22,7 @@ private slots:
     void on_btn_start_finish_mea_toggled(bool checked);
 
 public slots:
-    void slot_get_resis_and_show(QVector<double> resis);
+    void slot_get_resis_and_show(QVector<double> data);
 
 private:
     Ui::showWin_measureResis *ui;

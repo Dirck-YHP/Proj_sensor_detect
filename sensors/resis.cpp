@@ -136,7 +136,7 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
 
     // 组合成一个vector发出去，data中数据顺序如下：
     // 电阻 * (len - 1)、电池电量
-    emit send_ni9205_to_ui(data_after_process);
+    emit send_resis_to_ui(data_after_process);
 }
 
 /***************************************************************
