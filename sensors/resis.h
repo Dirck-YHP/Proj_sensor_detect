@@ -44,7 +44,7 @@ private slots:
     void rev_data_from_ni9205(QVector<double> data);
 
 signals:
-    void send_ni9205_to_ui(QVector<double> data);
+    void send_resis_to_ui(QVector<double> data);
 };
 
 #endif // RESIS_H
