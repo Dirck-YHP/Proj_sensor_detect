@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QThreadPool>
+#include <QTimer>
 
 #include "data_acquire/dataacquireai.h"
 
@@ -19,12 +20,24 @@ private:
 
     DataAcquireAI *data_acquire_ai;     // NI 9205的数据
 
+    enum RType{
+        high = 0,
+        middle = 1,
+        low = 2,
+    };
+
+    RType rType = RType::middle;
+    QTimer* m_timer;
+    bool allowChange;
+
 public:
     void set_channel(QString channel);
     QString get_channel() const;
 
     void start_acquire();
     void stop_acquire();
+
+    double map_from_vol_to_resis(double voltage, QString DI_str);
 
 private slots:
     // 这个函数负责接收来自采集卡的原始数据并做处理，然后发出去

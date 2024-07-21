@@ -105,10 +105,15 @@ void paramWin_angleEncoder::on_checkBox_no_need_device_stateChanged(int arg1)
 void paramWin_angleEncoder::on_cBox_file_save_stateChanged(int arg1)
 {
     if (arg1 == Qt::Checked) {
-        m_file_save_dir = QFileDialog::getExistingDirectory(this, "Save file", "../", QFileDialog::ShowDirsOnly);
-        qDebug() << m_file_save_dir;
+        m_file_save_dir = QFileDialog::getExistingDirectory(this, "请选择文件保存路径", "../", QFileDialog::ShowDirsOnly);
     } else if (arg1 == Qt::Unchecked) {
         m_file_save_dir = "";
+    }
+
+    if (!m_file_save_dir.isEmpty()) {
+        QMessageBox::information(this, "Info", "路径选择成功");
+    } else {
+        QMessageBox::information(this, "Info", "您未选择路径");
     }
 }
 

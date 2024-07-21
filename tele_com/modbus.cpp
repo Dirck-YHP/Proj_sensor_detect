@@ -2,7 +2,7 @@
 
 Modbus::Modbus(QObject *parent) : QObject(parent)
 {
-     qDebug() <<  "Modbus构造。cur thread：" << QThread::currentThreadId();
+     qDebug() <<  "(In modbus)Modbus构造。cur thread：" << QThread::currentThreadId();
     _angle_calibration = false;
 }
 
@@ -50,7 +50,7 @@ void Modbus::get_input_angle(QString input_angle)
  **************************************************************/
 void Modbus::build_connecttion()
 {
-    qDebug() << "0 BUILD cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)0 BUILD cur thread: " << QThread::currentThreadId();
     _modbusDevice = new QModbusRtuSerialMaster();
 
     // 设置串口参数
@@ -65,7 +65,7 @@ void Modbus::build_connecttion()
     // 打开连接
     if (!_modbusDevice->connectDevice()) {
         // 连接失败，处理错误
-        qDebug() << "Connect Error!";
+        qDebug() << "(In modbus)Connect Error!";
     }
 }
 
@@ -77,7 +77,7 @@ void Modbus::build_connecttion()
  **************************************************************/
 void Modbus::enable_motor()
 {
-    qDebug() << "1 ENABLE cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)1 ENABLE cur thread: " << QThread::currentThreadId();
     write_run(0, 1, 0x101);
 }
 
@@ -89,7 +89,7 @@ void Modbus::enable_motor()
  **************************************************************/
 void Modbus::run_motor()
 {
-    qDebug() << "2 RUN cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)2 RUN cur thread: " << QThread::currentThreadId();
     if (!_angle_calibration) {  // 如果不进行角度校准，默认从0开始
         // 设置当前位置为0°
         write_run(0, 1, 0x200);
@@ -106,7 +106,7 @@ void Modbus::run_motor()
 
     // 确保写命令执行完之后再开始读取角度
     BEGIN_READ = true;
-    qDebug() << "2 RUN FINISH";
+    qDebug() << "(In modbus)2 RUN FINISH";
 }
 
 /***************************************************************
@@ -117,7 +117,7 @@ void Modbus::run_motor()
  **************************************************************/
 void Modbus::disable_motor()
 {
-    qDebug() << "DISABLE cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)DISABLE cur thread: " << QThread::currentThreadId();
     write_run(0, 1, 0x100);
 }
 
@@ -129,7 +129,7 @@ void Modbus::disable_motor()
  **************************************************************/
 void Modbus::break_connection()
 {
-    qDebug() << "5 BREAK cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)5 BREAK cur thread: " << QThread::currentThreadId();
     _modbusDevice->disconnectDevice();
 }
 
@@ -141,7 +141,7 @@ void Modbus::break_connection()
  **************************************************************/
 void Modbus::stop_motor()
 {
-    qDebug() << "4 STOP cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)4 STOP cur thread: " << QThread::currentThreadId();
     write_run(0, 1, 0x401);
 }
 
@@ -211,10 +211,10 @@ void Modbus::write_run(int address, int count, int parameter)
 //        } else {
 //            delete reply;
 //        }
-        qDebug() << "Succeed Write!";
+        qDebug() << "(In modbus)Succeed Write!";
     } else {
         // 发送请求失败，处理错误
-        qDebug() << "Error Write Request!";
+        qDebug() << "(In modbus)Error Write Request!";
     }
 }
 
@@ -255,7 +255,7 @@ void Modbus::read(int address, int count)
         }
     } else {
         // 发送请求失败，处理错误
-        qDebug() << "Error Read Request!";
+        qDebug() << "(In modbus)Error Read Request!";
     }
 }
 
@@ -273,7 +273,7 @@ void Modbus::read_Data()
         // 发送数据
         emit send_data(read_num);
     } else {
-        qDebug() << "waiting for writing......";
+        qDebug() << "(In modbus)waiting for writing......";
     }
 }
 
@@ -285,14 +285,14 @@ void Modbus::read_Data()
  **************************************************************/
 void Modbus::slot_modbus_init()
 {
-    qDebug() << "启动线程";
+    qDebug() << "(In modbus)启动线程";
     // 建立连接
     build_connecttion();
 
     // 创建定时 - Ps: 如果线程中需要定时一定要在线程中Start
     timer_modbus = new QTimer();
     connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_Data);
-    qDebug() << "定时器配置完成。cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)定时器配置完成。cur thread: " << QThread::currentThreadId();
 }
 
 /***************************************************************
@@ -304,9 +304,9 @@ void Modbus::slot_modbus_init()
 void Modbus::slot_modbus_delete()
 {
     // 断开连接
-    qDebug() << "before break: " << put_modbusdevice_state();
+    qDebug() << "(In modbus)before break: " << put_modbusdevice_state();
     break_connection();
-    qDebug() << "after break: " << put_modbusdevice_state();
+    qDebug() << "(In modbus)after break: " << put_modbusdevice_state();
 
     _modbusDevice->deleteLater();
     _modbusDevice = NULL;
@@ -323,12 +323,12 @@ void Modbus::slot_configModbus()
 {
     bool if_port_connected = checkPortAvailability(COM);
     if (if_port_connected) {
-        qDebug() << "检查：串口已连接";
+        qDebug() << "(In modbus)检查：串口已连接";
         timer_modbus->start(20);
     } else {
-        qDebug() << "检查：串口连接失败";
+        qDebug() << "(In modbus)检查：串口连接失败";
     }
-    qDebug() << "Modbus配置完成。cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)Modbus配置完成。cur thread: " << QThread::currentThreadId();
 
     // 电机使能
     enable_motor();
@@ -345,7 +345,7 @@ void Modbus::slot_configModbus()
  **************************************************************/
 void Modbus::slot_closeOpneModbus()
 {
-    qDebug() << "now in slot close!";
+    qDebug() << "(In modbus)now in slot close!";
 
     // 停止电机
     stop_motor();
@@ -356,7 +356,7 @@ void Modbus::slot_closeOpneModbus()
     // 关闭定时器
     timer_modbus->stop();
 
-    qDebug() << "Modbus关闭。current thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)Modbus关闭。current thread: " << QThread::currentThreadId();
 }
 
 /***************************************************************

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "sensors/angleencoder.h"
 #include "ui_show/showwin_angleencoder.h"

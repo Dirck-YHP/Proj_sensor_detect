@@ -36,7 +36,7 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
             connect(_motor, &Motor::send_angle_to_ui,
                     this, &showWin_angleEncoder::slot_get_angle);
 
-             qDebug() << "first new motor ";
+             qDebug() << "(In win)first new motor ";
         }
 
 //        // 这个定时器的目的是数值框的显示，因为接收数据的频率很高，但是数值框显示频率没必要那么高
@@ -68,7 +68,7 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
         connect(&_timer_savefile, &QTimer::timeout, this, &showWin_angleEncoder::save_data);
     } else {
         FILE_SAVE = false;
-        qDebug() << "do not save file!";
+        qDebug() << "(In win)do not save file!";
     }
 
     /********************** qt特性配置 **********************/
@@ -78,7 +78,7 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
 
 showWin_angleEncoder::~showWin_angleEncoder()
 {
-    qDebug() << "encoder window destroyed";
+    qDebug() << "(In win)encoder window destroyed";
     qDebug() << "------------------------";
 
     delete ui;
@@ -94,12 +94,12 @@ void showWin_angleEncoder::on_btn_ok_clicked()
 {
     if (_motor != nullptr) {
         delete _motor;
-        qDebug() << "motor delete succeed";
+        qDebug() << "(In win)motor delete succeed";
     }
 
     if (_data_save != nullptr) {
         delete _data_save;
-        qDebug() << "data_save and delete succeed!";
+        qDebug() << "(In win)data_save and delete succeed!";
     }
 
     this->close();
@@ -180,7 +180,7 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         /********************** 文件保存相关 **********************/
         // 保存缓冲区中残余的数据
         _timer_savefile.stop();
-        qDebug() << "data_buf_size_when_close: " << save_data_buf_angle_motor.size();
+        qDebug() << "(In win)data_buf_size_when_close: " << save_data_buf_angle_motor.size();
         if (!save_data_buf_angle_motor.empty()) {
             QTextStream out(&file);
             out.setCodec("UTF-8");
@@ -189,7 +189,7 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
                 out << time_stamp << "," << dataPoint.value << "\n";
                 time_stamp++;
             }
-            qDebug() << "finish file writing last!!! ";
+            qDebug() << "(In win)finish file writing last!!! ";
         }
         file.close();
 
@@ -227,7 +227,7 @@ void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、A项信号电压、A项信号电流、B项信号电压、B项信号电流、供电电流、电池电量
-    qDebug() << "处理之后的数据大小为：" << data.size();
+    qDebug() << "(In win)处理之后的数据大小为：" << data.size();
     /*********************** 供电电压 *****************************/
     double sup_vol = data[0];
     ui->lineE_supply_voltage->setText(QString::number(sup_vol));
@@ -415,14 +415,14 @@ void showWin_angleEncoder::on_btn_run_stop_toggled(bool checked)
 {
     if (checked) {
         ui->btn_run_stop->setText("停止");
-        qDebug() << "UI 运行 cur id" << QThread::currentThreadId();
+        qDebug() << "(In win)UI 运行 cur id" << QThread::currentThreadId();
 
         // 发送配置信号
         emit signal_setConfigModbus();
 
     } else {
         ui->btn_run_stop->setText("运行");
-        qDebug() << "UI 停止 cur id" << QThread::currentThreadId();
+        qDebug() << "(In win)UI 停止 cur id" << QThread::currentThreadId();
 
         // 发送关闭信号
         emit signal_closeOpenModbus();

@@ -2,7 +2,14 @@
 
 Resis::Resis(QObject *parent) : QObject(parent)
 {
-
+    // 设置定时器，为了能够切换电阻挡位的时候维持两秒，不至于跳变
+    m_timer = new QTimer(this);
+    m_timer->setInterval(2000);
+    allowChange = true;
+    connect(m_timer, &QTimer::timeout, this, [=](){
+        allowChange = true;
+        m_timer->stop();
+    });
 }
 
 /***************************************************************
@@ -91,7 +98,119 @@ void Resis::stop_acquire()
 void Resis::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
+    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
+    if (data.size() != channel_final.length()) {
+        qDebug() << "in AE:通道和接收数据的size不一致！";
+        return;
+    }
 
-    // 目前还没做转化，直接发送原始数据
-    emit send_ni9205_to_ui(data);
+    int len = data.size();
+    QVector<double> data_after_process;
+
+    // 判断哪些通道被选中
+    QVector<QString> channel_choosed;
+    QString selected_channel_str = get_channel();
+    QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
+
+    for (int ch_num = 1; ch_num <= 5; ch_num++) {
+        if (selected_channel_arr.contains(ch_num + 9)) {
+            QString dir = "cDAQ2Mod2/port0/line" +
+                    QString::number(4+2*ch_num) + ":" +
+                    QString::number(5+2*ch_num);
+            qDebug() << "(In resis)dir: " << dir;
+
+            channel_choosed.append(dir);
+        }
+    }
+
+    // 电阻
+    for (int i = 0; i <= len - 2; i++) {
+        double vol = data[i];
+        double resis = map_from_vol_to_resis(vol, channel_choosed[i]);
+        data_after_process.append(resis);
+    }
+
+    // 电池电量
+    double bat = data[len - 1];
+    data_after_process.append(bat);
+
+    // 组合成一个vector发出去，data中数据顺序如下：
+    // 电阻 * (len - 1)、电池电量
+    emit send_ni9205_to_ui(data_after_process);
+}
+
+/***************************************************************
+  *  @brief
+  *  @param     无
+  *  @note      功能函数：实现电压到电阻的映射
+  *  @Sample usage:
+ **************************************************************/
+double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
+{
+    double vol = std::min(voltage, 4.9999);
+    double resis = 0;
+    switch (rType) {
+    case RType::high:
+        resis = vol * (1e6 + 3.5) / (5 - vol);
+        // 下面对电阻值进行修正
+
+        break;
+    case RType::middle:
+        resis = vol * (1e4 + 3.5) / (5 - vol);
+        // 下面对电阻值进行修正
+
+        break;
+    case RType::low:
+        resis = vol / ((1.25 / 120) + 5e-4);
+        // 下面对电阻值进行修正
+
+        break;
+    default:
+        break;
+    }
+
+    qDebug() << "vol: " << vol << ", resis: " << resis;
+    RType rTempType = RType::middle;
+    // 下面的判断条件待定
+    if (resis < 200) {
+        rTempType = RType::low;
+    }else if(resis < 5e4 && resis > 220) {
+        rTempType = RType::middle;
+    }else if (resis > 5e4 && resis < 2e7) {
+        rTempType = RType::high;
+    }
+
+    // 下面进行测电阻档位选择
+    if(rTempType != rType && allowChange){
+        m_timer->start();
+        allowChange = false;
+        rType = rTempType;
+        TaskHandle taskHandleSwitch;
+        DAQmxCreateTask("ASSIST", &taskHandleSwitch);
+
+        // 这里的数字io要根据用户的选择来变动
+        DAQmxCreateDOChan(taskHandleSwitch, DI_str.toStdString().c_str(), "", DAQmx_Val_ChanPerLine);
+
+        uInt8 writeArray[2];
+        int32 writeSuccessNum;
+        if(rType == RType::low){
+            writeArray[0] = 0;
+            writeArray[1] = 1;
+            qDebug() << "R LOW!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+        }else if(rType == RType::middle){
+            writeArray[0] = 0;
+            writeArray[1] = 0;
+            qDebug() << "R MIDDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+        }else if(rType == RType::high){
+            writeArray[0] = 1;
+            writeArray[1] = 0;
+            qDebug() << "R HIGH!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+        }
+        int error = DAQmxWriteDigitalLines(taskHandleSwitch, 1, true, -1,
+                                           DAQmx_Val_GroupByChannel, writeArray, &writeSuccessNum, NULL);
+        qDebug() << QString::number(error);
+        DAQmxClearTask(taskHandleSwitch);
+    }
+
+    return resis;
 }

@@ -58,11 +58,43 @@ void showWin_measureResis::on_btn_start_finish_mea_toggled(bool checked)
   *  @brief     接收电阻值 并在数值框中显示
   *  @param     无
   *  @note      槽函数——数值框
+  *          电阻 * (len - 1)、电池电量
   *  @Sample usage:
  **************************************************************/
-void showWin_measureResis::slot_get_resis_and_show(QVector<double> resis)
+void showWin_measureResis::slot_get_resis_and_show(QVector<double> data)
 {
+    /****************************** 新板 *************************************/
+    // 接收到的data中数据顺序如下：
+    // 电阻 * (len - 1)、电池电量
+    int total_len = data.size();
+    qDebug() << "处理之后的数据大小为：" << total_len;
 
+    /*********************** 电阻数值框显示 *************************/
+    QString selected_channel_str = _resis->get_channel();
+    QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
+
+    int start_idx = 0;
+
+    for (int ch_num = 1; ch_num <= 5; ch_num++) {
+        if (selected_channel_arr.contains(ch_num + 9)) {
+            QString lineE_name = "lineE_show_resis_" + QString::number(ch_num);
+            QLineEdit *lineE = this->findChild<QLineEdit*>(lineE_name);
+            lineE->setText(QString::number(data[start_idx]));
+
+            start_idx++;
+        }
+    }
+
+    /*********************** 电池电量 *****************************/
+    double bat = data[total_len - 1];
+    ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
+    ui->pBar_battery->setMinimum(0);                   // 最小值
+    ui->pBar_battery->setMaximum(24);                   // 最大值
+    ui->pBar_battery->setValue(bat);                  // 当前进度
+    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+                    / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 }
 
 /***************************************************************
