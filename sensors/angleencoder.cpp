@@ -88,7 +88,7 @@ void AngleEncoder::start_acquire()
     channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
                             chToStr(CH_BAT);
-    qDebug() << "fi: " << channel_final;
+    qDebug() << "(In AE)fi: " << channel_final;
 
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
@@ -136,8 +136,9 @@ void AngleEncoder::stop_acquire()
 void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
-    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
-    if (data.size() != channel_final.length()) {
+//    qDebug() << "(In AE)通道size: " << Assist::extractNumbers(channel_final).size()
+//             << " 接收数据size: " << data.size();
+    if (data.size() != Assist::extractNumbers(channel_final).size()) {
         qDebug() << "in AE:通道和接收数据的size不一致！";
         return;
     }

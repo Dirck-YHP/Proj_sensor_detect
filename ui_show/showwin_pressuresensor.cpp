@@ -228,10 +228,10 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
  **************************************************************/
 void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
 {
-    QString pressure = QString::number(data[0]) + "Pa...?";
+    QString pressure = QString::number(data[0]);
 
     /******************** 压力数值框显示 *********************/
-    ui->lineE_hydra_val->setText(pressure);
+    ui->lineE_hydra_val->setText(pressure + "Pa...?");
 
     /********************* 压力画图 **********************/
     int length = 1;

@@ -27,6 +27,7 @@ void DataAcquireAI::run()
         // 获取通道
         DAQmxGetTaskNumChans(_task, &_channel_num);
 
+//        qDebug() << "(In acq_ai) sampPerChanRead: " << _sampsPerChanRead << "chan: " << _channel_num;
         // LowPass
         for (int i = 0; i < _sampsPerChanRead * _channel_num; i++) {
             data[i] = _filters[i / _sampsPerChanRead].update(data[i]);
@@ -34,7 +35,7 @@ void DataAcquireAI::run()
 
         // 发送数据
         if(_sampsPerChanRead > 0) emit send_data(QVector<double>(data, data + _sampsPerChanRead * _channel_num));
-        else L_ERROR("没有采集到数据！");
+        else qDebug() << "没有采集到数据！";
 
         QThread::msleep(20);
     }
@@ -56,6 +57,7 @@ void DataAcquireAI::__init__(QString channel)
     // 将字符串形式的通道转化成数组
     idx = str_to_int(channel);
 
+    qDebug() << "(In acq_ai)idx: " << idx;
     // 配置通道
     for (int i = 0; i < idx.size(); i++) {
         double U = choose_min_max(idx[i]);
@@ -134,23 +136,20 @@ double DataAcquireAI::choose_min_max(int channel)
     case 3:
     case 4:
     case 5:
-        U = 5.0;
-        break;
     case 6:
     case 7:
     case 8:
     case 9:
     case 10:
     case 11:
-        U = 10.0;
-        break;
     case 12:
     case 13:
     case 14:
     case 15:
     case 16:
     case 17:
-        U = 0.2;
+    case 31:
+        U = 10;
         break;
     }
 

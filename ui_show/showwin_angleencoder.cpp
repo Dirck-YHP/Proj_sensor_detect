@@ -128,25 +128,20 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         ui->plot_angle->yAxis->setLabel("Y");
         ui->plot_angle->yAxis->setRange(-10, 10);
 
-        // 两条曲线：编码器角度 + 电机角度
-        for (int i = 0; i < 2; i++) {
-            ui->plot_angle->addGraph();
-        }
-
         /********************** ni 9205相关 **********************/
         connect(_angle_encoder, &AngleEncoder::send_vol_cur_to_ui,
                 this, &showWin_angleEncoder::slot_get_vol_cur_and_show);
 
 
         /********************** 脉冲图参数配置 **********************/
-        ui->plot_current->clearGraphs();
-        ui->plot_current->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-        ui->plot_current->xAxis->setLabel("time/s");
-        ui->plot_current->yAxis->setLabel("Y");
-        ui->plot_current->yAxis->setRange(-1, 3);
+        ui->plot_impulse->clearGraphs();
+        ui->plot_impulse->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+        ui->plot_impulse->xAxis->setLabel("time/s");
+        ui->plot_impulse->yAxis->setLabel("Y");
+        ui->plot_impulse->yAxis->setRange(-1, 3);
 
         for (int i = 0; i < 6; i++) {
-            ui->plot_current->addGraph();
+            ui->plot_impulse->addGraph();
         }
 
         /********************** ni 9403相关 **********************/
@@ -178,20 +173,22 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         ui->btn_start_finish_mea->setText("开始测量");
 
         /********************** 文件保存相关 **********************/
-        // 保存缓冲区中残余的数据
-        _timer_savefile.stop();
-        qDebug() << "(In win)data_buf_size_when_close: " << save_data_buf_angle_motor.size();
-        if (!save_data_buf_angle_motor.empty()) {
-            QTextStream out(&file);
-            out.setCodec("UTF-8");
-            // 遍历数据并写入文件
-            for (const SensorData& dataPoint : save_data_buf_angle_motor) {
-                out << time_stamp << "," << dataPoint.value << "\n";
-                time_stamp++;
+        if (FILE_SAVE) {
+            // 保存缓冲区中残余的数据
+            _timer_savefile.stop();
+            qDebug() << "(In win)data_buf_size_when_close: " << save_data_buf_angle_motor.size();
+            if (!save_data_buf_angle_motor.empty()) {
+                QTextStream out(&file);
+                out.setCodec("UTF-8");
+                // 遍历数据并写入文件
+                for (const SensorData& dataPoint : save_data_buf_angle_motor) {
+                    out << time_stamp << "," << dataPoint.value << "\n";
+                    time_stamp++;
+                }
+                qDebug() << "(In win)finish file writing last!!! ";
             }
-            qDebug() << "(In win)finish file writing last!!! ";
+            file.close();
         }
-        file.close();
 
         /********************** 数据采集相关 **********************/
         _angle_encoder->stop_acquire();     // 停止采集
@@ -227,7 +224,7 @@ void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、A项信号电压、A项信号电流、B项信号电压、B项信号电流、供电电流、电池电量
-    qDebug() << "(In win)处理之后的数据大小为：" << data.size();
+//    qDebug() << "(In win)处理之后的数据大小为：" << data.size();
     /*********************** 供电电压 *****************************/
     double sup_vol = data[0];
     ui->lineE_supply_voltage->setText(QString::number(sup_vol));
@@ -242,11 +239,11 @@ void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
 
     /*********************** B项信号电压 *****************************/
     double sig_vol_B = data[3];
-    ui->lineE_signal_voltage_A->setText(QString::number(sig_vol_B));
+    ui->lineE_signal_voltage_B->setText(QString::number(sig_vol_B));
 
     /*********************** B项信号电流 *****************************/
     double sig_cur_B = data[4];
-    ui->lineE_signal_current_A->setText(QString::number(sig_cur_B));
+    ui->lineE_signal_current_B->setText(QString::number(sig_cur_B));
 
     /*********************** 供电电流 *****************************/
     double sup_cur = data[5];
@@ -260,7 +257,7 @@ void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
     ui->pBar_battery->setValue(bat);                  // 当前进度
     double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 
 }
@@ -290,10 +287,10 @@ void showWin_angleEncoder::slot_get_pulse_and_plot(QVector<QVector<double> > dat
         QPair<QVector<double>, QVector<double>> x_and_y;
         x_and_y = Assist::make_di_plot_better(x, data[i], i);
 
-        ui->plot_current->graph(i)->setData(x_and_y.first, x_and_y.second, true);
+        ui->plot_impulse->graph(i)->setData(x_and_y.first, x_and_y.second, true);
     }
-    ui->plot_current->rescaleAxes();       // 自适应大小
-    ui->plot_current->replot();
+    ui->plot_impulse->rescaleAxes();       // 自适应大小
+    ui->plot_impulse->replot();
 }
 
 /***************************************************************
@@ -304,12 +301,15 @@ void showWin_angleEncoder::slot_get_pulse_and_plot(QVector<QVector<double> > dat
  **************************************************************/
 void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
 {
-    QString angle = QString::number(data[0]) + "°";
+    double angle = data[0];
 
     /******************** 角度数值框显示 *********************/
-    ui->lineE_encoder_angle->setText(angle);
+    ui->lineE_encoder_angle->setText(QString::number(angle) + "°");
 
     /********************** 角度画图 ***********************/
+    // 两条曲线之一：编码器角度
+    ui->plot_angle->addGraph();
+
     int length = 1;
     QVector<double> x(length);
     int point_count = ui->plot_angle->graph(0)->dataCount();
@@ -319,16 +319,19 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
         x[i] = i + point_count;
     }
 
+    QVector<double> y = {angle};
     // 画图，一次画一个点
-    ui->plot_angle->graph(0)->addData(x, QVector<double>(angle.toDouble()), true);
+    ui->plot_angle->graph(0)->addData(x, y, true);
 
     ui->plot_angle->rescaleAxes();       // 自适应大小
     ui->plot_angle->replot();
 
     /******************** 文件保存 *********************/
-    // 数据首先都放到缓冲区中
-    double angle_encoder = data[0];
-    _data_save->collectData(&save_data_buf_angle_encoder, angle_encoder);
+    if (FILE_SAVE) {
+        // 数据首先都放到缓冲区中
+        double angle_encoder = data[0];
+        _data_save->collectData(&save_data_buf_angle_encoder, angle_encoder);
+    }
 }
 
 /***************************************************************
@@ -369,14 +372,17 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
 void showWin_angleEncoder::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
-//    qDebug() << "ui : " << _motor_angle;
+    qDebug() << "(In Win)motor angle: " << _motor_angle;
     /******************** 角度数值框显示 *********************/
     ui->lineE_motor_angle->setText(QString::number(_motor_angle));
 
     /******************** 角度画图 *********************/
+    // 两条曲线之一：电机角度
+    ui->plot_angle->addGraph();
+
     int length = 1;
     QVector<double> x(length);
-    int point_count = ui->plot_angle->graph(1)->dataCount();
+    int point_count = ui->plot_angle->graph(0)->dataCount();
 
     // 确定画图的横轴
     for (int i = 0; i < length; i++) {
@@ -384,14 +390,17 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
     }
 
     // 画图，一次画一个点
-    ui->plot_angle->graph(0)->addData(x, QVector<double>(_motor_angle), true);
+    QVector<double> y = {_motor_angle};
+    ui->plot_angle->graph(0)->addData(x, y, true);
 
     ui->plot_angle->rescaleAxes();       // 自适应大小
     ui->plot_angle->replot();
 
     /******************** 文件保存 *********************/
-    // 数据首先都放到缓冲区中
-    _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
+    if (FILE_SAVE) {
+        // 数据首先都放到缓冲区中
+        _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
+    }
 }
 
 /***************************************************************

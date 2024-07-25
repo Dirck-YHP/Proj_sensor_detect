@@ -33,7 +33,7 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
             connect(_motor, &Motor::send_angle_to_ui,
                     this, &showWin_angleSensor::slot_get_angle);
 
-             qDebug() << "first new motor ";
+             qDebug() << "(In Win)first new motor ";
         }
 
 //        // 这个定时器的目的是数值框的显示，因为接收数据的频率很高，但是数值框显示频率没必要那么高
@@ -65,7 +65,7 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
         connect(&_timer_savefile, &QTimer::timeout, this, &showWin_angleSensor::save_data);
     } else {
         FILE_SAVE = false;
-        qDebug() << "do not save file!";
+        qDebug() << "(In Win)do not save file!";
     }
 
     /********************** qt特性配置 **********************/
@@ -75,7 +75,7 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
 
 showWin_angleSensor::~showWin_angleSensor()
 {
-    qDebug() << "angle window destroyed";
+    qDebug() << "(In Win)angle window destroyed";
     qDebug() << "------------------------";
 
     delete ui;
@@ -91,12 +91,12 @@ void showWin_angleSensor::on_btn_ok_clicked()
 {
     if (_motor != nullptr) {
         delete _motor;
-        qDebug() << "motor delete succeed";
+        qDebug() << "(In Win)motor delete succeed";
     }
 
     if (_data_save != nullptr) {
         delete _data_save;
-        qDebug() << "data_save and delete succeed!";
+        qDebug() << "(In Win)data_save and delete succeed!";
     }
 
     this->close();
@@ -123,7 +123,7 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
         ui->plot_angle->yAxis->setLabel("Y");
         ui->plot_angle->yAxis->setRange(-10, 10);
 
-        channel_num = 2;
+        channel_num = 1;
         // Graph数量 = 角位移传感器角度(1) + 电机(1)
         for (int i = 0; i < channel_num; i++) {
             ui->plot_angle->addGraph();
@@ -155,20 +155,22 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
         ui->btn_start_finish_mea->setText("开始测量");
 
         /********************** 文件保存相关 **********************/
-        // 保存缓冲区中残余的数据
-        _timer_savefile.stop();
-        qDebug() << "data_buf_size_when_close: " << save_data_buf_angle_motor.size();
-        if (!save_data_buf_angle_motor.empty()) {
-            QTextStream out(&file);
-            out.setCodec("UTF-8");
-            // 遍历数据并写入文件
-            for (const SensorData& dataPoint : save_data_buf_angle_motor) {
-                out << time_stamp << "," << dataPoint.value << "\n";
-                time_stamp++;
+        if (FILE_SAVE) {
+            // 保存缓冲区中残余的数据
+            _timer_savefile.stop();
+            qDebug() << "data_buf_size_when_close: " << save_data_buf_angle_motor.size();
+            if (!save_data_buf_angle_motor.empty()) {
+                QTextStream out(&file);
+                out.setCodec("UTF-8");
+                // 遍历数据并写入文件
+                for (const SensorData& dataPoint : save_data_buf_angle_motor) {
+                    out << time_stamp << "," << dataPoint.value << "\n";
+                    time_stamp++;
+                }
+                qDebug() << "finish file writing last!!! ";
             }
-            qDebug() << "finish file writing last!!! ";
+            file.close();
         }
-        file.close();
 
         /********************** 数据采集相关 **********************/
         _angle_sensor->stop_acquire();
@@ -205,7 +207,7 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、信号电压、信号电流、供电电流、角度、电池电量
-    qDebug() << "处理之后的数据大小为：" << data.size();
+    qDebug() << "(In Win)处理之后的数据大小为：" << data.size();
     /*********************** 供电电压 *****************************/
     double sup_vol = data[0];
     ui->lineE_supply_voltage->setText(QString::number(sup_vol));
@@ -227,19 +229,19 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     /************* 角度数值框显示 **************/
     ui->lineE_sensor_angle->setText(QString::number(angle_sensor));
     /************* 角度画图 *******************/
-    int length = 1;
-    QVector<double> x(length);
-    int point_count = ui->plot_angle->graph(0)->dataCount();
+//    int length = 1;
+//    QVector<double> x(length);
+//    int point_count = ui->plot_angle->graph(0)->dataCount();
 
-    // 确定画图的横轴
-    for (int i = 0; i < length; i++) {
-        x[i] = i + point_count;
-    }
+//    // 确定画图的横轴
+//    for (int i = 0; i < length; i++) {
+//        x[i] = i + point_count;
+//    }
 
-    // 画图，一次画一个点
-    ui->plot_angle->graph(0)->addData(x, QVector<double>(angle_sensor), true);
-    ui->plot_angle->rescaleAxes();       // 自适应大小
-    ui->plot_angle->replot();
+//    // 画图，一次画一个点
+//    ui->plot_angle->graph(0)->addData(x, QVector<double>(angle_sensor), true);
+//    ui->plot_angle->rescaleAxes();       // 自适应大小
+//    ui->plot_angle->replot();
 
     /*********************** 电池电量 *****************************/
     double bat = data[5];
@@ -249,12 +251,14 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     ui->pBar_battery->setValue(bat);                  // 当前进度
     double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 
     /********************文件保存*********************/
     // 数据首先都放到缓冲区中
-    _data_save->collectData(&save_data_buf_angle_sensor, angle_sensor);
+    if (FILE_SAVE) {
+        _data_save->collectData(&save_data_buf_angle_sensor, angle_sensor);
+    }
 }
 
 

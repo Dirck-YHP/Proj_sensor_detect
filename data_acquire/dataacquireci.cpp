@@ -64,6 +64,7 @@ void DataAcquireCI::run() {
     while (!STOP) {
         DAQmxReadCounterF64(_task, -1, -1, data, DATA_SIZE, &_sampsPerChanRead, NULL);
 
+//        qDebug() << "(In acq_ci)" << _sampsPerChanRead;
         // 发送信号到上层【一维数组】
         emit send_data(QVector<double>(data, data + _sampsPerChanRead));
     }
