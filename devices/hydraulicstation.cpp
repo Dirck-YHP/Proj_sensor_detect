@@ -5,7 +5,7 @@ HydraulicStation::HydraulicStation(QObject *parent) : QObject(parent)
     // 线程 Begin ----------------------------
     serial_port_com = new SerialPortCom();
     thread_serial_port = new QThread;
-    qDebug() << "fisrt new serialport";
+    qDebug() << "(In hydra)fisrt new serialport";
 
     serial_port_com->moveToThread(thread_serial_port);
     // 回收
@@ -43,7 +43,7 @@ HydraulicStation::~HydraulicStation()
 void HydraulicStation::build_connection()
 {
     serial_port_com->serial_port_connect();
-    qDebug() << "serial build connection";
+    qDebug() << "(In hydra)serial build connection";
 }
 
 /***************************************************************
@@ -55,7 +55,7 @@ void HydraulicStation::build_connection()
 void HydraulicStation::break_connection()
 {
     serial_port_com->serial_port_break();
-    qDebug() << "serial break connection";
+    qDebug() << "(In hydra)serial break connection";
 }
 
 /***************************************************************
@@ -107,7 +107,7 @@ void HydraulicStation::get_serial_data(QString rev_data)
     _tik_num++;
     if (_tik_num >= 1) {                   // 接收到1个信号就发送，也就是20ms发送一次数据
         _tik_num = 0;
-//        qDebug() << "vec_size: " << vec_rev_data.size();
+//        qDebug() << "(In hydra)vec_size: " << vec_rev_data.size();
 
         emit send_press_to_ui(vec_rev_data);
         vec_rev_data.clear();
@@ -123,7 +123,7 @@ void HydraulicStation::get_serial_data(QString rev_data)
  **************************************************************/
 void HydraulicStation::get_config_signal()
 {
-    qDebug() << "收到界面的配置信号";
+    qDebug() << "(In hydra)收到界面的配置信号";
     emit signal_set_config_serial_port();
 }
 
@@ -135,7 +135,7 @@ void HydraulicStation::get_config_signal()
  **************************************************************/
 void HydraulicStation::get_close_signal()
 {
-    qDebug() << "收到界面的关闭信号";
+    qDebug() << "(In hydra)收到界面的关闭信号";
     emit signal_close_seriao_port();
 }
 

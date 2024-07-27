@@ -74,6 +74,20 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
     /********************** qt特性配置 **********************/
     // Set the attribute to delete the window when it is closed
     setAttribute(Qt::WA_DeleteOnClose);
+
+    ui->plot_angle->clearGraphs();
+    ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->plot_angle->xAxis->setLabel("time/s");
+    ui->plot_angle->yAxis->setLabel("Y");
+    ui->plot_angle->yAxis->setRange(-10, 10);
+
+    // 两条曲线
+    for (int i = 0; i < 2; i++) {
+        ui->plot_angle->addGraph();
+    }
+
+    ui->plot_angle->rescaleAxes();       // 自适应大小
+    ui->plot_angle->replot();
 }
 
 showWin_angleEncoder::~showWin_angleEncoder()
@@ -122,11 +136,16 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         // 开始画图，先测试，不考虑下面的控件命名，编码器的9205后续不需要画图了，9401需要和电机的角度画在一起
         /********************** 角度图参数配置 **********************/
 //        channel_num = Assist::extractNumbers(_angle_encoder->get_channel()).size();
-        ui->plot_angle->clearGraphs();
-        ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-        ui->plot_angle->xAxis->setLabel("time/s");
-        ui->plot_angle->yAxis->setLabel("Y");
-        ui->plot_angle->yAxis->setRange(-10, 10);
+//        ui->plot_angle->clearGraphs();
+//        ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+//        ui->plot_angle->xAxis->setLabel("time/s");
+//        ui->plot_angle->yAxis->setLabel("Y");
+//        ui->plot_angle->yAxis->setRange(-10, 10);
+
+//        // 两条曲线
+//        for (int i = 0; i < 2; i++) {
+//            ui->plot_angle->addGraph();
+//        }
 
         /********************** ni 9205相关 **********************/
         connect(_angle_encoder, &AngleEncoder::send_vol_cur_to_ui,
@@ -307,9 +326,6 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
     ui->lineE_encoder_angle->setText(QString::number(angle) + "°");
 
     /********************** 角度画图 ***********************/
-    // 两条曲线之一：编码器角度
-    ui->plot_angle->addGraph();
-
     int length = 1;
     QVector<double> x(length);
     int point_count = ui->plot_angle->graph(0)->dataCount();
@@ -322,9 +338,6 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
     QVector<double> y = {angle};
     // 画图，一次画一个点
     ui->plot_angle->graph(0)->addData(x, y, true);
-
-    ui->plot_angle->rescaleAxes();       // 自适应大小
-    ui->plot_angle->replot();
 
     /******************** 文件保存 *********************/
     if (FILE_SAVE) {
@@ -377,12 +390,9 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
     ui->lineE_motor_angle->setText(QString::number(_motor_angle));
 
     /******************** 角度画图 *********************/
-    // 两条曲线之一：电机角度
-    ui->plot_angle->addGraph();
-
     int length = 1;
     QVector<double> x(length);
-    int point_count = ui->plot_angle->graph(0)->dataCount();
+    int point_count = ui->plot_angle->graph(1)->dataCount();
 
     // 确定画图的横轴
     for (int i = 0; i < length; i++) {
@@ -391,10 +401,7 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
 
     // 画图，一次画一个点
     QVector<double> y = {_motor_angle};
-    ui->plot_angle->graph(0)->addData(x, y, true);
-
-    ui->plot_angle->rescaleAxes();       // 自适应大小
-    ui->plot_angle->replot();
+    ui->plot_angle->graph(1)->addData(x, y, true);
 
     /******************** 文件保存 *********************/
     if (FILE_SAVE) {

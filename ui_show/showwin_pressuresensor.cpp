@@ -25,7 +25,7 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
         connect(this, &showWin_pressureSensor::signal_closeOpen,
                 _hydraulic_station, &HydraulicStation::get_close_signal);
 
-        qDebug() << "first new HydraulicStation and build conn";
+        qDebug() << "(In Win)first new HydraulicStation and build conn";
     }
 
     // 这个定时器的目的是数值框的显示，因为接收数据频率很高，但是数值框没必要那么高
@@ -47,7 +47,7 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
         connect(&_timer_savefile, &QTimer::timeout, this, &showWin_pressureSensor::save_data);
     } else {
         FILE_SAVE = false;
-        qDebug() << "do not save file!";
+        qDebug() << "(In Win)do not save file!";
     }
 
     /********************** qt特性配置 **********************/
@@ -57,7 +57,7 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
 
 showWin_pressureSensor::~showWin_pressureSensor()
 {
-    qDebug() << "pressure window destroyed";
+    qDebug() << "(In Win)pressure window destroyed";
     delete ui;
 }
 
@@ -79,10 +79,10 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
                 this, &showWin_pressureSensor::slot_plot_press_from_hydraSta);
 
         /************************ 压力传感器 ************************/
-        _pressure_sensor->start_acquire();      // 开始采集
+//        _pressure_sensor->start_acquire();      // 开始采集
 
-        connect(_pressure_sensor, &PressureSensor::send_vol_cur_pres_to_ui,
-                this, &showWin_pressureSensor::slot_plot_press_from_sensor);
+//        connect(_pressure_sensor, &PressureSensor::send_vol_cur_pres_to_ui,
+//                this, &showWin_pressureSensor::slot_plot_press_from_sensor);
 
         /********************** 画图参数配置 **********************/
         ui->plot_pressure->clearGraphs();
@@ -91,12 +91,13 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
         ui->plot_pressure->yAxis->setLabel("Y");
         ui->plot_pressure->yAxis->setRange(-10, 10);
 
-        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
-        qDebug() << "pre_channel_choosed: " << channel_num;
-        // Graph数量 = 选择的压力传感器个数(channel_num) + 液压站(1)
-        for (int i = 0; i < channel_num + 1; i++) {
+//        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
+//        qDebug() << "(In Win)pre_channel_choosed: " << channel_num;
+//        // Graph数量 = 选择的压力传感器个数(channel_num) + 液压站(1)
+//        channel_num = 1;
+//        for (int i = 0; i < channel_num; i++) {
             ui->plot_pressure->addGraph();
-        }
+//        }
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
@@ -124,22 +125,24 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 
         /********************** 文件保存相关 **********************/
         // 保存缓冲区中残余的数据
-        _timer_savefile.stop();
-        qDebug() << "data_buf_size_when_close: " << save_data_buf_hydra.size();
-        if (!save_data_buf_hydra.empty()) {
-            QTextStream out(&file);
-            out.setCodec("UTF-8");
-            // 遍历数据并写入文件
-            for (const SensorData& dataPoint : save_data_buf_hydra) {
-                out << time_stamp << "," << dataPoint.value << "\n";
-                time_stamp++;
+        if (FILE_SAVE) {
+            _timer_savefile.stop();
+            qDebug() << "data_buf_size_when_close: " << save_data_buf_hydra.size();
+            if (!save_data_buf_hydra.empty()) {
+                QTextStream out(&file);
+                out.setCodec("UTF-8");
+                // 遍历数据并写入文件
+                for (const SensorData& dataPoint : save_data_buf_hydra) {
+                    out << time_stamp << "," << dataPoint.value << "\n";
+                    time_stamp++;
+                }
+                qDebug() << "finish file writing last!!! ";
             }
-            qDebug() << "finish file writing last!!! ";
+            file.close();
         }
-        file.close();
 
         /*********************** 压力传感器相关 **********************/
-        _pressure_sensor->stop_acquire();   // 停止采集
+//        _pressure_sensor->stop_acquire();   // 停止采集
     }
 }
 
@@ -153,12 +156,12 @@ void showWin_pressureSensor::on_btn_ok_clicked()
 {
     if (_hydraulic_station != nullptr) {
         delete _hydraulic_station;
-        qDebug() << "HydraulicStation and delete succeed!";
+        qDebug() << "(In Win)HydraulicStation and delete succeed!";
     }
 
     if (_data_save != nullptr) {
         delete _data_save;
-        qDebug() << "data_save and delete succeed!";
+        qDebug() << "(In Win)data_save and delete succeed!";
     }
 
     this->close();
@@ -177,7 +180,7 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     // 接收到的data中数据顺序如下：
     // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
     int total_len = data.size();
-    qDebug() << "处理之后的数据大小为：" << total_len;
+    qDebug() << "(In Win)处理之后的数据大小为：" << total_len;
 
     /*********************** 数值框显示 *****************************/
     show_vol_cur_press(data);
@@ -228,10 +231,10 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
  **************************************************************/
 void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
 {
-    QString pressure = QString::number(data[0]);
+    double pressure = data[0];
 
     /******************** 压力数值框显示 *********************/
-    ui->lineE_hydra_val->setText(pressure + "Pa...?");
+    ui->lineE_hydra_val->setText(QString::number(pressure) + "Pa.?");
 
     /********************* 压力画图 **********************/
     int length = 1;
@@ -244,14 +247,17 @@ void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
     }
 
     // 画图，一次画一个点
-    ui->plot_pressure->graph(0)->addData(x, QVector<double>(pressure.toDouble()), true);
+    QVector<double> y = {pressure};
+    ui->plot_pressure->graph(0)->addData(x, y, true);
 
     ui->plot_pressure->rescaleAxes();       // 自适应大小
     ui->plot_pressure->replot();
 
     /********************文件保存*********************/
     // 数据首先都放到缓冲区中
-    _data_save->collectData(&save_data_buf_hydra, data[0]);
+    if (FILE_SAVE) {
+        _data_save->collectData(&save_data_buf_hydra, data[0]);
+    }
 }
 
 /***************************************************************
