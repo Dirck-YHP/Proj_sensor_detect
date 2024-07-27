@@ -20,7 +20,7 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
         connect(&_timer_savefile, &QTimer::timeout, this, &showWin_proximitySwitch::save_data);
     } else {
         FILE_SAVE = false;
-        qDebug() << "do not save file!";
+        qDebug() << "(In Win)do not save file!";
     }
 
     /********************** qt特性配置 **********************/
@@ -30,7 +30,7 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
 
 showWin_proximitySwitch::~showWin_proximitySwitch()
 {
-    qDebug() << "proximity window destroyed";
+    qDebug() << "(In Win)proximity window destroyed";
     delete ui;
 }
 
@@ -59,7 +59,6 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
 
         _proxi_switch->start_acquire();
 
-        // 需要一系列槽函数：供电电压、供电电流、信号电压、信号电流、是否触发、滑动变阻器距离、电池电量
         connect(_proxi_switch, &ProximitySwitch::send_vol_cur_pul_dis_to_ui,
                 this, &showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show);
 
@@ -72,7 +71,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
 
         // 添加图，两个，一个画距离，一个画触发信号
         // 可能一张图就够了，根据是否触发判断当前这个点要不要画的特殊一点
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             ui->plot_distance->addGraph();
         }
 
@@ -99,20 +98,22 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
         ui->btn_start_finish_mea->setText("开始测量");
 
         /********************** 文件保存相关 **********************/
-        // 保存缓冲区中残余的数据
-        _timer_savefile.stop();
-        qDebug() << "data_buf_size_when_close: " << save_data_buf_variaresis.size();
-        if (!save_data_buf_variaresis.empty()) {
-            QTextStream out(&file);
-            out.setCodec("UTF-8");
-            // 遍历数据并写入文件
-            for (const SensorData& dataPoint : save_data_buf_variaresis) {
-                out << time_stamp << "," << dataPoint.value << "\n";
-                time_stamp++;
+        if (FILE_SAVE) {
+            // 保存缓冲区中残余的数据
+            _timer_savefile.stop();
+            qDebug() << "data_buf_size_when_close: " << save_data_buf_variaresis.size();
+            if (!save_data_buf_variaresis.empty()) {
+                QTextStream out(&file);
+                out.setCodec("UTF-8");
+                // 遍历数据并写入文件
+                for (const SensorData& dataPoint : save_data_buf_variaresis) {
+                    out << time_stamp << "," << dataPoint.value << "\n";
+                    time_stamp++;
+                }
+                qDebug() << "finish file writing last!!! ";
             }
-            qDebug() << "finish file writing last!!! ";
+            file.close();
         }
-        file.close();
 
         /********************** 数据采集相关 **********************/
 //        _variable_resis->stop_acquire();
@@ -184,6 +185,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     _if_pulse = if_Pulse;       // 保存触发状态
 
     /********************* 滑动变阻器距离 **********************/
+    // ---------------- 这里待定 感觉画在一张图里面更合适 ----------
     _distance = data[5];
     /*************** 画距离 ****************/
     int length = 1;
@@ -202,7 +204,10 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
         ui->plot_distance->graph(0)->setPen(QPen(Qt::blue));
     }
 
-    ui->plot_distance->graph(0)->addData(x, QVector<double>(_distance), true);
+    // 画图，一次画一个点
+    QVector<double> y = {_distance};
+
+    ui->plot_distance->graph(0)->addData(x, y, true);
     ui->plot_distance->rescaleAxes();       // 自适应大小
     ui->plot_distance->replot();
 
@@ -249,9 +254,11 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 
     /******************** 文件保存 *********************/
-    // 数据首先都放到缓冲区中
-    _data_save->collectData(&save_data_buf_if_pulse, if_changed);
-    _data_save->collectData(&save_data_buf_variaresis, _distance);
+    if (FILE_SAVE) {
+        // 数据首先都放到缓冲区中
+        _data_save->collectData(&save_data_buf_if_pulse, if_changed);
+        _data_save->collectData(&save_data_buf_variaresis, _distance);
+    }
 }
 
 /***************************************************************
@@ -264,7 +271,7 @@ void showWin_proximitySwitch::on_btn_ok_clicked()
 {
     if (_data_save != nullptr) {
         delete _data_save;
-        qDebug() << "data_save and delete succeed!";
+        qDebug() << "(In Win)data_save and delete succeed!";
     }
 
     this->close();
@@ -279,7 +286,7 @@ void showWin_proximitySwitch::on_btn_ok_clicked()
 void showWin_proximitySwitch::on_btn_repeat_precise_clicked()
 {
     _if_rep_mea = true;
-    qDebug() << "begin repeart precise measure...";
+    qDebug() << "(In Win)begin repeart precise measure...";
 }
 
 /***************************************************************

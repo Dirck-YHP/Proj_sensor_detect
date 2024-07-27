@@ -94,10 +94,10 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 //        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
 //        qDebug() << "(In Win)pre_channel_choosed: " << channel_num;
 //        // Graph数量 = 选择的压力传感器个数(channel_num) + 液压站(1)
-//        channel_num = 1;
-//        for (int i = 0; i < channel_num; i++) {
+        channel_num = 2;
+        for (int i = 0; i < channel_num; i++) {
             ui->plot_pressure->addGraph();
-//        }
+        }
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
@@ -239,7 +239,7 @@ void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
     /********************* 压力画图 **********************/
     int length = 1;
     QVector<double> x(length);
-    int point_count = ui->plot_pressure->graph(0)->dataCount();
+    int point_count = ui->plot_pressure->graph(1)->dataCount();
 
     // 确定画图的横轴
     for (int i = 0; i < length; i++) {
@@ -248,7 +248,7 @@ void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
 
     // 画图，一次画一个点
     QVector<double> y = {pressure};
-    ui->plot_pressure->graph(0)->addData(x, y, true);
+    ui->plot_pressure->graph(1)->addData(x, y, true);
 
     ui->plot_pressure->rescaleAxes();       // 自适应大小
     ui->plot_pressure->replot();

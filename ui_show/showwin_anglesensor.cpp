@@ -68,6 +68,19 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
         qDebug() << "(In Win)do not save file!";
     }
 
+    /********************** 画图参数配置 **********************/
+    ui->plot_angle->clearGraphs();
+    ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->plot_angle->xAxis->setLabel("time/s");
+    ui->plot_angle->yAxis->setLabel("Y");
+    ui->plot_angle->yAxis->setRange(-10, 10);
+
+    channel_num = 2;
+    // Graph数量 = 角位移传感器角度(1) + 电机(1)
+    for (int i = 0; i < channel_num; i++) {
+        ui->plot_angle->addGraph();
+    }
+
     /********************** qt特性配置 **********************/
     // Set the attribute to delete the window when it is closed
     setAttribute(Qt::WA_DeleteOnClose);
@@ -115,19 +128,6 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
 
         /********************** ni9205开始采集 **********************/
         _angle_sensor->start_acquire();
-
-        /********************** 画图参数配置 **********************/
-        ui->plot_angle->clearGraphs();
-        ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-        ui->plot_angle->xAxis->setLabel("time/s");
-        ui->plot_angle->yAxis->setLabel("Y");
-        ui->plot_angle->yAxis->setRange(-10, 10);
-
-        channel_num = 1;
-        // Graph数量 = 角位移传感器角度(1) + 电机(1)
-        for (int i = 0; i < channel_num; i++) {
-            ui->plot_angle->addGraph();
-        }
 
         /***************** 接收传感器发送的电压电流角度 *******************/
         connect(_angle_sensor, &AngleSensor::send_vol_cur_angle_to_ui,
@@ -229,19 +229,21 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     /************* 角度数值框显示 **************/
     ui->lineE_sensor_angle->setText(QString::number(angle_sensor));
     /************* 角度画图 *******************/
-//    int length = 1;
-//    QVector<double> x(length);
-//    int point_count = ui->plot_angle->graph(0)->dataCount();
+    int length = 1;
+    QVector<double> x(length);
+    int point_count = ui->plot_angle->graph(0)->dataCount();
 
-//    // 确定画图的横轴
-//    for (int i = 0; i < length; i++) {
-//        x[i] = i + point_count;
-//    }
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x[i] = i + point_count;
+    }
 
-//    // 画图，一次画一个点
-//    ui->plot_angle->graph(0)->addData(x, QVector<double>(angle_sensor), true);
-//    ui->plot_angle->rescaleAxes();       // 自适应大小
-//    ui->plot_angle->replot();
+    // 画图，一次画一个点
+    QVector<double> y = {angle_sensor};
+
+    ui->plot_angle->graph(0)->addData(x, y, true);
+    ui->plot_angle->rescaleAxes();       // 自适应大小
+    ui->plot_angle->replot();
 
     /*********************** 电池电量 *****************************/
     double bat = data[5];
@@ -272,12 +274,32 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
 void showWin_angleSensor::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
-//    qDebug() << "ui : " << _motor_angle;
+    qDebug() << "(In Win)motor angle: " << _motor_angle;
+    /******************** 角度数值框显示 *********************/
     ui->lineE_motor_angle->setText(QString::number(_motor_angle));
 
+    /******************** 角度画图 *********************/
+    int length = 1;
+    QVector<double> x(length);
+    int point_count = ui->plot_angle->graph(1)->dataCount();
+
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x[i] = i + point_count;
+    }
+
+    // 画图，一次画一个点
+    QVector<double> y = {_motor_angle};
+
+    ui->plot_angle->graph(1)->addData(x, y, true);
+    ui->plot_angle->rescaleAxes();       // 自适应大小
+    ui->plot_angle->replot();
+
     /********************文件保存*********************/
-    // 数据首先都放到缓冲区中
-    _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
+    if (FILE_SAVE) {
+        // 数据首先都放到缓冲区中
+        _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
+    }
 }
 
 /***************************************************************
@@ -301,14 +323,14 @@ void showWin_angleSensor::on_btn_run_stop_toggled(bool checked)
 {
     if (checked) {
         ui->btn_run_stop->setText("停止");
-        qDebug() << "UI 运行 cur id" << QThread::currentThreadId();
+        qDebug() << "(In Win)UI 运行 cur id" << QThread::currentThreadId();
 
         // 发送配置信号
         emit signal_setConfigModbus();
 
     } else {
         ui->btn_run_stop->setText("运行");
-        qDebug() << "UI 停止 cur id" << QThread::currentThreadId();
+        qDebug() << "(In Win)UI 停止 cur id" << QThread::currentThreadId();
 
         // 发送关闭信号
         emit signal_closeOpenModbus();
