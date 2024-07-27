@@ -75,6 +75,7 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
     // Set the attribute to delete the window when it is closed
     setAttribute(Qt::WA_DeleteOnClose);
 
+    /********************** 角度图参数配置 **********************/
     ui->plot_angle->clearGraphs();
     ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->plot_angle->xAxis->setLabel("time/s");
@@ -84,10 +85,20 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
     // 两条曲线
     for (int i = 0; i < 2; i++) {
         ui->plot_angle->addGraph();
+        ui->plot_angle->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
     }
 
-    ui->plot_angle->rescaleAxes();       // 自适应大小
-    ui->plot_angle->replot();
+    /********************** 脉冲图参数配置 **********************/
+    ui->plot_impulse->clearGraphs();
+    ui->plot_impulse->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->plot_impulse->xAxis->setLabel("time/s");
+    ui->plot_impulse->yAxis->setLabel("Y");
+    ui->plot_impulse->yAxis->setRange(-1, 3);
+
+    for (int i = 0; i < 6; i++) {
+        ui->plot_impulse->addGraph();
+        ui->plot_impulse->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
+    }
 }
 
 showWin_angleEncoder::~showWin_angleEncoder()
@@ -134,8 +145,8 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         _angle_encoder->start_acquire();
 
         // 开始画图，先测试，不考虑下面的控件命名，编码器的9205后续不需要画图了，9401需要和电机的角度画在一起
-        /********************** 角度图参数配置 **********************/
-//        channel_num = Assist::extractNumbers(_angle_encoder->get_channel()).size();
+//        /********************** 角度图参数配置 **********************/
+////        channel_num = Assist::extractNumbers(_angle_encoder->get_channel()).size();
 //        ui->plot_angle->clearGraphs();
 //        ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 //        ui->plot_angle->xAxis->setLabel("time/s");
@@ -152,16 +163,17 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
                 this, &showWin_angleEncoder::slot_get_vol_cur_and_show);
 
 
-        /********************** 脉冲图参数配置 **********************/
-        ui->plot_impulse->clearGraphs();
-        ui->plot_impulse->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-        ui->plot_impulse->xAxis->setLabel("time/s");
-        ui->plot_impulse->yAxis->setLabel("Y");
-        ui->plot_impulse->yAxis->setRange(-1, 3);
+//        /********************** 脉冲图参数配置 **********************/
+//        ui->plot_impulse->clearGraphs();
+//        ui->plot_impulse->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+//        ui->plot_impulse->xAxis->setLabel("time/s");
+//        ui->plot_impulse->yAxis->setLabel("Y");
+//        ui->plot_impulse->yAxis->setRange(-1, 3);
 
-        for (int i = 0; i < 6; i++) {
-            ui->plot_impulse->addGraph();
-        }
+//        for (int i = 0; i < 6; i++) {
+//            ui->plot_impulse->addGraph();
+//            ui->plot_impulse->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
+//        }
 
         /********************** ni 9403相关 **********************/
         connect(_angle_encoder, &AngleEncoder::send_pulse_to_ui,
@@ -330,14 +342,19 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
     QVector<double> x(length);
     int point_count = ui->plot_angle->graph(0)->dataCount();
 
+//    qDebug() << "(In Win)dataCnt: " << point_count;
     // 确定画图的横轴
     for (int i = 0; i < length; i++) {
         x[i] = i + point_count;
     }
 
-    QVector<double> y = {angle};
+//    qDebug() << "(In Win)x: " << x;
     // 画图，一次画一个点
+    QVector<double> y = {angle};
+
     ui->plot_angle->graph(0)->addData(x, y, true);
+    ui->plot_angle->rescaleAxes();       // 自适应大小
+    ui->plot_angle->replot();
 
     /******************** 文件保存 *********************/
     if (FILE_SAVE) {
@@ -394,14 +411,19 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
     QVector<double> x(length);
     int point_count = ui->plot_angle->graph(1)->dataCount();
 
+//    qDebug() << "(In Win)dataCnt: " << point_count;
     // 确定画图的横轴
     for (int i = 0; i < length; i++) {
         x[i] = i + point_count;
     }
 
+//    qDebug() << "(In Win)x: " << x;
     // 画图，一次画一个点
     QVector<double> y = {_motor_angle};
+
     ui->plot_angle->graph(1)->addData(x, y, true);
+    ui->plot_angle->rescaleAxes();       // 自适应大小
+    ui->plot_angle->replot();
 
     /******************** 文件保存 *********************/
     if (FILE_SAVE) {
