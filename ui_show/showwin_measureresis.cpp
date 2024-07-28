@@ -67,7 +67,7 @@ void showWin_measureResis::slot_get_resis_and_show(QVector<double> data)
     // 接收到的data中数据顺序如下：
     // 电阻 * (len - 1)、电池电量
     int total_len = data.size();
-    qDebug() << "处理之后的数据大小为：" << total_len;
+    qDebug() << "(In Win)处理之后的数据大小为：" << total_len;
 
     /*********************** 电阻数值框显示 *************************/
     QString selected_channel_str = _resis->get_channel();
@@ -93,7 +93,7 @@ void showWin_measureResis::slot_get_resis_and_show(QVector<double> data)
     ui->pBar_battery->setValue(bat);                  // 当前进度
     double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 }
 

@@ -20,7 +20,7 @@ Resis::Resis(QObject *parent) : QObject(parent)
  **************************************************************/
 void Resis::set_channel(QString channel)
 {
-    qDebug() << "way choosed: " << channel;
+    qDebug() << "(In resis)way choosed: " << channel;
     QVector<int> selected_channel_arr  = Assist::extractNumbers(channel);
 
     _channel = "";
@@ -67,7 +67,7 @@ void Resis::start_acquire()
     // 电阻：(10),...,(14) + 电池电量(31)
     channel_final = get_channel() + "," +
                             chToStr(CH_BAT);
-    qDebug() << "fi: " << channel_final;
+    qDebug() << "(In resis)fi: " << channel_final;
 
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
@@ -98,9 +98,9 @@ void Resis::stop_acquire()
 void Resis::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
-    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
-    if (data.size() != channel_final.length()) {
-        qDebug() << "in AE:通道和接收数据的size不一致！";
+//    qDebug() << "(In resis)通道size: " << channel_final.length() << " 接收数据size: " << data.size();
+    if (data.size() != Assist::extractNumbers(channel_final).size()) {
+        qDebug() << "in resis:通道和接收数据的size不一致！";
         return;
     }
 
@@ -169,7 +169,7 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
         break;
     }
 
-    qDebug() << "vol: " << vol << ", resis: " << resis;
+    qDebug() << "(In resis)vol: " << vol << ", resis: " << resis;
     RType rTempType = RType::middle;
     // 下面的判断条件待定
     if (resis < 200) {
@@ -196,15 +196,15 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
         if(rType == RType::low){
             writeArray[0] = 0;
             writeArray[1] = 1;
-            qDebug() << "R LOW!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+            qDebug() << "(In resis)R LOW!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }else if(rType == RType::middle){
             writeArray[0] = 0;
             writeArray[1] = 0;
-            qDebug() << "R MIDDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+            qDebug() << "(In resis)R MIDDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }else if(rType == RType::high){
             writeArray[0] = 1;
             writeArray[1] = 0;
-            qDebug() << "R HIGH!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+            qDebug() << "(In resis)R HIGH!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }
         int error = DAQmxWriteDigitalLines(taskHandleSwitch, 1, true, -1,
                                            DAQmx_Val_GroupByChannel, writeArray, &writeSuccessNum, NULL);
