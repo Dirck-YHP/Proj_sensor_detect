@@ -186,7 +186,7 @@ void AngleEncoder::rev_data_from_ni9403(QVector<QVector<double> > data_final)
 /***************************************************************
   *  @brief     接收ni9401的角度数据
   *  @param     无
-  *  @note      后续似乎不需要做处理，直接转发就行【画角度图，角度1】
+  *  @note      这里是0~360°，需要上传绝对角度【画角度图，角度1】
   *  @Sample usage:
  **************************************************************/
 void AngleEncoder::rev_data_from_ni9401(QVector<double> data)

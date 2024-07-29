@@ -8,23 +8,6 @@ funcWin_DataReview::funcWin_DataReview(SensorType sensor_type, QWidget *parent) 
 {
     ui->setupUi(this);
 
-//    switch (_sensor_type) {
-//        case SensorType::AngleEncoder:
-//            // 处理角度编码器
-//            break;
-//        case SensorType::AngleSensor:
-//            // 处理角度传感器
-//            break;
-//        case SensorType::ProximitySwitch:
-//            // 处理接近开关
-//            break;
-//        case SensorType::PressureSensor:
-//            // 处理压力传感器
-//            break;
-//        default:
-//            // 可选：处理未知传感器类型
-//            break;
-//    }
 }
 
 funcWin_DataReview::~funcWin_DataReview()
@@ -32,12 +15,45 @@ funcWin_DataReview::~funcWin_DataReview()
     delete ui;
 }
 
+/***************************************************************
+  *  @brief     确认键按下
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
 void funcWin_DataReview::on_btn_ok_clicked()
 {
     this->close();
 }
 
+/***************************************************************
+  *  @brief     选择文件
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
 void funcWin_DataReview::on_btn_choose_file_clicked()
+{
+    switch (_sensor_type) {
+        case SensorType::AngleEncoder:          // 处理角度编码器
+            break;
+        case SensorType::AngleSensor:           // 处理角度传感器
+            break;
+        case SensorType::ProximitySwitch:       // 处理接近开关
+            break;
+        case SensorType::PressureSensor:        // 处理压力传感器
+            file_process_press();
+            break;
+    }
+}
+
+/***************************************************************
+  *  @brief     处理压力传感器的文件
+  *  @param     无
+  *  @note      功能函数
+  *  @Sample usage:
+ **************************************************************/
+void funcWin_DataReview::file_process_press()
 {
     QString filePath = QFileDialog::getOpenFileName(this, "选择文件", "../", "所有文件 (*);;文本文件 (*.txt)");
 

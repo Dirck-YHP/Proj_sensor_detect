@@ -6,6 +6,7 @@
 #include <QRunnable>
 #include <QThread>
 #include <QDebug>
+#include <QMessageBox>
 
 class DataAcquireDI : public QObject, public QRunnable
 {

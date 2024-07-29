@@ -35,8 +35,10 @@ void DataAcquireAI::run()
 
         // 发送数据
         if(_sampsPerChanRead > 0) emit send_data(QVector<double>(data, data + _sampsPerChanRead * _channel_num));
-        else qDebug() << "没有采集到数据！";
+        else {
+            qDebug() << "没有采集到数据！";
 
+        }
         QThread::msleep(20);
     }
 }

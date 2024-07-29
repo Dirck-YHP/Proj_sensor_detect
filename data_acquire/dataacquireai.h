@@ -6,6 +6,7 @@
 #include <QRunnable>
 #include <QRegExp>
 #include <QThread>
+#include <QMessageBox>
 #include "lowpassfilter.h"
 #include "simpleQtLogger.h"
 #include "assist.h"

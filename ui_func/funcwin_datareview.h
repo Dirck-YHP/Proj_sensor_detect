@@ -32,6 +32,11 @@ private:
     Ui::funcWin_DataReview *ui;
     SensorType _sensor_type;
 
+    void file_process_press();          // 压力传感器
+    void file_process_angle_e();        // 角位移编码器
+    void file_process_angle_s();        // 角位移传感器
+    void file_process_proxi();          // 接近开关
+
 private:
 };
 

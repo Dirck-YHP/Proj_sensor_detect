@@ -5,6 +5,7 @@
 #include <NIDAQmx.h>
 #include <QRunnable>
 #include <QThread>
+#include <QMessageBox>
 #include <QDebug>
 
 class DataAcquireCI : public QObject, public QRunnable

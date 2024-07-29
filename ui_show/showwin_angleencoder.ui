@@ -106,7 +106,7 @@
   <widget class="QLineEdit" name="lineE_motor_circle">
    <property name="geometry">
     <rect>
-     <x>460</x>
+     <x>500</x>
      <y>810</y>
      <width>121</width>
      <height>31</height>
@@ -188,7 +188,7 @@
   <widget class="QLineEdit" name="lineE_encoder_angle">
    <property name="geometry">
     <rect>
-     <x>460</x>
+     <x>500</x>
      <y>610</y>
      <width>121</width>
      <height>31</height>
@@ -211,7 +211,7 @@
   <widget class="QLineEdit" name="lineE_motor_angle">
    <property name="geometry">
     <rect>
-     <x>460</x>
+     <x>500</x>
      <y>710</y>
      <width>121</width>
      <height>31</height>
@@ -296,8 +296,8 @@
   <widget class="QPushButton" name="btn_stop_now">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>790</y>
+     <x>660</x>
+     <y>800</y>
      <width>101</width>
      <height>51</height>
     </rect>
@@ -312,7 +312,7 @@
   <widget class="QPushButton" name="btn_run_stop">
    <property name="geometry">
     <rect>
-     <x>600</x>
+     <x>660</x>
      <y>710</y>
      <width>101</width>
      <height>51</height>
