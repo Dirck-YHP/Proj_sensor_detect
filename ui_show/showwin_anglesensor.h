@@ -46,12 +46,16 @@ private slots:
     void on_btn_run_stop_toggled(bool checked);
     void on_btn_stop_now_clicked();
 
+    void on_btn_angle_cali_clicked();
+
 public slots:
     void update_motor_tar_angle(const QString &text);
 
 signals:
     void signal_setConfigModbus();              // 点击“开始”时发送的配置信号
     void signal_closeOpenModbus();              // 点击“停止”时发送的关闭信号
+
+    void signal_angle_cali(double cur_angle);   // 角度校准信号
 
 private:
     Ui::showWin_angleSensor *ui;
@@ -62,6 +66,9 @@ private:
     QTimer _timer_motor;        // 显示数值框显示频率的定时器【暂时没用】
     bool _if_need_motor;        // 是否需要电机，由外界传入
     double _motor_angle;        // 电机的角度
+    int totalTurns = 0;
+    int last_turn = 0;
+    bool fresh_turn = false;    // 重新开始
 
     // 文件保存
     QString _file_save_dir;     // 文件保存路径，由外界传入

@@ -48,6 +48,8 @@ public slots:
     void get_config_signal();
     void get_close_signal();
 
+    void slot_get_angle_cali(double angle_cali);
+
 signals:
     void signal_set_config_modbus();
     void signal_close_modbus();
@@ -55,6 +57,8 @@ signals:
     void send_angle_to_ui(double angle);
 
     void signal_delete();
+
+    void signal_angle_cali(double angle_cali);
 };
 
 #endif // MOTOR_H

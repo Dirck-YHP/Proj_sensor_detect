@@ -51,12 +51,16 @@ private:
     const QString COM = "COM3";
 
     int _read_num = 0;                  // 读到的值
+
+    double _angle_cali;
 public slots:
     void slot_modbus_init();            // 初始化——创定时器
     void slot_modbus_delete();
 
     void slot_configModbus();
     void slot_closeOpneModbus();
+
+    void slot_get_angle_cali(double angle_cali);
 
 signals:
     void send_data(int data);

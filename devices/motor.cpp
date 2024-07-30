@@ -29,6 +29,10 @@ Motor::Motor(QObject *parent) : QObject(parent)
     connect(this, &Motor::signal_close_modbus,
             modbus_com, &Modbus::slot_closeOpneModbus);
 
+    // 接收到来自ui界面的角度校准信号，发送信号给modbus，进行角度校准
+    connect(this, &Motor::signal_angle_cali,
+            modbus_com, &Modbus::slot_get_angle_cali);
+
     // 接收Modbus发送的数据信号，Motor这里转换成角度
     connect(modbus_com, &Modbus::send_data, this, &Motor::rev_data_from_modbus);
 }
@@ -213,4 +217,16 @@ void Motor::get_close_signal()
 {
     qDebug() << "(In motor)收到界面的关闭信号";
     emit signal_close_modbus();
+}
+
+/***************************************************************
+  *  @brief     接收ui的角度校准信号并把目标角度发送给modbus
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
+void Motor::slot_get_angle_cali(double angle_cali)
+{
+    qDebug() << "(In motor)收到校准角度：" << angle_cali;
+    emit signal_angle_cali(angle_cali);
 }

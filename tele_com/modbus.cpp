@@ -90,9 +90,13 @@ void Modbus::enable_motor()
 void Modbus::run_motor()
 {
     qDebug() << "(In modbus)2 RUN cur thread: " << QThread::currentThreadId();
+    qDebug() << "(In modbus)2   : " << _angle_calibration;
     if (!_angle_calibration) {  // 如果不进行角度校准，默认从0开始
         // 设置当前位置为0°
         write_run(0, 1, 0x200);
+    } else {
+        angle_cali();
+        qDebug() << "(In modbus)2 angle_cali!!";
     }
 
 //        // 绝对位移
@@ -153,16 +157,26 @@ void Modbus::stop_motor()
  **************************************************************/
 void Modbus::angle_cali()
 {
-    _angle_calibration = true;
-
+    qDebug() << "(In modbus)now angle cali";
     // 失能状态下，首先写入位置参数
-    disable_motor();     // 先失能
+    disable_motor();            // 先失能
 
-    write_run(0, 1, 0x302); // 写入位置参数
+    write_run(0, 1, 0x302);     // 写入位置参数
     write_run(0, 1, 0x200);     // 设置当前位置
 
-    enable_motor();         // 再使能
-    _angle_calibration = false;
+    // 待定
+    write_run(0, 1, 0x302);     // 写入位置参数
+
+
+    int parameter = _angle_cali * 12800 / 360;
+    write_run(1, 2, parameter);
+    qDebug() << "(In modbus)cali: " << _angle_cali;
+
+    enable_motor();             // 再使能
+
+    // 确保写命令执行完之后再开始读取角度
+    BEGIN_READ = true;
+    qDebug() << "(In modbus)finish angle cali";
 }
 
 /***************************************************************
@@ -357,6 +371,21 @@ void Modbus::slot_closeOpneModbus()
     timer_modbus->stop();
 
     qDebug() << "(In modbus)Modbus关闭。current thread: " << QThread::currentThreadId();
+}
+
+/***************************************************************
+  *  @brief     在Motor中connect。获取校准角度，并进行角度校准
+  *  @param     无
+  *  @note      槽函数——角度校准
+  *  @Sample usage:
+ **************************************************************/
+void Modbus::slot_get_angle_cali(double angle_cali)
+{
+    _angle_calibration = true;
+
+    _angle_cali = angle_cali;
+
+//    _angle_calibration = false;
 }
 
 /***************************************************************

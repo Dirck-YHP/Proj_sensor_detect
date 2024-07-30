@@ -33,6 +33,10 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
             connect(_motor, &Motor::send_angle_to_ui,
                     this, &showWin_angleSensor::slot_get_angle);
 
+            // 用户点击“角度校准”之后会发送这个信号 给电机
+            connect(this, &showWin_angleSensor::signal_angle_cali,
+                    _motor, &Motor::slot_get_angle_cali);
+
              qDebug() << "(In Win)first new motor ";
         }
 
@@ -79,6 +83,7 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
     // Graph数量 = 角位移传感器角度(1) + 电机(1)
     for (int i = 0; i < channel_num; i++) {
         ui->plot_angle->addGraph();
+        ui->plot_angle->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
     }
 
     /********************** qt特性配置 **********************/
@@ -266,6 +271,19 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
 
 /*******************************电机************************************/
 /***************************************************************
+  *  @brief     按键：“角度校准”
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
+void showWin_angleSensor::on_btn_angle_cali_clicked()
+{
+    double cur_angle = ui->lineE_angle_cali->text().toDouble();
+    emit signal_angle_cali(cur_angle);
+    qDebug() << "(In Win)校准信号已发送！";
+}
+
+/***************************************************************
   *  @brief     接收电机发送来的角度并在数值框中显示并【画图，角度2】
   *  @param     无
   *  @note      槽函数——
@@ -275,8 +293,20 @@ void showWin_angleSensor::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
     qDebug() << "(In Win)motor angle: " << _motor_angle;
+    /******************** 电机转动圈数显示 *********************/
+    int cur_turn = _motor_angle / 360;
+//    qDebug() << "(In Win)turn: " << cur_turn << " last_turn: " << last_turn;
+    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
+        totalTurns += 1;
+//        qDebug() << "(In Win)++ ";
+    }
+    if (cur_turn == 0) fresh_turn = false;
+
+    last_turn = cur_turn;
+    ui->lineE_motor_circle->setText(QString::number(totalTurns));
+
     /******************** 角度数值框显示 *********************/
-    ui->lineE_motor_angle->setText(QString::number(_motor_angle));
+    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
 
     /******************** 角度画图 *********************/
     int length = 1;
@@ -324,6 +354,11 @@ void showWin_angleSensor::on_btn_run_stop_toggled(bool checked)
     if (checked) {
         ui->btn_run_stop->setText("停止");
         qDebug() << "(In Win)UI 运行 cur id" << QThread::currentThreadId();
+
+        // 电机转动圈数清零
+        totalTurns = 0;
+        last_turn = 0;
+        fresh_turn = true;
 
         // 发送配置信号
         emit signal_setConfigModbus();
