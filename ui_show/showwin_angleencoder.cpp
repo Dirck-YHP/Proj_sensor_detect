@@ -207,8 +207,9 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
-            QString currentDateTime = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString currentDateTime = "AE_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
             QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
+
             file.setFileName(file_name);
             if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
                 return;
@@ -218,6 +219,7 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
             out << QString("传感器类型：")  << _angle_encoder->get_label().toUtf8()
                 << QString("，编码器每圈脉冲数：") << _angle_encoder->get_pul_per_cir().toUtf8()
                 << QString("，采集通道：") << _angle_encoder->get_channel().toUtf8() << "\n";
+            out << QString("x") << QString("  编码器") << QString(" 电机") << "\n";
 
             _timer_savefile.start();    // 开启定时器，开始保存数据
         }
@@ -229,15 +231,21 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         if (FILE_SAVE) {
             // 保存缓冲区中残余的数据
             _timer_savefile.stop();
-            qDebug() << "(In win)data_buf_size_when_close: " << save_data_buf_angle_motor.size();
+            qDebug() << "(In win)data_buf_size_when_close: "
+                     << save_data_buf_angle_encoder.size()
+                     << save_data_buf_angle_motor.size();
+
             if (!save_data_buf_angle_motor.empty()) {
                 QTextStream out(&file);
                 out.setCodec("UTF-8");
                 // 遍历数据并写入文件
-                for (const SensorData& dataPoint : save_data_buf_angle_motor) {
-                    out << time_stamp << "," << dataPoint.value << "\n";
+                for (int i = 0; i < save_data_buf_angle_encoder.size(); i++) {
+                    out << time_stamp << ":  "
+                        << save_data_buf_angle_encoder[i].value << "    "
+                        << save_data_buf_angle_motor[i].value << "\n";
                     time_stamp++;
                 }
+
                 qDebug() << "(In win)finish file writing last!!! ";
             }
             file.close();
@@ -372,7 +380,6 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
 
     double angle = absolute_angle_encoder;
 //    qDebug() << "(In Win)angle: " << angle << " " << data[0] << " " << last_angle_encoder;
-//    qDebug() << "(In Win)angle: " << data[0];
 
     // 更新上次角度值
     last_angle_encoder = data[0];
@@ -415,11 +422,11 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
     ui->plot_angle->rescaleAxes();       // 自适应大小
     ui->plot_angle->replot();
 
-    /******************** 文件保存 *********************/
+    /************************* 文件保存 ***************************/
     if (FILE_SAVE) {
         // 数据首先都放到缓冲区中
-        double angle_encoder = data[0];
-        _data_save->collectData(&save_data_buf_angle_encoder, angle_encoder);
+        _data_save->collectData(&save_data_buf_angle_encoder, absolute_angle_encoder);
+        _data_save->collectData(&save_data_buf_angle_motor, _motor_angle);
     }
 }
 
@@ -497,10 +504,10 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
 //    ui->plot_angle->replot();
 
     /******************** 文件保存 *********************/
-    if (FILE_SAVE) {
-        // 数据首先都放到缓冲区中
-        _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
-    }
+//    if (FILE_SAVE) {
+//        // 数据首先都放到缓冲区中
+//        _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
+//    }
 }
 
 /***************************************************************
@@ -568,9 +575,15 @@ void showWin_angleEncoder::save_data()
     QTextStream out(&file);
     out.setCodec("UTF-8");
     // 遍历数据并写入文件
-    for (const SensorData& dataPoint : save_data_buf_angle_motor) {
-        out << time_stamp << "," << dataPoint.value << "\n";
+    qDebug() << "(In W_file_save)size: " << save_data_buf_angle_encoder.size()
+             << " " << save_data_buf_angle_motor.size();
+    for (int i = 0; i < save_data_buf_angle_encoder.size(); i++) {
+        out << time_stamp << ":  "
+            << save_data_buf_angle_encoder[i].value << "    "
+            << save_data_buf_angle_motor[i].value << "\n";
         time_stamp++;
     }
-    save_data_buf_angle_motor.clear();                // 清空缓冲区
+
+    save_data_buf_angle_encoder.clear();        // 清空缓冲区
+    save_data_buf_angle_motor.clear();
 }
