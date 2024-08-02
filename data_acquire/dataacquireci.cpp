@@ -2,7 +2,7 @@
 
 DataAcquireCI::DataAcquireCI()
 {
-    setAutoDelete(true);
+    setAutoDelete(false);
 }
 
 /***************************************************************
@@ -67,6 +67,8 @@ void DataAcquireCI::run() {
 //        qDebug() << "(In acq_ci)" << _sampsPerChanRead;
         // 发送信号到上层【一维数组】
         emit send_data(QVector<double>(data, data + _sampsPerChanRead));
+
+//        qDebug() << "(In acq_ci)angle: " << data[0];
 
         // 延时20ms
         QThread::msleep(20);

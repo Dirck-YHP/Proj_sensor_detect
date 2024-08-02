@@ -49,18 +49,20 @@ signals:
     void signal_setConfigModbus();              // 点击“开始”时发送的配置信号
     void signal_closeOpenModbus();              // 点击“停止”时发送的关闭信号
 
+    void signal_delete();
+
 private:
     Ui::showWin_angleEncoder *ui;
     AngleEncoder *_angle_encoder;
 
-    int absolute_angle_encoder = 0;     // 编码器角度绝对值
-    int last_angle_encoder = 0;         // 编码器上次角度
+    double absolute_angle_encoder = 0;     // 编码器角度绝对值
+    double last_angle_encoder = 0;         // 编码器上次角度
 
     // 电机
     Motor *_motor = nullptr;
     QTimer _timer_motor;        // 显示数值框显示频率的定时器【暂时没用】
     bool _if_need_motor;        // 是否需要电机，由外界传入
-    double _motor_angle;        // 电机的角度
+    double _motor_angle = 0;        // 电机的角度
     int totalTurns = 0;
     int last_turn = 0;
     bool fresh_turn = false;    // 重新开始

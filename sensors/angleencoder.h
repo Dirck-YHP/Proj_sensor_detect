@@ -21,9 +21,13 @@ private:
     QString _channel;           // 通道
     QString channel_final;
 
-    DataAcquireAI *data_acquire_ai;     // NI 9205
-    DataAcquireDI *data_acquire_di;     // NI 9403
-    DataAcquireCI *data_acquire_ci;     // NI 9401
+    DataAcquireAI *data_acquire_ai = nullptr;     // NI 9205
+    DataAcquireDI *data_acquire_di = nullptr;     // NI 9403
+    DataAcquireCI *data_acquire_ci = nullptr;     // NI 9401
+
+//    DataAcquireAI *data_acquire_ai;     // NI 9205
+//    DataAcquireDI *data_acquire_di;     // NI 9403
+//    DataAcquireCI *data_acquire_ci;     // NI 9401
 
 public:
     void set_label(QString label);
@@ -44,10 +48,15 @@ private slots:
     void rev_data_from_ni9403(QVector<QVector<double>> data_final);
     void rev_data_from_ni9401(QVector<double> data);
 
+public slots:
+    void slot_acq_delete();
+
 signals:
     void send_vol_cur_to_ui(QVector<double> data);
     void send_pulse_to_ui(QVector<QVector<double>> data_final);
     void send_angle_to_ui(QVector<double> data);
+
+    void signal_delete();
 };
 
 #endif // ANGLEENCODER_H

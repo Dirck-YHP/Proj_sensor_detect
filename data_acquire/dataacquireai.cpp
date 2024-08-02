@@ -3,7 +3,7 @@
 
 DataAcquireAI::DataAcquireAI(QObject *parent) : QObject(parent)
 {
-    setAutoDelete(true);
+    setAutoDelete(false);
 
     _task = NULL;
     _channel = "";

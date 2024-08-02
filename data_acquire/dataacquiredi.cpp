@@ -2,7 +2,7 @@
 
 DataAcquireDI::DataAcquireDI()
 {
-    setAutoDelete(true);
+    setAutoDelete(false);
 }
 
 /***************************************************************

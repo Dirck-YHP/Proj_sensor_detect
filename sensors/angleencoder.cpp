@@ -2,7 +2,29 @@
 
 AngleEncoder::AngleEncoder(QObject *parent) : QObject(parent)
 {
+    if (data_acquire_ai == nullptr) {
+        data_acquire_ai = new DataAcquireAI;
+        qDebug() << "(In AE)new acq_ai succeed";
+    }
 
+    if (data_acquire_di == nullptr) {
+        data_acquire_di = new DataAcquireDI;
+        qDebug() << "(In AE)new acq_di succeed";
+    }
+
+    if (data_acquire_ci == nullptr) {
+        data_acquire_ci = new DataAcquireCI;
+        qDebug() << "(In AE)new acq_ci succeed";
+    }
+
+    connect(data_acquire_ai, &DataAcquireAI::send_data,
+            this, &AngleEncoder::rev_data_from_ni9205);
+
+    connect(data_acquire_di, &DataAcquireDI::send_data,
+            this, &AngleEncoder::rev_data_from_ni9403);
+
+    connect(data_acquire_ci, &DataAcquireCI::send_data,
+            this, &AngleEncoder::rev_data_from_ni9401);
 }
 
 /***************************************************************
@@ -82,7 +104,7 @@ QString AngleEncoder::get_channel() const
 void AngleEncoder::start_acquire()
 {
     //--------------------------NI 9205--------------------------------------
-    data_acquire_ai = new DataAcquireAI;
+//    data_acquire_ai = new DataAcquireAI;
 
     // 供电电压(0) + 角位移编码器 A+(3) B+(5) supc(9) + 电池电量(31)
     channel_final = chToStr(CH_SUPV) + "," +
@@ -93,24 +115,24 @@ void AngleEncoder::start_acquire()
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
-    connect(data_acquire_ai, &DataAcquireAI::send_data,
-            this, &AngleEncoder::rev_data_from_ni9205);
+//    connect(data_acquire_ai, &DataAcquireAI::send_data,
+//            this, &AngleEncoder::rev_data_from_ni9205);
 
     //--------------------------NI 9403--------------------------------------
-    data_acquire_di = new DataAcquireDI;
+//    data_acquire_di = new DataAcquireDI;
     QThreadPool::globalInstance()->start(data_acquire_di);
 
-    connect(data_acquire_di, &DataAcquireDI::send_data,
-            this, &AngleEncoder::rev_data_from_ni9403);
+//    connect(data_acquire_di, &DataAcquireDI::send_data,
+//            this, &AngleEncoder::rev_data_from_ni9403);
 
     //--------------------------NI 9401--------------------------------------
-    data_acquire_ci = new DataAcquireCI;
+//    data_acquire_ci = new DataAcquireCI;
     data_acquire_ci->get_pulses_per_rev(get_pul_per_cir().toUInt());
 
     QThreadPool::globalInstance()->start(data_acquire_ci);
 
-    connect(data_acquire_ci, &DataAcquireCI::send_data,
-            this, &AngleEncoder::rev_data_from_ni9401);
+//    connect(data_acquire_ci, &DataAcquireCI::send_data,
+//            this, &AngleEncoder::rev_data_from_ni9401);
 }
 
 /***************************************************************
@@ -191,5 +213,32 @@ void AngleEncoder::rev_data_from_ni9403(QVector<QVector<double> > data_final)
  **************************************************************/
 void AngleEncoder::rev_data_from_ni9401(QVector<double> data)
 {
+//    qDebug() << "(In AE)angle: " << data;
     emit send_angle_to_ui(data);
+}
+
+/***************************************************************
+  *  @brief     在win中connect，窗口关闭，删除对象
+  *  @param     无
+  *  @note      槽函数——负责删除对象
+  *  @Sample usage:
+ **************************************************************/
+void AngleEncoder::slot_acq_delete()
+{
+    qDebug() << "(In AE)get delete sig";
+
+    if (data_acquire_ai != nullptr) {
+        delete data_acquire_ai;
+        qDebug() << "(In AE)delete acq_ai succeed!!!!!!!!!!";
+    }
+
+    if (data_acquire_di != nullptr) {
+        delete data_acquire_di;
+        qDebug() << "(In AE)delete acq_di succeed!!!!!!!!!!";
+    }
+
+    if (data_acquire_ci != nullptr) {
+        delete data_acquire_ci;
+        qDebug() << "(In AE)delete acq_ci succeed!!!!!!!!!!";
+    }
 }

@@ -99,10 +99,27 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
         ui->plot_impulse->addGraph();
         ui->plot_impulse->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
     }
+
+
+    /********************** ni 9205相关 **********************/
+    connect(_angle_encoder, &AngleEncoder::send_vol_cur_to_ui,
+            this, &showWin_angleEncoder::slot_get_vol_cur_and_show);
+
+    /********************** ni 9403相关 **********************/
+    connect(_angle_encoder, &AngleEncoder::send_pulse_to_ui,
+            this, &showWin_angleEncoder::slot_get_pulse_and_plot);
+
+    /********************** ni 9401相关 **********************/
+    connect(_angle_encoder, &AngleEncoder::send_angle_to_ui,
+            this, &showWin_angleEncoder::slot_get_angle_and_plot);
+
+    connect(this, &showWin_angleEncoder::signal_delete,
+            _angle_encoder, &AngleEncoder::slot_acq_delete);
 }
 
 showWin_angleEncoder::~showWin_angleEncoder()
 {
+    emit signal_delete();
     qDebug() << "(In win)encoder window destroyed";
     qDebug() << "------------------------";
 
@@ -140,6 +157,11 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
+        // 编码器角度的绝对值归零
+        absolute_angle_encoder = 0;
+        last_angle_encoder = 0;
+
+        totalTurns = 0;
 
         /********************** 三张卡开始采集 **********************/
         _angle_encoder->start_acquire();
@@ -158,9 +180,9 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 //            ui->plot_angle->addGraph();
 //        }
 
-        /********************** ni 9205相关 **********************/
-        connect(_angle_encoder, &AngleEncoder::send_vol_cur_to_ui,
-                this, &showWin_angleEncoder::slot_get_vol_cur_and_show);
+//        /********************** ni 9205相关 **********************/
+//        connect(_angle_encoder, &AngleEncoder::send_vol_cur_to_ui,
+//                this, &showWin_angleEncoder::slot_get_vol_cur_and_show);
 
 
 //        /********************** 脉冲图参数配置 **********************/
@@ -175,13 +197,13 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 //            ui->plot_impulse->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
 //        }
 
-        /********************** ni 9403相关 **********************/
-        connect(_angle_encoder, &AngleEncoder::send_pulse_to_ui,
-                this, &showWin_angleEncoder::slot_get_pulse_and_plot);
+//        /********************** ni 9403相关 **********************/
+//        connect(_angle_encoder, &AngleEncoder::send_pulse_to_ui,
+//                this, &showWin_angleEncoder::slot_get_pulse_and_plot);
 
-        /********************** ni 9401相关 **********************/
-        connect(_angle_encoder, &AngleEncoder::send_angle_to_ui,
-                this, &showWin_angleEncoder::slot_get_angle_and_plot);
+//        /********************** ni 9401相关 **********************/
+//        connect(_angle_encoder, &AngleEncoder::send_angle_to_ui,
+//                this, &showWin_angleEncoder::slot_get_angle_and_plot);
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
@@ -202,10 +224,6 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 
     } else {
         ui->btn_start_finish_mea->setText("开始测量");
-        // 编码器角度的绝对值归零
-        absolute_angle_encoder = 0;
-
-        totalTurns = 0;
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
@@ -335,16 +353,17 @@ void showWin_angleEncoder::slot_get_pulse_and_plot(QVector<QVector<double> > dat
   *  @Sample usage:
  **************************************************************/
 void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
-{   
-    // 显示累计值
-    int angleChange = data[0] - last_angle_encoder;
+{
+    /*************************** 编码器 *****************************/
+    /**************** 显示编码器角度累计值 ******************/
+    double angleChange = data[0] - last_angle_encoder;
     if (angleChange != 0) {        // 角度变化
         if (angleChange < -300) {
             absolute_angle_encoder += angleChange + 360;
-            qDebug() << "360: " << absolute_angle_encoder;
+//            qDebug() << "360: " << absolute_angle_encoder;
         } else if (angleChange > 300) {
             absolute_angle_encoder += angleChange - 360;
-            qDebug() << "-360: " << absolute_angle_encoder;
+//            qDebug() << "-360: " << absolute_angle_encoder;
 
         } else {
             absolute_angle_encoder += angleChange;
@@ -352,29 +371,47 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
     }
 
     double angle = absolute_angle_encoder;
+//    qDebug() << "(In Win)angle: " << angle << " " << data[0] << " " << last_angle_encoder;
+//    qDebug() << "(In Win)angle: " << data[0];
 
     // 更新上次角度值
     last_angle_encoder = data[0];
 
-    /******************** 角度数值框显示 *********************/
+    /***************** 编码器角度数值框显示 ******************/
     ui->lineE_encoder_angle->setText(QString::number(angle) + "°");
 
-    /********************** 角度画图 ***********************/
+    /*************************** 电机 *****************************/
+    /******************** 电机转动圈数显示 *********************/
+//    qDebug() << "(In Win)motor angle: " << _motor_angle;
+    int cur_turn = _motor_angle / 360;
+    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
+        totalTurns += 1;
+    }
+    if (cur_turn == 0) fresh_turn = false;
+
+    last_turn = cur_turn;
+    ui->lineE_motor_circle->setText(QString::number(totalTurns));
+
+    /******************** 角度数值框显示 *********************/
+    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
+
+    /************************* 角度画图 ***************************/
     int length = 1;
     QVector<double> x(length);
     int point_count = ui->plot_angle->graph(0)->dataCount();
 
-//    qDebug() << "(In Win)dataCnt: " << point_count;
     // 确定画图的横轴
     for (int i = 0; i < length; i++) {
         x[i] = i + point_count;
     }
 
-//    qDebug() << "(In Win)x: " << x;
     // 画图，一次画一个点
-    QVector<double> y = {angle};
+    QVector<double> y1 = {angle};
+    QVector<double> y2 = {_motor_angle};
 
-    ui->plot_angle->graph(0)->addData(x, y, true);
+    ui->plot_angle->graph(0)->addData(x, y1, true);
+    ui->plot_angle->graph(1)->addData(x, y2, true);
+
     ui->plot_angle->rescaleAxes();       // 自适应大小
     ui->plot_angle->replot();
 
@@ -424,41 +461,40 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
 void showWin_angleEncoder::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
-    qDebug() << "(In Win)motor angle: " << _motor_angle;
 
-    /******************** 电机转动圈数显示 *********************/
-    int cur_turn = _motor_angle / 360;
-//    qDebug() << "(In Win)turn: " << cur_turn << " last_turn: " << last_turn;
-    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
-        totalTurns += 1;
-//        qDebug() << "(In Win)++ ";
-    }
-    if (cur_turn == 0) fresh_turn = false;
+//    /******************** 电机转动圈数显示 *********************/
+//    int cur_turn = _motor_angle / 360;
+////    qDebug() << "(In Win)turn: " << cur_turn << " last_turn: " << last_turn;
+//    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
+//        totalTurns += 1;
+////        qDebug() << "(In Win)++ ";
+//    }
+//    if (cur_turn == 0) fresh_turn = false;
 
-    last_turn = cur_turn;
-    ui->lineE_motor_circle->setText(QString::number(totalTurns));
+//    last_turn = cur_turn;
+//    ui->lineE_motor_circle->setText(QString::number(totalTurns));
 
-    /******************** 角度数值框显示 *********************/
-    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
+//    /******************** 角度数值框显示 *********************/
+//    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
 
-    /******************** 角度画图 *********************/
-    int length = 1;
-    QVector<double> x(length);
-    int point_count = ui->plot_angle->graph(1)->dataCount();
+//    /******************** 角度画图 *********************/
+//    int length = 1;
+//    QVector<double> x(length);
+//    int point_count = ui->plot_angle->graph(1)->dataCount();
 
-//    qDebug() << "(In Win)dataCnt: " << point_count;
-    // 确定画图的横轴
-    for (int i = 0; i < length; i++) {
-        x[i] = i + point_count;
-    }
+////    qDebug() << "(In Win)dataCnt: " << point_count;
+//    // 确定画图的横轴
+//    for (int i = 0; i < length; i++) {
+//        x[i] = i + point_count;
+//    }
 
-//    qDebug() << "(In Win)x: " << x;
-    // 画图，一次画一个点
-    QVector<double> y = {_motor_angle};
+////    qDebug() << "(In Win)x: " << x;
+//    // 画图，一次画一个点
+//    QVector<double> y = {_motor_angle};
 
-    ui->plot_angle->graph(1)->addData(x, y, true);
-    ui->plot_angle->rescaleAxes();       // 自适应大小
-    ui->plot_angle->replot();
+//    ui->plot_angle->graph(1)->addData(x, y, true);
+//    ui->plot_angle->rescaleAxes();       // 自适应大小
+//    ui->plot_angle->replot();
 
     /******************** 文件保存 *********************/
     if (FILE_SAVE) {
