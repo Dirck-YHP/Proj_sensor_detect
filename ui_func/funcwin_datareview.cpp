@@ -44,7 +44,7 @@ void funcWin_DataReview::on_btn_choose_file_clicked()
             break;
 
         case SensorType::ProximitySwitch:       // 处理接近开关
-
+            file_process_proxi();
             break;
 
         case SensorType::PressureSensor:        // 处理压力传感器
@@ -410,14 +410,24 @@ void funcWin_DataReview::file_process_proxi()
             ui->custom_plot->yAxis->setLabel("Y");
             ui->custom_plot->yAxis->setRange(-10, 10);
 
-            // Graph数量 = 角位移编码器角度(1) + 电机角度(1)
-            for (int i = 0; i < 2; i++) {
-                ui->custom_plot->addGraph();
-                ui->custom_plot->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
-            }
+            // Graph数量 = 1
+            ui->custom_plot->addGraph();
 
-            ui->custom_plot->graph(0)->addData(xData, yData1, true);
-            ui->custom_plot->graph(1)->addData(xData, yData2, true);
+            // 根据y2判断是否画“触发”
+            for (int i = 0; i < yData1.size(); i++) {
+                if (yData2[i] == 1) {
+                    ui->custom_plot->graph(0)->setPen(QPen(Qt::red));
+                    ui->custom_plot->graph(0)->addData(QVector<double>(xData[i]),
+                                                       QVector<double>(yData1[i]), true);
+                } else {
+                    ui->custom_plot->graph(0)->setPen(QPen(Qt::blue));
+                    ui->custom_plot->graph(0)->addData(QVector<double>(xData[i]),
+                                                       QVector<double>(yData1[i]), true);
+                }
+            }
+//            ui->custom_plot->graph(0)->addData(xData, yData1, true);
+//            ui->custom_plot->graph(1)->addData(xData, yData2, true);
+
             ui->custom_plot->rescaleAxes();       // 自适应大小
             ui->custom_plot->replot();
         } else {
