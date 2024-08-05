@@ -2,7 +2,13 @@
 
 PressureSensor::PressureSensor(QObject *parent) : QObject(parent)
 {
+    if (data_acquire_ai == nullptr) {
+        data_acquire_ai = new DataAcquireAI;
+        qDebug() << "(In PS)new acq_ai succeed";
+    }
 
+    connect(data_acquire_ai, &DataAcquireAI::send_data,
+            this, &PressureSensor::rev_data_from_ni9205);
 }
 
 /***************************************************************
@@ -101,7 +107,7 @@ QString PressureSensor::get_channel() const
  **************************************************************/
 void PressureSensor::start_acquire()
 {
-    data_acquire_ai = new DataAcquireAI;
+//    data_acquire_ai = new DataAcquireAI;
 
     // 供电电压(0) + 压力传感器(26),...,(30) + 电池电量(31)
     channel_final = chToStr(CH_SUPV) + "," +
@@ -112,8 +118,8 @@ void PressureSensor::start_acquire()
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
-    connect(data_acquire_ai, &DataAcquireAI::send_data,
-            this, &PressureSensor::rev_data_from_ni9205);
+//    connect(data_acquire_ai, &DataAcquireAI::send_data,
+//            this, &PressureSensor::rev_data_from_ni9205);
 }
 
 /***************************************************************
@@ -137,9 +143,9 @@ void PressureSensor::stop_acquire()
 void PressureSensor::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
-    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
+    qDebug() << "(In PS)通道size: " << channel_final.length() << " 接收数据size: " << data.size();
     if (data.size() != channel_final.length()) {
-        qDebug() << "in AE:通道和接收数据的size不一致！";
+        qDebug() << "(In PS):通道和接收数据的size不一致！";
         return;
     }
 
@@ -166,6 +172,22 @@ void PressureSensor::rev_data_from_ni9205(QVector<double> data)
     // 组合成一个vector发出去，data中数据顺序如下：
     // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
     emit send_vol_cur_pres_to_ui(data_after_process);
+}
+
+/***************************************************************
+  *  @brief     在win中connect，窗口关闭，删除对象
+  *  @param     无
+  *  @note      槽函数——负责删除对象
+  *  @Sample usage:
+ **************************************************************/
+void PressureSensor::slot_acq_delete()
+{
+    qDebug() << "(In PS)get delete sig";
+
+    if (data_acquire_ai != nullptr) {
+        delete data_acquire_ai;
+        qDebug() << "(In PS)delete acq_ai succeed!!!!!!!!!!";
+    }
 }
 
 /***************************************************************

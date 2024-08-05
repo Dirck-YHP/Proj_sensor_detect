@@ -61,6 +61,9 @@ private:
     QVector<SensorData> save_data_buf_variaresis;        // 来自滑动变阻器的要保存的数据
     QVector<SensorData> save_data_buf_if_pulse;          // 来自接近开关的要保存的数据
     int time_stamp = 0;
+
+signals:
+    void signal_delete();
 };
 
 #endif // SHOWWIN_PROXIMITYSWITCH_H

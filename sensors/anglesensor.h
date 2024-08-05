@@ -20,7 +20,7 @@ private:
     QString _channel;           // 通道
     QString channel_final;
 
-    DataAcquireAI *data_acquire_ai;     // NI 9205的数据
+    DataAcquireAI *data_acquire_ai = nullptr;     // NI 9205的数据
 
 public:
     void set_label(QString label);
@@ -39,6 +39,8 @@ public:
 
 public slots:
     void rev_data_from_ni9205(QVector<double> data);
+
+    void slot_acq_delete();
 
 signals:
     void send_vol_cur_angle_to_ui(QVector<double> data);

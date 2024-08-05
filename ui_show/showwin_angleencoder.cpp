@@ -113,6 +113,7 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
     connect(_angle_encoder, &AngleEncoder::send_angle_to_ui,
             this, &showWin_angleEncoder::slot_get_angle_and_plot);
 
+    /********************** 对象析构 **********************/
     connect(this, &showWin_angleEncoder::signal_delete,
             _angle_encoder, &AngleEncoder::slot_acq_delete);
 }

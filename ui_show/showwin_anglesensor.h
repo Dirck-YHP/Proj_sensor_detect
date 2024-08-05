@@ -57,6 +57,8 @@ signals:
 
     void signal_angle_cali(double cur_angle);   // 角度校准信号
 
+    void signal_delete();
+
 private:
     Ui::showWin_angleSensor *ui;
     AngleSensor *_angle_sensor;

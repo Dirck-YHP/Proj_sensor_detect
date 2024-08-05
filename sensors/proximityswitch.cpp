@@ -2,7 +2,13 @@
 
 ProximitySwitch::ProximitySwitch(QObject *parent) : QObject(parent)
 {
+    if (data_acquire_ai == nullptr) {
+        data_acquire_ai = new DataAcquireAI;
+        qDebug() << "(In PxS)new acq_ai succeed";
+    }
 
+    connect(data_acquire_ai, &DataAcquireAI::send_data,
+            this, &ProximitySwitch::rev_data_from_ni9205);
 }
 
 /***************************************************************
@@ -135,7 +141,7 @@ QString ProximitySwitch::get_channel() const
 void ProximitySwitch::start_acquire()
 {
     //--------------------------NI 9205--------------------------------------
-    data_acquire_ai = new DataAcquireAI;
+//    data_acquire_ai = new DataAcquireAI;
 
     // 供电电压：(0) + 接近开关通道：(15,16),...,(23,24) + 滑动变阻器：(25) + 电池电量：(31)
     channel_final = chToStr(CH_SUPV) + "," +
@@ -146,8 +152,8 @@ void ProximitySwitch::start_acquire()
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
-    connect(data_acquire_ai, &DataAcquireAI::send_data,
-            this, &ProximitySwitch::rev_data_from_ni9205);
+//    connect(data_acquire_ai, &DataAcquireAI::send_data,
+//            this, &ProximitySwitch::rev_data_from_ni9205);
 }
 
 /***************************************************************
@@ -171,9 +177,9 @@ void ProximitySwitch::stop_acquire()
 void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
-    qDebug() << "通道size: " << channel_final.length() << " 接收数据size: " << data.size();
+    qDebug() << "(In PxS)通道size: " << channel_final.length() << " 接收数据size: " << data.size();
     if (data.size() != channel_final.length()) {
-        qDebug() << "in AE:通道和接收数据的size不一致！";
+        qDebug() << "(In PxS)通道和接收数据的size不一致！";
         return;
     }
 
@@ -182,7 +188,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 
     // 信号电压、信号电流、是否触发
     double sig_vol = data[1];
-    double sig_cur = sig_vol / 5000;
+    double sig_cur = sig_vol / 5100;
     double if_pulse = (sig_vol > THREAD_VOL_TO_PUL) ? 1 : 0;
 
     // 供电电流
@@ -193,7 +199,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
     double distance_var = map_from_cur_to_varDis(cur);
 
     // 电池电量
-    double bat = data[3] * 3;
+    double bat = data[4] * 3;
 
     // 组合成一个vector发出去，data中数据顺序如下：
     // 供电电压、信号电压、信号电流、供电电流、是否触发、滑动变阻器距离、电池电量
@@ -203,9 +209,23 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
                                          if_pulse, distance_var,
                                          bat};
 
-    // 目前还没做转化，直接发送原始数据
-    data[0]++;
     emit send_vol_cur_pul_dis_to_ui(data_after_process);
+}
+
+/***************************************************************
+  *  @brief     在win中connect，窗口关闭，删除对象
+  *  @param     无
+  *  @note      槽函数——负责删除对象
+  *  @Sample usage:
+ **************************************************************/
+void ProximitySwitch::slot_acq_delete()
+{
+    qDebug() << "(In PxS)get delete sig";
+
+    if (data_acquire_ai != nullptr) {
+        delete data_acquire_ai;
+        qDebug() << "(In PxS)delete acq_ai succeed!!!!!!!!!!";
+    }
 }
 
 /***************************************************************

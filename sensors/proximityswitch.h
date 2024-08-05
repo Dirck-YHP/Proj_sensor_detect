@@ -21,7 +21,7 @@ private:
     QString _channel;           // 通道
     QString channel_final;
 
-    DataAcquireAI *data_acquire_ai;     // NI 9205
+    DataAcquireAI *data_acquire_ai = nullptr;     // NI 9205
 
     const int THREAD_VOL_TO_PUL = 3;
 
@@ -49,6 +49,9 @@ public:
 private slots:
     // 这个函数负责接收来自采集卡的原始数据并做处理，然后发出去
     void rev_data_from_ni9205(QVector<double> data);
+
+public slots:
+    void slot_acq_delete();
 
 signals:
     void send_vol_cur_pul_dis_to_ui(QVector<double> data);

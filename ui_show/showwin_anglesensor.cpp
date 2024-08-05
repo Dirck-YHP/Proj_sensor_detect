@@ -89,10 +89,19 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
     /********************** qt特性配置 **********************/
     // Set the attribute to delete the window when it is closed
     setAttribute(Qt::WA_DeleteOnClose);
+
+    /***************** 接收传感器发送的电压电流角度 *******************/
+    connect(_angle_sensor, &AngleSensor::send_vol_cur_angle_to_ui,
+            this, &showWin_angleSensor::slot_get_vol_cur_angle_and_show);
+
+    /********************** 对象析构 **********************/
+    connect(this, &showWin_angleSensor::signal_delete,
+            _angle_sensor, &AngleSensor::slot_acq_delete);
 }
 
 showWin_angleSensor::~showWin_angleSensor()
 {
+    emit signal_delete();
     qDebug() << "(In Win)angle window destroyed";
     qDebug() << "------------------------";
 
@@ -131,18 +140,21 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
 
+        totalTurns = 0;
+
         /********************** ni9205开始采集 **********************/
         _angle_sensor->start_acquire();
 
-        /***************** 接收传感器发送的电压电流角度 *******************/
-        connect(_angle_sensor, &AngleSensor::send_vol_cur_angle_to_ui,
-                this, &showWin_angleSensor::slot_get_vol_cur_angle_and_show);
+//        /***************** 接收传感器发送的电压电流角度 *******************/
+//        connect(_angle_sensor, &AngleSensor::send_vol_cur_angle_to_ui,
+//                this, &showWin_angleSensor::slot_get_vol_cur_angle_and_show);
 
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
-            QString currentDateTime = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString currentDateTime = "AS_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
             QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
+
             file.setFileName(file_name);
             if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
                 return;
@@ -152,6 +164,7 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
             out << QString("传感器类型：")  << _angle_sensor->get_label().toUtf8()
                 << QString("，采集范围：") << _angle_sensor->get_range().first << "~" << _angle_sensor->get_range().second
                 << QString("，采集通道：") << _angle_sensor->get_channel().toUtf8() << "\n";
+            out << QString("x") << QString("  传感器") << QString(" 电机") << "\n";
 
             _timer_savefile.start();    // 开启定时器，开始保存数据
         }
@@ -163,15 +176,25 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
         if (FILE_SAVE) {
             // 保存缓冲区中残余的数据
             _timer_savefile.stop();
-            qDebug() << "data_buf_size_when_close: " << save_data_buf_angle_motor.size();
+            qDebug() << "data_buf_size_when_close: "
+                     << save_data_buf_angle_sensor.size()
+                     << save_data_buf_angle_motor.size();
+
             if (!save_data_buf_angle_motor.empty()) {
                 QTextStream out(&file);
                 out.setCodec("UTF-8");
                 // 遍历数据并写入文件
-                for (const SensorData& dataPoint : save_data_buf_angle_motor) {
-                    out << time_stamp << "," << dataPoint.value << "\n";
+                for (int i = 0; i < save_data_buf_angle_sensor.size(); i++) {
+                    out << time_stamp << ":  "
+                        << save_data_buf_angle_sensor[i].value << "    "
+                        << save_data_buf_angle_motor[i].value << "\n";
                     time_stamp++;
                 }
+
+//                for (const SensorData& dataPoint : save_data_buf_angle_motor) {
+//                    out << time_stamp << "," << dataPoint.value << "\n";
+//                    time_stamp++;
+//                }
                 qDebug() << "finish file writing last!!! ";
             }
             file.close();
@@ -233,7 +256,22 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     double angle_sensor = data[4];
     /************* 角度数值框显示 **************/
     ui->lineE_sensor_angle->setText(QString::number(angle_sensor));
-    /************* 角度画图 *******************/
+
+    /*********************** 电机角度 ***************************/
+    /************* 电机转动圈数显示 ************/
+    int cur_turn = _motor_angle / 360;
+    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
+        totalTurns += 1;
+    }
+    if (cur_turn == 0) fresh_turn = false;
+
+    last_turn = cur_turn;
+    ui->lineE_motor_circle->setText(QString::number(totalTurns));
+
+    /************** 角度数值框显示 ************/
+    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
+
+    /*********************** 角度画图 ***************************/
     int length = 1;
     QVector<double> x(length);
     int point_count = ui->plot_angle->graph(0)->dataCount();
@@ -244,9 +282,12 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     }
 
     // 画图，一次画一个点
-    QVector<double> y = {angle_sensor};
+    QVector<double> y1 = {angle_sensor};
+    QVector<double> y2 = {_motor_angle};
 
-    ui->plot_angle->graph(0)->addData(x, y, true);
+    ui->plot_angle->graph(0)->addData(x, y1, true);
+    ui->plot_angle->graph(1)->addData(x, y2, true);
+
     ui->plot_angle->rescaleAxes();       // 自适应大小
     ui->plot_angle->replot();
 
@@ -265,6 +306,7 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     // 数据首先都放到缓冲区中
     if (FILE_SAVE) {
         _data_save->collectData(&save_data_buf_angle_sensor, angle_sensor);
+        _data_save->collectData(&save_data_buf_angle_motor, _motor_angle);
     }
 }
 
@@ -292,44 +334,45 @@ void showWin_angleSensor::on_btn_angle_cali_clicked()
 void showWin_angleSensor::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
-    qDebug() << "(In Win)motor angle: " << _motor_angle;
-    /******************** 电机转动圈数显示 *********************/
-    int cur_turn = _motor_angle / 360;
-//    qDebug() << "(In Win)turn: " << cur_turn << " last_turn: " << last_turn;
-    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
-        totalTurns += 1;
-//        qDebug() << "(In Win)++ ";
-    }
-    if (cur_turn == 0) fresh_turn = false;
+//    qDebug() << "(In Win)motor angle: " << _motor_angle;
 
-    last_turn = cur_turn;
-    ui->lineE_motor_circle->setText(QString::number(totalTurns));
+//    /******************** 电机转动圈数显示 *********************/
+//    int cur_turn = _motor_angle / 360;
+////    qDebug() << "(In Win)turn: " << cur_turn << " last_turn: " << last_turn;
+//    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
+//        totalTurns += 1;
+////        qDebug() << "(In Win)++ ";
+//    }
+//    if (cur_turn == 0) fresh_turn = false;
 
-    /******************** 角度数值框显示 *********************/
-    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
+//    last_turn = cur_turn;
+//    ui->lineE_motor_circle->setText(QString::number(totalTurns));
 
-    /******************** 角度画图 *********************/
-    int length = 1;
-    QVector<double> x(length);
-    int point_count = ui->plot_angle->graph(1)->dataCount();
+//    /******************** 角度数值框显示 *********************/
+//    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
 
-    // 确定画图的横轴
-    for (int i = 0; i < length; i++) {
-        x[i] = i + point_count;
-    }
+//    /******************** 角度画图 *********************/
+//    int length = 1;
+//    QVector<double> x(length);
+//    int point_count = ui->plot_angle->graph(1)->dataCount();
 
-    // 画图，一次画一个点
-    QVector<double> y = {_motor_angle};
+//    // 确定画图的横轴
+//    for (int i = 0; i < length; i++) {
+//        x[i] = i + point_count;
+//    }
 
-    ui->plot_angle->graph(1)->addData(x, y, true);
-    ui->plot_angle->rescaleAxes();       // 自适应大小
-    ui->plot_angle->replot();
+//    // 画图，一次画一个点
+//    QVector<double> y = {_motor_angle};
 
-    /********************文件保存*********************/
-    if (FILE_SAVE) {
-        // 数据首先都放到缓冲区中
-        _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
-    }
+//    ui->plot_angle->graph(1)->addData(x, y, true);
+//    ui->plot_angle->rescaleAxes();       // 自适应大小
+//    ui->plot_angle->replot();
+
+//    /********************文件保存*********************/
+//    if (FILE_SAVE) {
+//        // 数据首先都放到缓冲区中
+//        _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
+//    }
 }
 
 /***************************************************************
@@ -397,9 +440,15 @@ void showWin_angleSensor::save_data()
     QTextStream out(&file);
     out.setCodec("UTF-8");
     // 遍历数据并写入文件
-    for (const SensorData& dataPoint : save_data_buf_angle_motor) {
-        out << time_stamp << "," << dataPoint.value << "\n";
+    qDebug() << "(In W_file_save)size: " << save_data_buf_angle_sensor.size()
+             << " " << save_data_buf_angle_motor.size();
+    for (int i = 0; i < save_data_buf_angle_sensor.size(); i++) {
+        out << time_stamp << ":  "
+            << save_data_buf_angle_sensor[i].value << "    "
+            << save_data_buf_angle_motor[i].value << "\n";
         time_stamp++;
     }
-    save_data_buf_angle_motor.clear();                // 清空缓冲区
+
+    save_data_buf_angle_sensor.clear();        // 清空缓冲区
+    save_data_buf_angle_motor.clear();
 }

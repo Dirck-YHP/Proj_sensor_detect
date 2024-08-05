@@ -26,10 +26,33 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
     /********************** qt特性配置 **********************/
     // Set the attribute to delete the window when it is closed
     setAttribute(Qt::WA_DeleteOnClose);
+
+    /********************** 画图参数配置 **********************/
+    ui->plot_distance->clearGraphs();
+    ui->plot_distance->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->plot_distance->xAxis->setLabel("time/s");
+    ui->plot_distance->yAxis->setLabel("Y");
+    ui->plot_distance->yAxis->setRange(-10, 10);
+
+    // 添加图 画距离 和 画触发信号
+    // 一张图就够了，根据是否触发判断当前这个点要不要画的特殊一点
+    for (int i = 0; i < 1; i++) {
+        ui->plot_distance->addGraph();
+    }
+
+
+    /********************** 9205相关 **********************/
+    connect(_proxi_switch, &ProximitySwitch::send_vol_cur_pul_dis_to_ui,
+            this, &showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show);
+
+    /********************** 对象析构 **********************/
+    connect(this, &showWin_proximitySwitch::signal_delete,
+            _proxi_switch, &ProximitySwitch::slot_acq_delete);
 }
 
 showWin_proximitySwitch::~showWin_proximitySwitch()
 {
+    emit signal_delete();
     qDebug() << "(In Win)proximity window destroyed";
     delete ui;
 }
@@ -59,25 +82,25 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
 
         _proxi_switch->start_acquire();
 
-        connect(_proxi_switch, &ProximitySwitch::send_vol_cur_pul_dis_to_ui,
-                this, &showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show);
+//        connect(_proxi_switch, &ProximitySwitch::send_vol_cur_pul_dis_to_ui,
+//                this, &showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show);
 
-        /********************** 画图参数配置 **********************/
-        ui->plot_distance->clearGraphs();
-        ui->plot_distance->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-        ui->plot_distance->xAxis->setLabel("time/s");
-        ui->plot_distance->yAxis->setLabel("Y");
-        ui->plot_distance->yAxis->setRange(-10, 10);
+//        /********************** 画图参数配置 **********************/
+//        ui->plot_distance->clearGraphs();
+//        ui->plot_distance->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+//        ui->plot_distance->xAxis->setLabel("time/s");
+//        ui->plot_distance->yAxis->setLabel("Y");
+//        ui->plot_distance->yAxis->setRange(-10, 10);
 
-        // 添加图，两个，一个画距离，一个画触发信号
-        // 可能一张图就够了，根据是否触发判断当前这个点要不要画的特殊一点
-        for (int i = 0; i < 1; i++) {
-            ui->plot_distance->addGraph();
-        }
+//        // 添加图，两个，一个画距离，一个画触发信号
+//        // 可能一张图就够了，根据是否触发判断当前这个点要不要画的特殊一点
+//        for (int i = 0; i < 1; i++) {
+//            ui->plot_distance->addGraph();
+//        }
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
-            QString currentDateTime = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString currentDateTime = "PxS" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
             QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
             file.setFileName(file_name);
             if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
@@ -90,6 +113,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
                 << QString("，感应材料：") << _proxi_switch->get_sensing_matirial()
                 << QString("，感应距离：") << _proxi_switch->get_sensing_dis()
                 << QString("，采集通道：") << _proxi_switch->get_channel().toUtf8() << "\n";
+            out << QString("x") << QString("  距离") << QString(" 是否触发") << "\n";
 
             _timer_savefile.start();    // 开启定时器，开始保存数据
         }
@@ -101,22 +125,30 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
         if (FILE_SAVE) {
             // 保存缓冲区中残余的数据
             _timer_savefile.stop();
-            qDebug() << "data_buf_size_when_close: " << save_data_buf_variaresis.size();
+            qDebug() << "data_buf_size_when_close: "
+                     << save_data_buf_variaresis.size()
+                     << save_data_buf_if_pulse.size();
+
             if (!save_data_buf_variaresis.empty()) {
                 QTextStream out(&file);
                 out.setCodec("UTF-8");
                 // 遍历数据并写入文件
-                for (const SensorData& dataPoint : save_data_buf_variaresis) {
-                    out << time_stamp << "," << dataPoint.value << "\n";
+                for (int i = 0; i < save_data_buf_variaresis.size(); i++) {
+                    out << time_stamp << ":  "
+                        << save_data_buf_variaresis[i].value << "    "
+                        << save_data_buf_if_pulse[i].value << "\n";
                     time_stamp++;
                 }
+//                for (const SensorData& dataPoint : save_data_buf_variaresis) {
+//                    out << time_stamp << "," << dataPoint.value << "\n";
+//                    time_stamp++;
+//                }
                 qDebug() << "finish file writing last!!! ";
             }
             file.close();
         }
 
         /********************** 数据采集相关 **********************/
-//        _variable_resis->stop_acquire();
         _proxi_switch->stop_acquire();
     }
 }
@@ -124,7 +156,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
 /***************************************************************
   *  @brief     画 来自滑动变阻器的距离波形
   *  @param     无
-  *  @note      槽函数
+  *  @note      槽函数——暂没用到！！！！
   *  @Sample usage:
  **************************************************************/
 void showWin_proximitySwitch::get_data_and_plot_distance(QVector<double> data)
@@ -185,7 +217,6 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     _if_pulse = if_Pulse;       // 保存触发状态
 
     /********************* 滑动变阻器距离 **********************/
-    // ---------------- 这里待定 感觉画在一张图里面更合适 ----------
     _distance = data[5];
     /*************** 画距离 ****************/
     int length = 1;
@@ -250,7 +281,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     ui->pBar_battery->setValue(bat);                  // 当前进度
     double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 
     /******************** 文件保存 *********************/
@@ -300,9 +331,18 @@ void showWin_proximitySwitch::save_data()
     QTextStream out(&file);
     out.setCodec("UTF-8");
     // 遍历数据并写入文件
-    for (const SensorData& dataPoint : save_data_buf_variaresis) {
-        out << time_stamp << "," << dataPoint.value << "\n";
+    qDebug() << "(In W_file_save)size: " << save_data_buf_variaresis.size()
+             << " " << save_data_buf_if_pulse.size();
+    for (int i = 0; i < save_data_buf_variaresis.size(); i++) {
+        out << time_stamp << ":  "
+            << save_data_buf_variaresis[i].value << "    "
+            << save_data_buf_if_pulse[i].value << "\n";
         time_stamp++;
     }
+//    for (const SensorData& dataPoint : save_data_buf_variaresis) {
+//        out << time_stamp << "," << dataPoint.value << "\n";
+//        time_stamp++;
+//    }
     save_data_buf_variaresis.clear();                // 清空缓冲区
+    save_data_buf_if_pulse.clear();
 }

@@ -40,6 +40,8 @@ signals:
     void signal_setConfigSerialPort();
     void signal_closeOpen();
 
+    void signal_delete();
+
 private:
     Ui::showWin_pressureSensor *ui;
     PressureSensor *_pressure_sensor;
@@ -48,6 +50,9 @@ private:
     int channel_num;
 
     QTimer _timer_hydrau;
+
+    // 液压站
+    double _pressure = 0;
 
     // 文件保存
     QString _file_save_dir;
