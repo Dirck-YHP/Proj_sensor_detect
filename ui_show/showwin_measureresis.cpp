@@ -10,10 +10,18 @@ showWin_measureResis::showWin_measureResis(Resis *mea_resis, QWidget *parent) :
 
     //  根据用户选择设置哪些可见
     set_visible();
+
+    /********************** 对象析构 **********************/
+    connect(this, &showWin_measureResis::signal_delete,
+            mea_resis, &Resis::slot_acq_delete);
 }
 
 showWin_measureResis::~showWin_measureResis()
 {
+    emit signal_delete();
+    qDebug() << "(In Win)angle window destroyed";
+    qDebug() << "------------------------";
+
     delete ui;
 }
 

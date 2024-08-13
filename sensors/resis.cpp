@@ -2,6 +2,14 @@
 
 Resis::Resis(QObject *parent) : QObject(parent)
 {
+    if (data_acquire_ai == nullptr) {
+        data_acquire_ai = new DataAcquireAI;
+        qDebug() << "(In resis)new acq_ai succeed";
+    }
+
+    connect(data_acquire_ai, &DataAcquireAI::send_data,
+            this, &Resis::rev_data_from_ni9205);
+
     // 设置定时器，为了能够切换电阻挡位的时候维持两秒，不至于跳变
     m_timer = new QTimer(this);
     m_timer->setInterval(2000);
@@ -10,6 +18,7 @@ Resis::Resis(QObject *parent) : QObject(parent)
         allowChange = true;
         m_timer->stop();
     });
+
 }
 
 /***************************************************************
@@ -62,7 +71,7 @@ QString Resis::get_channel() const
  **************************************************************/
 void Resis::start_acquire()
 {
-    data_acquire_ai = new DataAcquireAI;
+//    data_acquire_ai = new DataAcquireAI;
 
     // 电阻：(10),...,(14) + 电池电量(31)
     channel_final = get_channel() + "," +
@@ -72,8 +81,8 @@ void Resis::start_acquire()
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
-    connect(data_acquire_ai, &DataAcquireAI::send_data,
-            this, &Resis::rev_data_from_ni9205);
+//    connect(data_acquire_ai, &DataAcquireAI::send_data,
+//            this, &Resis::rev_data_from_ni9205);
 }
 
 /***************************************************************
@@ -137,6 +146,22 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
     // 组合成一个vector发出去，data中数据顺序如下：
     // 电阻 * (len - 1)、电池电量
     emit send_resis_to_ui(data_after_process);
+}
+
+/***************************************************************
+  *  @brief     在win中connect，窗口关闭，删除对象
+  *  @param     无
+  *  @note      槽函数——负责删除对象
+  *  @Sample usage:
+ **************************************************************/
+void Resis::slot_acq_delete()
+{
+    qDebug() << "(In resis)get delete sig";
+
+    if (data_acquire_ai != nullptr) {
+        delete data_acquire_ai;
+        qDebug() << "(In resis)delete acq_ai succeed!!!!!!!!!!";
+    }
 }
 
 /***************************************************************

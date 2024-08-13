@@ -29,6 +29,9 @@ private:
     Resis* _resis;
 
     void set_visible();
+
+signals:
+    void signal_delete();
 };
 
 #endif // SHOWWIN_MEASURERESIS_H

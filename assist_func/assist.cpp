@@ -67,7 +67,7 @@ void Assist::board_init()
     int32 writeSuccessNum;
 
     // 给0 还是 给1 是通电
-    writeArray[0] = 1;
+    writeArray[0] = 0;
 
     int error = DAQmxWriteDigitalLines(taskHandleSwitch, 1, true, -1,
                                        DAQmx_Val_GroupByChannel, writeArray, &writeSuccessNum, NULL);

@@ -288,28 +288,28 @@ void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
     // 供电电压、A项信号电压、A项信号电流、B项信号电压、B项信号电流、供电电流、电池电量
 //    qDebug() << "(In win)处理之后的数据大小为：" << data.size();
     /*********************** 供电电压 *****************************/
-    double sup_vol = data[0];
-    ui->lineE_supply_voltage->setText(QString::number(sup_vol));
+    double sup_vol = qRound(data[0] * 3 * 10.0) / 10.0;
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol) + "V");
 
     /*********************** A项信号电压 *****************************/
-    double sig_vol_A = data[1];
-    ui->lineE_signal_voltage_A->setText(QString::number(sig_vol_A));
+    double sig_vol_A = qRound(data[1] * 10.0) / 10.0;
+    ui->lineE_signal_voltage_A->setText(QString::number(sig_vol_A) + "V");
 
     /*********************** A项信号电流 *****************************/
-    double sig_cur_A = data[2];
-    ui->lineE_signal_current_A->setText(QString::number(sig_cur_A));
+    double sig_cur_A = qRound(data[2] * 1000 * 10.0) / 10.0;
+    ui->lineE_signal_current_A->setText(QString::number(sig_cur_A) + "mA");
 
     /*********************** B项信号电压 *****************************/
-    double sig_vol_B = data[3];
-    ui->lineE_signal_voltage_B->setText(QString::number(sig_vol_B));
+    double sig_vol_B = qRound(data[3] * 10.0) / 10.0;
+    ui->lineE_signal_voltage_B->setText(QString::number(sig_vol_B) + "V");
 
     /*********************** B项信号电流 *****************************/
-    double sig_cur_B = data[4];
-    ui->lineE_signal_current_B->setText(QString::number(sig_cur_B));
+    double sig_cur_B = qRound(data[4] * 1000 * 10.0) / 10.0;
+    ui->lineE_signal_current_B->setText(QString::number(sig_cur_B) + "mA");
 
     /*********************** 供电电流 *****************************/
-    double sup_cur = data[5];
-    ui->lineE_supply_current->setText(QString::number(sup_cur));
+    double sup_cur = qRound(data[5] * 1000 * 10.0) / 10.0;
+    ui->lineE_supply_current->setText(QString::number(sup_cur) + "mA");
 
     /*********************** 电池电量 *****************************/
     double bat = data[6];

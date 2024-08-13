@@ -61,12 +61,12 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
     ui->plot_pressure->yAxis->setLabel("Y");
     ui->plot_pressure->yAxis->setRange(-10, 10);
 
-//        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
-//        qDebug() << "(In Win)pre_channel_choosed: " << channel_num;
-//        // Graph数量 = 选择的压力传感器个数(channel_num) + 液压站(1)
-    channel_num = 2;
+    // Graph数量 = 选择的压力传感器个数(channel_num) + 液压站(1)
+    channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size() + 1;
+    qDebug() << channel_num;
     for (int i = 0; i < channel_num; i++) {
         ui->plot_pressure->addGraph();
+        ui->plot_pressure->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
     }
 
     /********************** 液压站相关 **********************/
@@ -103,33 +103,15 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
         /************************ 液压站相关 ************************/
         emit signal_setConfigSerialPort();      // 发送配置信号
         _timer_hydrau.start();                  // 开启定时：这个是限制ui数值框显示
-//        connect(_hydraulic_station, &HydraulicStation::send_press_to_ui,
-//                this, &showWin_pressureSensor::slot_plot_press_from_hydraSta);
 
         /************************ 压力传感器 ************************/
-//        _pressure_sensor->start_acquire();      // 开始采集
-
-//        connect(_pressure_sensor, &PressureSensor::send_vol_cur_pres_to_ui,
-//                this, &showWin_pressureSensor::slot_plot_press_from_sensor);
-
-//        /********************** 画图参数配置 **********************/
-//        ui->plot_pressure->clearGraphs();
-//        ui->plot_pressure->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-//        ui->plot_pressure->xAxis->setLabel("time/s");
-//        ui->plot_pressure->yAxis->setLabel("Y");
-//        ui->plot_pressure->yAxis->setRange(-10, 10);
-
-////        channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size();
-////        qDebug() << "(In Win)pre_channel_choosed: " << channel_num;
-////        // Graph数量 = 选择的压力传感器个数(channel_num) + 液压站(1)
-//        channel_num = 2;
-//        for (int i = 0; i < channel_num; i++) {
-//            ui->plot_pressure->addGraph();
-//        }
+        _pressure_sensor->start_acquire();      // 开始采集
 
         /********************** 文件保存相关 **********************/
         // 压力传感器的缓冲区大小根据用户选择的通道先确定
-        save_data_buf_sensor.resize(channel_num);   // 这里是不是channel_num待定
+        save_data_buf_sensor.resize(channel_num - 1);   // 这里是不是channel_num待定
+
+        qDebug() << "(In WIn)data size: " << save_data_buf_sensor.size();
 
         if (FILE_SAVE) {
             QString currentDateTime = "PS_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
@@ -159,22 +141,27 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
         // 保存缓冲区中残余的数据
         if (FILE_SAVE) {
             _timer_savefile.stop();
-            qDebug() << "data_buf_size_when_close: " << save_data_buf_hydra.size();
+            qDebug() << "(In Win)data_buf_size_when_close: " << save_data_buf_hydra.size();
             if (!save_data_buf_hydra.empty()) {
                 QTextStream out(&file);
                 out.setCodec("UTF-8");
                 // 遍历数据并写入文件
-                for (const SensorData& dataPoint : save_data_buf_hydra) {
-                    out << time_stamp << "," << dataPoint.value << "\n";
+                for (int i = 0; i < save_data_buf_hydra.size(); i++) {
+                    out << time_stamp << ":  ";
+                    for (int j = 0; j < save_data_buf_sensor.size(); j++) {
+                        out << save_data_buf_sensor[j][i].value << "    ";
+                    }
+                    out << save_data_buf_hydra[i].value << "\n";
                     time_stamp++;
                 }
+
                 qDebug() << "finish file writing last!!! ";
             }
             file.close();
         }
 
         /*********************** 压力传感器相关 **********************/
-//        _pressure_sensor->stop_acquire();   // 停止采集
+        _pressure_sensor->stop_acquire();   // 停止采集
     }
 }
 
@@ -212,7 +199,7 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     // 接收到的data中数据顺序如下：
     // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
     int total_len = data.size();
-    qDebug() << "(In Win)处理之后的数据大小为：" << total_len;
+//    qDebug() << "(In Win)处理之后的数据大小为：" << total_len;
 
     /*********************** 数值框显示 *****************************/
     show_vol_cur_press(data);
@@ -263,7 +250,7 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     ui->pBar_battery->setValue(bat);                  // 当前进度
     double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("电池电量剩余：%1%").arg(QString::number(dProgress, 'f', 1)));
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 }
 
@@ -372,6 +359,7 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
 
     int start_idx = 0;
     int len = selected_channel_arr.size();
+    len = 3;
 
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
         if (selected_channel_arr.contains(ch_num + 25)) {
@@ -431,10 +419,23 @@ void showWin_pressureSensor::save_data()
     QTextStream out(&file);
     out.setCodec("UTF-8");
     // 遍历数据并写入文件
-    for (const SensorData& dataPoint : save_data_buf_hydra) {
-        out << time_stamp << "," << dataPoint.value << "\n";
+//    qDebug() << "(In W_file_save)size1: " << save_data_buf_hydra.size();
+//    for (int i = 0; i < save_data_buf_sensor.size(); i++) {
+//        qDebug() << "(In W_file_save)size_" << i << " " << save_data_buf_sensor[i].size();
+//    }
+
+    for (int i = 0; i < save_data_buf_hydra.size(); i++) {
+        out << time_stamp << ":  ";
+        for (int j = 0; j < save_data_buf_sensor.size(); j++) {
+            out << save_data_buf_sensor[j][i].value << "    ";
+        }
+        out << save_data_buf_hydra[i].value << "\n";
         time_stamp++;
     }
+
     save_data_buf_hydra.clear();                // 清空缓冲区
+    for (int i = 0; i < save_data_buf_sensor.size(); i++) {
+        save_data_buf_sensor[i].clear();
+    }
 }
 

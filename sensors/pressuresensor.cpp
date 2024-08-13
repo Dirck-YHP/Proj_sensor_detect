@@ -64,7 +64,7 @@ QPair<int, int> PressureSensor::get_range() const
  **************************************************************/
 void PressureSensor::set_channel(QString channel)
 {
-    qDebug() << "way choosed: " << channel;
+    qDebug() << "(In PS)way choosed: " << channel;
     QVector<int> selected_channel_arr  = Assist::extractNumbers(channel);
 
     _channel = "";
@@ -143,8 +143,8 @@ void PressureSensor::stop_acquire()
 void PressureSensor::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
-    qDebug() << "(In PS)通道size: " << channel_final.length() << " 接收数据size: " << data.size();
-    if (data.size() != channel_final.length()) {
+//    qDebug() << "(In PS)接收数据size: " << data.size();
+    if (data.size() != Assist::extractNumbers(channel_final).size()) {
         qDebug() << "(In PS):通道和接收数据的size不一致！";
         return;
     }
@@ -193,10 +193,10 @@ void PressureSensor::slot_acq_delete()
 /***************************************************************
   *  @brief
   *  @param     无
-  *  @note      功能函数：实现电流到压力的映射
+  *  @note      功能函数：实现电流到压力的映射（暂时还没映射）
   *  @Sample usage:
  **************************************************************/
 double PressureSensor::map_from_cur_to_press(double current)
 {
-
+    return current;
 }

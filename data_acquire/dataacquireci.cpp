@@ -14,7 +14,7 @@ DataAcquireCI::DataAcquireCI()
 void DataAcquireCI::__init__(uInt32 pulses_per_rev) {
     // 创建任务
     DAQmxCreateTask("NI9401", &_task);
-    DAQmxCreateCIAngEncoderChan(_task, "cDAQ2Mod1/ctr0", "CI", DAQmx_Val_X4, true, 0, DAQmx_Val_AHighBHigh, DAQmx_Val_Degrees, pulses_per_rev, 0, NULL);
+    DAQmxCreateCIAngEncoderChan(_task, "cDAQ2Mod1/ctr0", "CI", DAQmx_Val_X4, false, 0, DAQmx_Val_AHighBHigh, DAQmx_Val_Degrees, pulses_per_rev, 0, NULL);
     DAQmxSetCIEncoderAInputTerm(_task, "CI", "/cDAQ2Mod1/PFI0");
     DAQmxSetCIEncoderBInputTerm(_task, "CI", "/cDAQ2Mod1/PFI2");
     DAQmxSetCIEncoderZInputTerm(_task, "CI", "/cDAQ2Mod1/PFI4");
