@@ -93,28 +93,37 @@ void funcWin_DataReview::file_process_press()
                          " 采集通道：" + acqChannels;
             ui->lineE_labels->setText(str);
 
-            // 从第二行开始读取数据
+            // 第二行是提示信息：暂不处理
+            QString second_line = in.readLine();
+//          qDebug() << second_line;
+
+            // 从第三行开始读取数据
             QVector<double> xData;
-            QVector<double> yData1;
-            QVector<double> yData2;
+            QVector<QVector<double>> yData(6);
 
             while (!in.atEnd()) {
                 QString line = in.readLine();
-                QStringList data = line.split(",", QString::SkipEmptyParts);
-                if (data.size() >= 2) {
-                    // 这里假设第一列是时间戳，第二列和第三列是数据点
-                    // 根据实际情况调整解析逻辑
-                    xData.append(data[0].toDouble());
-                    yData1.append(data[1].toDouble());
-//                    yData2.append(data[2].toDouble());
+                QStringList data = line.split(":", QString::SkipEmptyParts);
+                if (data.size() == 2) {
+                    QStringList yParts = data.at(1).split(" ", QString::SkipEmptyParts);
+                    y_channel_num = yParts.size();
+                    if (yParts.size() >= 2) {
+                        xData.append(data[0].toDouble());
+                        for (int k = 0; k < yParts.size(); k++) {
+                            yData[k].append(yParts[k].toDouble());
+                        }
+                    }
                 }
             }
             file.close();
 
+            qDebug() << "channel_num[ +hydra(1) ]: " << y_channel_num;
             qDebug() << "finish reading data, size: "
-                     << xData.size() << " "
-                     << yData1.size() << " ";
-//                     << yData2.size();
+                     << xData.size();
+            for (int i = 0; i < y_channel_num; i++) {
+                qDebug() << "y_size:" << yData[i].size();
+            }
+
             // 画图
             ui->custom_plot->clearGraphs();
             ui->custom_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
@@ -122,12 +131,15 @@ void funcWin_DataReview::file_process_press()
             ui->custom_plot->yAxis->setLabel("Y");
             ui->custom_plot->yAxis->setRange(-10, 10);
 
-            // Graph数量 = 压力传感器的通道数(channel_num) + 液压站(1)，暂时为1
-            for (int i = 0; i < 1; i++) {
+            // Graph数量 = 压力传感器的通道数(channel_num) + 液压站(1)
+            for (int i = 0; i < y_channel_num; i++) {
                 ui->custom_plot->addGraph();
+                ui->custom_plot->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
             }
 
-            ui->custom_plot->graph(0)->addData(xData, yData1, true);
+            for (int i = 0; i < y_channel_num; i++) {
+                ui->custom_plot->graph(i)->addData(xData, yData[i], true);
+            }
             ui->custom_plot->rescaleAxes();       // 自适应大小
             ui->custom_plot->replot();
 

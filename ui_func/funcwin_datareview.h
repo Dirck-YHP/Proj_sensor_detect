@@ -38,6 +38,7 @@ private:
     void file_process_proxi();          // 接近开关
 
 private:
+    int y_channel_num;
 };
 
 #endif // FUNCWIN_DATAREVIEW_H
