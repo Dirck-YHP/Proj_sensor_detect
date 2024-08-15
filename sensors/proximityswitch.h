@@ -27,13 +27,6 @@ private:
 
     const int THREAD_VOL_TO_PUL = 3;
 
-// ----以下是尝试代码----
-private:
-    TaskHandle tk;
-signals:
-    void startDataAcq(TaskHandle task);
-// ---- END ----
-
 public:
     void set_label(QString label);  // 设置传感器类型
     QString get_label() const;

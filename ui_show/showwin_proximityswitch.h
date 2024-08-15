@@ -41,6 +41,8 @@ public:
     // 需要一个转化函数，根据读到的电压值判断是否“接触”
 
 private:
+    int tmp_num = 100;
+
     Ui::showWin_proximitySwitch *ui;
     ProximitySwitch *_proxi_switch;
 //    VariableResis *_variable_resis;

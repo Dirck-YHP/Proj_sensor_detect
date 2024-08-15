@@ -68,35 +68,12 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
 
-        /************************ 滑动变阻器相关 ************************/
-//        _variable_resis = new VariableResis;
-//        _variable_resis->start_acquire();
-
-//        connect(_variable_resis, &VariableResis::send_ni9205_to_ui,
-//                this, &showWin_proximitySwitch::get_data_and_plot_distance);
-
         /************************ 接近开关 + 滑动变阻器 ************************/
         // 由于滑动变阻器也是通过9205采集数据计算得到距离，而全局只能存在一个数据采集类的对象
         // 所以将滑动变阻器类和接近开关类结合到一起
         // 即 接近开关下发通道时在最后加上滑动变阻器对应通道
 
         _proxi_switch->start_acquire();
-
-//        connect(_proxi_switch, &ProximitySwitch::send_vol_cur_pul_dis_to_ui,
-//                this, &showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show);
-
-//        /********************** 画图参数配置 **********************/
-//        ui->plot_distance->clearGraphs();
-//        ui->plot_distance->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-//        ui->plot_distance->xAxis->setLabel("time/s");
-//        ui->plot_distance->yAxis->setLabel("Y");
-//        ui->plot_distance->yAxis->setRange(-10, 10);
-
-//        // 添加图，两个，一个画距离，一个画触发信号
-//        // 可能一张图就够了，根据是否触发判断当前这个点要不要画的特殊一点
-//        for (int i = 0; i < 1; i++) {
-//            ui->plot_distance->addGraph();
-//        }
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
@@ -139,10 +116,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
                         << save_data_buf_if_pulse[i].value << "\n";
                     time_stamp++;
                 }
-//                for (const SensorData& dataPoint : save_data_buf_variaresis) {
-//                    out << time_stamp << "," << dataPoint.value << "\n";
-//                    time_stamp++;
-//                }
+
                 qDebug() << "finish file writing last!!! ";
             }
             file.close();
@@ -197,7 +171,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     /*********************** 供电电压 ************************/
     double sup_vol = data[0];
     ui->lineE_supply_voltage->setText(QString::number(sup_vol));
-#if 1
+
     /*********************** 信号电压 ************************/
     double sig_vol = data[1];
     ui->lineE_signal_voltage->setText(QString::number(sig_vol));
@@ -231,7 +205,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     /*************** 画 “触发点” ****************/
     if (if_changed) {
 //        ui->plot_distance->graph(0)->setPen(QPen(Qt::red));
-        qDebug() << "================YES=================";
+        qDebug() << "---- YES ----";
     } else {
 //        ui->plot_distance->graph(0)->setPen(QPen(Qt::blue));
     }
@@ -247,11 +221,16 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     ui->lineE_sensing_dis->setText(QString::number(_distance) + "mm");
 
     /********************** 重复精度测量 **********************/
-    if (_if_rep_mea) {      // 如果用户点击了“重复精度测量”
-        if (if_changed)       // 只有“触发”的时候才记录距离
-            _dis_arr.push_back(_distance);
 
-        qDebug() << "(In Win)measuring... _dis_arr's size: " << _dis_arr.size();
+    if (_if_rep_mea) {      // 如果用户点击了“重复精度测量”
+        if (if_changed) {   // 只有“触发”的时候才记录距离
+//            _dis_arr.push_back(_distance);
+            qDebug() << "(In Win)tmp_num: " << tmp_num;
+            _dis_arr.push_back(tmp_num);
+            tmp_num++;
+        }
+
+//        qDebug() << "(In Win)measuring... _dis_arr's size: " << _dis_arr.size();
 
         if (_dis_arr.size() == REPEAT_TIMES) {      // 已经记录了10次
             auto maxIt = std::max_element(_dis_arr.begin(), _dis_arr.end());
@@ -291,7 +270,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
         _data_save->collectData(&save_data_buf_if_pulse, if_changed);
         _data_save->collectData(&save_data_buf_variaresis, _distance);
     }
-#endif
+
 }
 
 /***************************************************************
@@ -341,10 +320,7 @@ void showWin_proximitySwitch::save_data()
             << save_data_buf_if_pulse[i].value << "\n";
         time_stamp++;
     }
-//    for (const SensorData& dataPoint : save_data_buf_variaresis) {
-//        out << time_stamp << "," << dataPoint.value << "\n";
-//        time_stamp++;
-//    }
+
     save_data_buf_variaresis.clear();                // 清空缓冲区
     save_data_buf_if_pulse.clear();
 }

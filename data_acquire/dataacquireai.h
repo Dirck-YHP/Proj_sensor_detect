@@ -71,11 +71,6 @@ public:
 signals:
     void send_data(QVector<double> data);       // 将采集到的数据发送给上层
 
-// ---- 以下是测试代码 ----
-public slots:
-    void init(TaskHandle task);
-// ---- END ----
-
 public:
     void get_channel(QString channel);
     void stop_acquire();
@@ -83,7 +78,7 @@ public:
 private:
     TaskHandle _task;
     QString _channel;
-    float64 _sample_rate = 1000.0;
+    float64 _sample_rate = 50.0;
     uint64_t _sampsPerChanToAcquire = 1000;
     int32 _numSampsPerChan = 1;                // 每通道采样数
     uInt32 _channel_num;

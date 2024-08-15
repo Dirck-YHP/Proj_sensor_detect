@@ -19,13 +19,12 @@ void DataAcquireAI::run()
 {
     // 初始化配置
     __init__(_channel);
-    qDebug() << "(In ai)id_1:" << QThread::currentThreadId();
 
     while (!STOP) {
         // 读数据
         DAQmxReadAnalogF64(_task, _numSampsPerChan, -1, DAQmx_Val_GroupByChannel,
                            data, DATA_SIZE, &_sampsPerChanRead, NULL);
-//        qDebug() << data[0];
+//        qDebug() << data[1];
         // 获取通道
         DAQmxGetTaskNumChans(_task, &_channel_num);
 
@@ -40,20 +39,8 @@ void DataAcquireAI::run()
             qDebug() << "没有采集到数据！";
 
         }
-        QThread::msleep(20);
+        QThread::msleep(10);
     }
-}
-
-void DataAcquireAI::init(TaskHandle task)
-{
-    qDebug() << "(In ai)id_0:" << QThread::currentThreadId();
-    qDebug() << "(In ai)get task";
-    // 创建滤波器
-    for (int i = 0; i < 1; i++) {
-        _filters.push_back(LowpassFilter(taps));
-    }
-
-    this->_task = task;
 }
 
 /***************************************************************
@@ -64,8 +51,6 @@ void DataAcquireAI::init(TaskHandle task)
  **************************************************************/
 void DataAcquireAI::__init__(QString channel)
 {
-    qDebug() << "(In ai)id_1:" << QThread::currentThreadId();
-
     QVector<int> idx;
 
     // 创建任务
@@ -74,11 +59,9 @@ void DataAcquireAI::__init__(QString channel)
     // 将字符串形式的通道转化成数组
     idx = str_to_int(channel);
 
-    qDebug() << "(In acq_ai)idx: " << idx;
     // 配置通道
     for (int i = 0; i < idx.size(); i++) {
         double U = choose_min_max(idx[i]);
-        qDebug() << "(In acq_ai)U: " << U;
 
         QString physicalChannel = "cDAQ2Mod3/ai" + QString::number(idx[i]);
         DAQmxCreateAIVoltageChan(_task, physicalChannel.toUtf8(), "",
