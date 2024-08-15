@@ -167,45 +167,6 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
         /********************** 三张卡开始采集 **********************/
         _angle_encoder->start_acquire();
 
-        // 开始画图，先测试，不考虑下面的控件命名，编码器的9205后续不需要画图了，9401需要和电机的角度画在一起
-//        /********************** 角度图参数配置 **********************/
-////        channel_num = Assist::extractNumbers(_angle_encoder->get_channel()).size();
-//        ui->plot_angle->clearGraphs();
-//        ui->plot_angle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-//        ui->plot_angle->xAxis->setLabel("time/s");
-//        ui->plot_angle->yAxis->setLabel("Y");
-//        ui->plot_angle->yAxis->setRange(-10, 10);
-
-//        // 两条曲线
-//        for (int i = 0; i < 2; i++) {
-//            ui->plot_angle->addGraph();
-//        }
-
-//        /********************** ni 9205相关 **********************/
-//        connect(_angle_encoder, &AngleEncoder::send_vol_cur_to_ui,
-//                this, &showWin_angleEncoder::slot_get_vol_cur_and_show);
-
-
-//        /********************** 脉冲图参数配置 **********************/
-//        ui->plot_impulse->clearGraphs();
-//        ui->plot_impulse->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-//        ui->plot_impulse->xAxis->setLabel("time/s");
-//        ui->plot_impulse->yAxis->setLabel("Y");
-//        ui->plot_impulse->yAxis->setRange(-1, 3);
-
-//        for (int i = 0; i < 6; i++) {
-//            ui->plot_impulse->addGraph();
-//            ui->plot_impulse->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
-//        }
-
-//        /********************** ni 9403相关 **********************/
-//        connect(_angle_encoder, &AngleEncoder::send_pulse_to_ui,
-//                this, &showWin_angleEncoder::slot_get_pulse_and_plot);
-
-//        /********************** ni 9401相关 **********************/
-//        connect(_angle_encoder, &AngleEncoder::send_angle_to_ui,
-//                this, &showWin_angleEncoder::slot_get_angle_and_plot);
-
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
             QString currentDateTime = "AE_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
@@ -265,24 +226,6 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
  **************************************************************/
 void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
 {
-    /****************************** 旧板 *************************************/
-//    int length = data.size() / channel_num;     // 每通道数据 数
-//    QVector<double> x(length);
-//    int point_count = ui->plot_angle->graph(0)->dataCount();
-
-//    // 确定画图的横轴
-//    for (int i = 0; i < length; i++) {
-//        x[i] = i + point_count;
-//    }
-
-//    // 画图，一共channel_num条曲线
-//    for (int i = 0; i < channel_num; i++) {
-//        ui->plot_angle->graph(i)->addData(x,
-//            QVector<double>(data.begin() + i*length, data.begin() + i*length + length), true);
-//    }
-//    ui->plot_angle->rescaleAxes();       // 自适应大小
-//    ui->plot_angle->replot();
-
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、A项信号电压、A项信号电流、B项信号电压、B项信号电流、供电电流、电池电量
@@ -337,7 +280,6 @@ void showWin_angleEncoder::slot_get_pulse_and_plot(QVector<QVector<double> > dat
     int length = data[0].size();
 
     QVector<double> x(length);
-//    int point_count = ui->plot_ni_9403->graph(0)->dataCount() / 2;
 
     // 确定画图的横轴
     for (int i = 0; i < length; i++) {
@@ -469,46 +411,6 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
 void showWin_angleEncoder::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
-
-//    /******************** 电机转动圈数显示 *********************/
-//    int cur_turn = _motor_angle / 360;
-////    qDebug() << "(In Win)turn: " << cur_turn << " last_turn: " << last_turn;
-//    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
-//        totalTurns += 1;
-////        qDebug() << "(In Win)++ ";
-//    }
-//    if (cur_turn == 0) fresh_turn = false;
-
-//    last_turn = cur_turn;
-//    ui->lineE_motor_circle->setText(QString::number(totalTurns));
-
-//    /******************** 角度数值框显示 *********************/
-//    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
-
-//    /******************** 角度画图 *********************/
-//    int length = 1;
-//    QVector<double> x(length);
-//    int point_count = ui->plot_angle->graph(1)->dataCount();
-
-////    qDebug() << "(In Win)dataCnt: " << point_count;
-//    // 确定画图的横轴
-//    for (int i = 0; i < length; i++) {
-//        x[i] = i + point_count;
-//    }
-
-////    qDebug() << "(In Win)x: " << x;
-//    // 画图，一次画一个点
-//    QVector<double> y = {_motor_angle};
-
-//    ui->plot_angle->graph(1)->addData(x, y, true);
-//    ui->plot_angle->rescaleAxes();       // 自适应大小
-//    ui->plot_angle->replot();
-
-    /******************** 文件保存 *********************/
-//    if (FILE_SAVE) {
-//        // 数据首先都放到缓冲区中
-//        _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
-//    }
 }
 
 /***************************************************************

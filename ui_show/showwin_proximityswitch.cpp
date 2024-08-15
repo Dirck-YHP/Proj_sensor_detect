@@ -38,8 +38,8 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
     // 一张图就够了，根据是否触发判断当前这个点要不要画的特殊一点
     for (int i = 0; i < 1; i++) {
         ui->plot_distance->addGraph();
+        ui->plot_distance->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
     }
-
 
     /********************** 9205相关 **********************/
     connect(_proxi_switch, &ProximitySwitch::send_vol_cur_pul_dis_to_ui,
@@ -78,7 +78,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
         /************************ 接近开关 + 滑动变阻器 ************************/
         // 由于滑动变阻器也是通过9205采集数据计算得到距离，而全局只能存在一个数据采集类的对象
         // 所以将滑动变阻器类和接近开关类结合到一起
-        // 即接近开关下发通道时在最后加上滑动变阻器对应通道
+        // 即 接近开关下发通道时在最后加上滑动变阻器对应通道
 
         _proxi_switch->start_acquire();
 
@@ -100,7 +100,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
-            QString currentDateTime = "PxS" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString currentDateTime = "PxS_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
             QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
             file.setFileName(file_name);
             if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
@@ -197,7 +197,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     /*********************** 供电电压 ************************/
     double sup_vol = data[0];
     ui->lineE_supply_voltage->setText(QString::number(sup_vol));
-
+#if 1
     /*********************** 信号电压 ************************/
     double sig_vol = data[1];
     ui->lineE_signal_voltage->setText(QString::number(sig_vol));
@@ -230,9 +230,10 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
 
     /*************** 画 “触发点” ****************/
     if (if_changed) {
-        ui->plot_distance->graph(0)->setPen(QPen(Qt::red));
+//        ui->plot_distance->graph(0)->setPen(QPen(Qt::red));
+        qDebug() << "================YES=================";
     } else {
-        ui->plot_distance->graph(0)->setPen(QPen(Qt::blue));
+//        ui->plot_distance->graph(0)->setPen(QPen(Qt::blue));
     }
 
     // 画图，一次画一个点
@@ -243,14 +244,14 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     ui->plot_distance->replot();
 
     /*************** 数值框显示 ****************/
-    ui->lineE_sensing_dis->setText(QString::number(_distance));
+    ui->lineE_sensing_dis->setText(QString::number(_distance) + "mm");
 
     /********************** 重复精度测量 **********************/
     if (_if_rep_mea) {      // 如果用户点击了“重复精度测量”
         if (if_changed)       // 只有“触发”的时候才记录距离
             _dis_arr.push_back(_distance);
 
-        qDebug() << "measuring... _dis_arr's size: " << _dis_arr.size();
+        qDebug() << "(In Win)measuring... _dis_arr's size: " << _dis_arr.size();
 
         if (_dis_arr.size() == REPEAT_TIMES) {      // 已经记录了10次
             auto maxIt = std::max_element(_dis_arr.begin(), _dis_arr.end());
@@ -269,7 +270,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
 
             _if_rep_mea = false;        // 结束重复精度测量
             _dis_arr.clear();           // 清空
-            qDebug() << "finish repeart precise measure...";
+            qDebug() << "(In Win)finish repeart precise measure...";
         }
     }
 
@@ -290,6 +291,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
         _data_save->collectData(&save_data_buf_if_pulse, if_changed);
         _data_save->collectData(&save_data_buf_variaresis, _distance);
     }
+#endif
 }
 
 /***************************************************************

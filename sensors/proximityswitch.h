@@ -5,6 +5,8 @@
 #include <QThreadPool>
 #include <QDebug>
 
+#include <NIDAQmx.h>
+
 #include "data_acquire/dataacquireai.h"
 
 class ProximitySwitch : public QObject
@@ -24,6 +26,13 @@ private:
     DataAcquireAI *data_acquire_ai = nullptr;     // NI 9205
 
     const int THREAD_VOL_TO_PUL = 3;
+
+// ----以下是尝试代码----
+private:
+    TaskHandle tk;
+signals:
+    void startDataAcq(TaskHandle task);
+// ---- END ----
 
 public:
     void set_label(QString label);  // 设置传感器类型
@@ -55,7 +64,6 @@ public slots:
 
 signals:
     void send_vol_cur_pul_dis_to_ui(QVector<double> data);
-
 };
 
 #endif // PROXIMITYSWITCH_H

@@ -427,18 +427,16 @@ void funcWin_DataReview::file_process_proxi()
 
             // 根据y2判断是否画“触发”
             for (int i = 0; i < yData1.size(); i++) {
+                QVector<double> x = {xData[i]};
+                QVector<double> y = {yData1[i]};
                 if (yData2[i] == 1) {
                     ui->custom_plot->graph(0)->setPen(QPen(Qt::red));
-                    ui->custom_plot->graph(0)->addData(QVector<double>(xData[i]),
-                                                       QVector<double>(yData1[i]), true);
+                    ui->custom_plot->graph(0)->addData(x, y, true);
                 } else {
                     ui->custom_plot->graph(0)->setPen(QPen(Qt::blue));
-                    ui->custom_plot->graph(0)->addData(QVector<double>(xData[i]),
-                                                       QVector<double>(yData1[i]), true);
+                    ui->custom_plot->graph(0)->addData(x, y, true);
                 }
             }
-//            ui->custom_plot->graph(0)->addData(xData, yData1, true);
-//            ui->custom_plot->graph(1)->addData(xData, yData2, true);
 
             ui->custom_plot->rescaleAxes();       // 自适应大小
             ui->custom_plot->replot();

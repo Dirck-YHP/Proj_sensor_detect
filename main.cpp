@@ -3,6 +3,10 @@
 
 #include <QApplication>
 
+#include "data_acquire/dataacquireai.h"
+#include <QThreadPool>
+
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -14,8 +18,15 @@ int main(int argc, char *argv[])
 
 //    Widget w;
 //    w.show();
+
     mainWindow mW;
     mW.show();
+
+//    DataAcquireAI* dataAcquire;
+//    dataAcquire = new DataAcquireAI;
+
+//    dataAcquire->get_channel("0,17,18,25,31");
+//    QThreadPool::globalInstance()->start(dataAcquire);
 
     return a.exec();
 }

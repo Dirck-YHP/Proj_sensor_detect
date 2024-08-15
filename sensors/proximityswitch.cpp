@@ -1,4 +1,4 @@
-#include "proximityswitch.h"
+﻿#include "proximityswitch.h"
 
 ProximitySwitch::ProximitySwitch(QObject *parent) : QObject(parent)
 {
@@ -138,10 +138,68 @@ QString ProximitySwitch::get_channel() const
   *  @note      构造数据采集类的对象，接收数据采集类传过来的数据并进行处理
   *  @Sample usage:
  **************************************************************/
+double choose_min_max(int channel)
+{
+    double U = 0.0;
+    switch (channel) {
+    case 0:     // 0 供电电压
+    case 1:     // 1 角位移传感器信号电压、信号电流、角度值
+        U = 10;
+        break;
+    case 2:     // 2 角位移传感器供电电流
+        U = 0.2;
+        break;
+    case 3:     // 3~8 角位移编码器信号电压、信号电流
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+        U = 10;
+        break;
+    case 9:     // 9 角位移编码器供电电流
+        U = 0.2;
+        break;
+    case 10:    // 10~14 测电阻
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+        U = 5.0;
+        break;
+    case 15:    // 15~24 接近开关
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+        U = 10;
+        break;
+    case 25:    // 25 滑动变阻器距离
+        U = 5.0;
+        break;
+    case 26:    // 26~30 压力传感器信号电压、信号电流、压力值
+    case 27:
+    case 28:
+    case 29:
+    case 30:
+
+    case 31:
+        U = 10;
+        break;
+    }
+
+    return U;
+}
+
 void ProximitySwitch::start_acquire()
 {
     //--------------------------NI 9205--------------------------------------
-//    data_acquire_ai = new DataAcquireAI;
+    qDebug() << "(In PxS)id:" << QThread::currentThreadId();
 
     // 供电电压：(0) + 接近开关通道：(15,16),...,(23,24) + 滑动变阻器：(25) + 电池电量：(31)
     channel_final = chToStr(CH_SUPV) + "," +
@@ -150,10 +208,32 @@ void ProximitySwitch::start_acquire()
                             chToStr(CH_BAT);
 
     data_acquire_ai->get_channel(channel_final);
+#if 0
+    // ----以下是尝试代码----
+    connect(this, &ProximitySwitch::startDataAcq, data_acquire_ai, &DataAcquireAI::init);
+
+    DAQmxCreateTask("Data Acquire Task", &tk);
+    QVector<int> idx = Assist::extractNumbers(channel_final);
+    idx = QVector<int>{17};
+    qDebug() << "(In PxS)idx: " << idx;
+
+    for (int i = 0; i < idx.size(); i++) {
+        double U = choose_min_max(idx[i]);
+        qDebug() << "(In PxS)U: " << U;
+
+        QString physicalChannel = "cDAQ2Mod3/ai" + QString::number(idx[i]);
+        DAQmxCreateAIVoltageChan(tk, physicalChannel.toUtf8(), "",
+                                 DAQmx_Val_RSE, -U, U, DAQmx_Val_Volts, NULL);
+        DAQmxCfgSampClkTiming(tk, NULL, 1000.0, DAQmx_Val_Rising, DAQmx_Val_ContSamps, 1000);
+
+    }
+    DAQmxStartTask(tk);
+
+    emit startDataAcq(tk);
+    // ---- END ----
+#endif
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
-//    connect(data_acquire_ai, &DataAcquireAI::send_data,
-//            this, &ProximitySwitch::rev_data_from_ni9205);
 }
 
 /***************************************************************
@@ -177,8 +257,8 @@ void ProximitySwitch::stop_acquire()
 void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
-    qDebug() << "(In PxS)通道size: " << channel_final.length() << " 接收数据size: " << data.size();
-    if (data.size() != channel_final.length()) {
+//    qDebug() << "(In PxS)通道size: " << Assist::extractNumbers(channel_final).size() << " 接收数据size: " << data.size();
+    if (data.size() != Assist::extractNumbers(channel_final).size()) {
         qDebug() << "(In PxS)通道和接收数据的size不一致！";
         return;
     }
@@ -190,6 +270,8 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
     double sig_vol = data[1];
     double sig_cur = sig_vol / 5100;
     double if_pulse = (sig_vol > THREAD_VOL_TO_PUL) ? 1 : 0;
+
+//    qDebug() << "(In PxS)if_pulse" << if_pulse;
 
     // 供电电流
     double sup_cur = data[2] / 5000;
@@ -209,6 +291,10 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
                                          if_pulse, distance_var,
                                          bat};
 
+#if 0
+    double sup_vol = data[0];
+    QVector<double> data_after_process = {sup_vol};
+#endif
     emit send_vol_cur_pul_dis_to_ui(data_after_process);
 }
 
@@ -231,10 +317,10 @@ void ProximitySwitch::slot_acq_delete()
 /***************************************************************
   *  @brief
   *  @param     无
-  *  @note      功能函数：实现电流到滑动变阻器距离的映射
+  *  @note      功能函数：实现电流到滑动变阻器距离的映射(暂时还没补充映射)
   *  @Sample usage:
  **************************************************************/
 double ProximitySwitch::map_from_cur_to_varDis(double current)
 {
-
+    return current;
 }

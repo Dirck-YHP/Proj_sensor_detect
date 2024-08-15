@@ -19,11 +19,13 @@ void DataAcquireAI::run()
 {
     // 初始化配置
     __init__(_channel);
+    qDebug() << "(In ai)id_1:" << QThread::currentThreadId();
 
     while (!STOP) {
         // 读数据
         DAQmxReadAnalogF64(_task, _numSampsPerChan, -1, DAQmx_Val_GroupByChannel,
                            data, DATA_SIZE, &_sampsPerChanRead, NULL);
+//        qDebug() << data[0];
         // 获取通道
         DAQmxGetTaskNumChans(_task, &_channel_num);
 
@@ -32,7 +34,6 @@ void DataAcquireAI::run()
         for (int i = 0; i < _sampsPerChanRead * _channel_num; i++) {
             data[i] = _filters[i / _sampsPerChanRead].update(data[i]);
         }
-
         // 发送数据
         if(_sampsPerChanRead > 0) emit send_data(QVector<double>(data, data + _sampsPerChanRead * _channel_num));
         else {
@@ -43,6 +44,18 @@ void DataAcquireAI::run()
     }
 }
 
+void DataAcquireAI::init(TaskHandle task)
+{
+    qDebug() << "(In ai)id_0:" << QThread::currentThreadId();
+    qDebug() << "(In ai)get task";
+    // 创建滤波器
+    for (int i = 0; i < 1; i++) {
+        _filters.push_back(LowpassFilter(taps));
+    }
+
+    this->_task = task;
+}
+
 /***************************************************************
   *  @brief     初始化采集卡配置
   *  @param     无
@@ -51,6 +64,8 @@ void DataAcquireAI::run()
  **************************************************************/
 void DataAcquireAI::__init__(QString channel)
 {
+    qDebug() << "(In ai)id_1:" << QThread::currentThreadId();
+
     QVector<int> idx;
 
     // 创建任务
@@ -63,6 +78,8 @@ void DataAcquireAI::__init__(QString channel)
     // 配置通道
     for (int i = 0; i < idx.size(); i++) {
         double U = choose_min_max(idx[i]);
+        qDebug() << "(In acq_ai)U: " << U;
+
         QString physicalChannel = "cDAQ2Mod3/ai" + QString::number(idx[i]);
         DAQmxCreateAIVoltageChan(_task, physicalChannel.toUtf8(), "",
                                  DAQmx_Val_RSE, -U, U, DAQmx_Val_Volts, NULL);

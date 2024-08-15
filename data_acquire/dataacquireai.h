@@ -71,6 +71,11 @@ public:
 signals:
     void send_data(QVector<double> data);       // 将采集到的数据发送给上层
 
+// ---- 以下是测试代码 ----
+public slots:
+    void init(TaskHandle task);
+// ---- END ----
+
 public:
     void get_channel(QString channel);
     void stop_acquire();
