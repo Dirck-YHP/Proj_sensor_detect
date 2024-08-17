@@ -6,105 +6,158 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>677</width>
-    <height>355</height>
+    <width>636</width>
+    <height>387</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>主界面</string>
   </property>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>30</y>
-     <width>231</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>14</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>便携式校验系统：</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btn_exit">
-   <property name="geometry">
-    <rect>
-     <x>330</x>
-     <y>230</y>
-     <width>261</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>退出</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btn_start">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>230</y>
-     <width>261</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>开始</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="cbox_choose_sensor">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>80</y>
-     <width>261</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>角位移编码器</string>
-    </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>便携式校验系统</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QComboBox" name="cbox_choose_sensor">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="editable">
+          <bool>false</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>角位移编码器</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>角位移传感器</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>接近开关</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>压力传感器</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>电阻</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_data_export">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>数据导出</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="btn_start">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>开始</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_exit">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>退出</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
-   <item>
-    <property name="text">
-     <string>角位移传感器</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>接近开关</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>压力传感器</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>电阻</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QPushButton" name="btn_data_export">
-   <property name="geometry">
-    <rect>
-     <x>330</x>
-     <y>80</y>
-     <width>261</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>数据导出</string>
-   </property>
-  </widget>
+  </layout>
  </widget>
  <resources/>
  <connections/>

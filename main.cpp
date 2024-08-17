@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
 //    w.show();
 
     mainWindow mW;
+    mW.setStyleSheet("background-color:rgb(67,67,67);");
     mW.show();
 
     return a.exec();

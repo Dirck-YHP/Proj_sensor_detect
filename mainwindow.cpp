@@ -7,6 +7,12 @@ mainWindow::mainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->btn_exit->setStyleSheet("color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_start->setStyleSheet("color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_data_export->setStyleSheet("color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->cbox_choose_sensor->setStyleSheet("color:rgb(254,254,254);background-color:rgb(84,80,107);");
+
     // 板子上电，待测
 //    Assist::board_init();
 }
@@ -41,6 +47,7 @@ void mainWindow::on_btn_start_clicked()
                 this, &mainWindow::showMainWindow);
 
         this->hide();
+        param_win_angle_sensor->setStyleSheet("background-color:rgb(67,67,67);");
         param_win_angle_sensor->show();
     } else if (ui->cbox_choose_sensor->currentText() == "角位移编码器") {
         paramWin_angleEncoder *param_win_angle_encoder = new paramWin_angleEncoder;
@@ -48,6 +55,7 @@ void mainWindow::on_btn_start_clicked()
                 this, &mainWindow::showMainWindow);
 
         this->hide();
+        param_win_angle_encoder->setStyleSheet("background-color:rgb(67,67,67);");
         param_win_angle_encoder->show();
     } else if (ui->cbox_choose_sensor->currentText() == "接近开关") {
         paramWin_proximitySwitch *param_win_proximity_switch = new paramWin_proximitySwitch;
@@ -55,6 +63,7 @@ void mainWindow::on_btn_start_clicked()
                 this, &mainWindow::showMainWindow);
 
         this->hide();
+        param_win_proximity_switch->setStyleSheet("background-color:rgb(67,67,67);");
         param_win_proximity_switch->show();
     } else if (ui->cbox_choose_sensor->currentText() == "压力传感器") {
         paramWin_pressureSensor *param_win_pressure_sensor = new paramWin_pressureSensor;
@@ -62,6 +71,7 @@ void mainWindow::on_btn_start_clicked()
                 this, &mainWindow::showMainWindow);
 
         this->hide();
+        param_win_pressure_sensor->setStyleSheet("background-color:rgb(67,67,67);");
         param_win_pressure_sensor->show();
     } else if (ui->cbox_choose_sensor->currentText() == "电阻") {
         paramWin_mea_resis *param_win_mea_r = new paramWin_mea_resis;
@@ -69,6 +79,7 @@ void mainWindow::on_btn_start_clicked()
                 this, &mainWindow::showMainWindow);
 
         this->hide();
+        param_win_mea_r->setStyleSheet("background-color:rgb(67,67,67);");
         param_win_mea_r->show();
     }
 }
@@ -87,6 +98,7 @@ void mainWindow::on_btn_data_export_clicked()
             this, &mainWindow::showMainWindow);
 
     this->hide();
+    func_win_data_export->setStyleSheet("background-color:rgb(67,67,67);");
     func_win_data_export->show();
 }
 

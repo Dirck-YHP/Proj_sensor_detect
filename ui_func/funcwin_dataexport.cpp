@@ -7,6 +7,13 @@ funcWin_DataExport::funcWin_DataExport(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // ui界面
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_send->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_choose->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_back_mainW->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+
     tcpServer = new QTcpServer(this);
     tcpSocket = NULL;
     // 设置窗口标题
