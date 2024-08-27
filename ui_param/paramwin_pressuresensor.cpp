@@ -6,6 +6,30 @@ paramWin_pressureSensor::paramWin_pressureSensor(QWidget *parent) :
     ui(new Ui::paramWin_pressureSensor)
 {
     ui->setupUi(this);
+
+    // ui界面
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->label_4mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_20mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_range->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_channel->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+
+    ui->cBox_pressure_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->cBox_file_save->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_1->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_2->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_3->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_4->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_5->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+
+    ui->lineE_4mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_20mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+
+    ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_exit->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_back_mainW->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_load_data->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
 }
 
 paramWin_pressureSensor::~paramWin_pressureSensor()

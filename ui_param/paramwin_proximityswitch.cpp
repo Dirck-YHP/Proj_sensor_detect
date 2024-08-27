@@ -6,6 +6,30 @@ paramWin_proximitySwitch::paramWin_proximitySwitch(QWidget *parent) :
     ui(new Ui::paramWin_proximitySwitch)
 {
     ui->setupUi(this);
+
+    // ui界面
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->label_channel->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_matirial->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_using_time->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_sensing_dis->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+
+    ui->cBox_distance->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->cBox_material->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->cBox_use_time->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->cBox_prox_switch_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->checkBox_ch_1->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_2->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_3->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_4->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->checkBox_ch_5->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->cBox_file_save->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+
+    ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_exit->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_back_mainW->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_load_data->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
 }
 
 paramWin_proximitySwitch::~paramWin_proximitySwitch()
