@@ -9,7 +9,7 @@ paramWin_pressureSensor::paramWin_pressureSensor(QWidget *parent) :
 
     // ui界面
     ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
-    ui->label_4mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+//    ui->label_4mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_20mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_range->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_channel->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
@@ -23,7 +23,7 @@ paramWin_pressureSensor::paramWin_pressureSensor(QWidget *parent) :
     ui->checkBox_ch_4->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->checkBox_ch_5->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 
-    ui->lineE_4mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+//    ui->lineE_4mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->lineE_20mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 
     ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
@@ -70,7 +70,7 @@ void paramWin_pressureSensor::on_btn_ok_clicked()
 {
     _pressure_sensor = new PressureSensor;
     _pressure_sensor->set_label(ui->cBox_pressure_sensor_type->currentText());
-    _pressure_sensor->set_range(ui->lineE_4mA->text(), ui->lineE_20mA->text());
+    _pressure_sensor->set_range(range_4mA, ui->lineE_20mA->text());
     _pressure_sensor->set_channel(check_channel_choosed());
 
     show_win_press_sensor = new showWin_pressureSensor(m_file_save_dir, _pressure_sensor);

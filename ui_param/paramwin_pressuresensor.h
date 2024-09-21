@@ -34,6 +34,8 @@ signals:
 public:
     QString check_channel_choosed();
 
+const QString range_4mA = "0";
+
 private slots:
     void on_btn_back_mainW_clicked();
     void on_btn_exit_clicked();

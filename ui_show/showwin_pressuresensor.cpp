@@ -61,12 +61,24 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
     ui->plot_pressure->yAxis->setLabel("Y");
     ui->plot_pressure->yAxis->setRange(-10, 10);
 
+    ui->plot_error->clearGraphs();
+    ui->plot_error->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->plot_error->xAxis->setLabel("time/s");
+    ui->plot_error->yAxis->setLabel("Y");
+    ui->plot_error->yAxis->setRange(-10, 10);
+
     // Graph数量 = 选择的压力传感器个数(channel_num) + 液压站(1)
     channel_num = Assist::extractNumbers(_pressure_sensor->get_channel()).size() + 1;
     qDebug() << channel_num;
     for (int i = 0; i < channel_num; i++) {
         ui->plot_pressure->addGraph();
         ui->plot_pressure->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
+    }
+
+    // 误差graph数量 = 选择的压力传感器个数 - 1  ————  误差图像
+    for (int i = 0; i < channel_num - 2; i++) {
+        ui->plot_error->addGraph();
+        ui->plot_error->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
     }
 
     /********************** 液压站相关 **********************/
@@ -237,6 +249,26 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     ui->plot_pressure->rescaleAxes();       // 自适应大小
     ui->plot_pressure->replot();
 
+    /*********************** 误差值画图 ****************************/
+    // 根据用户选择确定通道然后画图
+    int length_err = 1;
+    QVector<double> x_err(length_err);
+    int point_count_err = ui->plot_error->graph(0)->dataCount();
+
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x_err[i] = i + point_count_err;
+    }
+
+    // 画图
+    for (int i = 0; i < channel_num - 2; i++) {
+        QVector<double> y_err = QVector<double>{err_save[i]};
+        ui->plot_error->graph(i)->addData(x_err, y_err, true);
+    }
+
+    ui->plot_error->rescaleAxes();       // 自适应大小
+    ui->plot_error->replot();
+
     /*********************** 文件保存 *****************************/
     if (FILE_SAVE) {
         _data_save->collectData(&save_data_buf_hydra, _pressure);
@@ -386,6 +418,25 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
             setLineEditsForRowValue(baseName + "pres_val", ch_num, pressure);
 
             start_idx++;
+        }
+    }
+
+    QString base_object_name = "lineE_pres_val_1";
+    QLineEdit *base_lineEdit = ui->gridLayout->findChild<QLineEdit*>(base_object_name);
+    double base_value = base_lineEdit->text().toDouble();
+
+    for (int ch_num = 2; ch_num <= 5; ch_num++) {
+        if (selected_channel_arr.contains(ch_num + 25)) {
+            QString baseName = "lineE_"; // 基础名称
+            QString objectName = baseName + "pres_val_" + QString::number(ch_num);
+            QLineEdit *lineEdit = ui->gridGroupBox->findChild<QLineEdit*>(objectName);
+            double value = lineEdit->text().toDouble();
+
+            setLineEditsForRowValue(baseName + "error_percentage", ch_num, (value - base_value) / base_value);
+            setLineEditsForRowValue(baseName + "error_value", ch_num, value - base_value);
+
+            // 保存误差值，画图用
+            err_save.push_back(value - base_value);
         }
     }
 }
