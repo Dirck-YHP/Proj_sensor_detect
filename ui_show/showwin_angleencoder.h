@@ -42,6 +42,7 @@ private slots:
     void slot_get_angle_and_plot(QVector<double> data);          // 后续需要换名字，编码器9401同电机一起画图
 
     void slot_get_angle(double motor_angle);    // 接收电机发过来的角度数据
+    void slot_get_speed(double motor_speed);    // 接收电机发过来的速度
 
     void save_data();                           // 保存数据
 
@@ -63,6 +64,7 @@ private:
     QTimer _timer_motor;        // 显示数值框显示频率的定时器【暂时没用】
     bool _if_need_motor;        // 是否需要电机，由外界传入
     double _motor_angle = 0;        // 电机的角度
+    double _motor_speed = 0;
     int totalTurns = 0;
     int last_turn = 0;
     bool fresh_turn = false;    // 重新开始
@@ -86,6 +88,7 @@ private:
 
 public slots:
     void update_motor_tar_angle(const QString &text);
+    void update_motor_speed(const QString &text);
 };
 
 #endif // SHOWWIN_ANGLEENCODER_H

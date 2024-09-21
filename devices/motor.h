@@ -18,6 +18,8 @@ public:
     void set_target_angle(QString motor_target_angle);
     QString get_target_angle() const;
 
+    void set_speed(QString motor_spd);
+
     void build_connection();        // 建立连接
     void break_connection();        // 断开连接
 
@@ -43,6 +45,7 @@ private:
 
 private slots:
     void rev_data_from_modbus(int data);
+    void rev_spd_from_modbus(int data);
 
 public slots:
     void get_config_signal();
@@ -55,6 +58,7 @@ signals:
     void signal_close_modbus();
 
     void send_angle_to_ui(double angle);
+    void send_spd_to_ui(double spd);
 
     void signal_delete();
 

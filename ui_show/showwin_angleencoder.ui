@@ -107,7 +107,7 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>810</y>
+     <y>760</y>
      <width>121</width>
      <height>31</height>
     </rect>
@@ -117,7 +117,7 @@
    <property name="geometry">
     <rect>
      <x>360</x>
-     <y>810</y>
+     <y>760</y>
      <width>161</width>
      <height>31</height>
     </rect>
@@ -369,6 +369,29 @@
    </property>
    <property name="text">
     <string>信号回路电流 B：</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineE_motor_speed">
+   <property name="geometry">
+    <rect>
+     <x>500</x>
+     <y>810</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>810</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>电机转动速度：</string>
    </property>
   </widget>
  </widget>

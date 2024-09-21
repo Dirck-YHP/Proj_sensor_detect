@@ -35,6 +35,8 @@ Motor::Motor(QObject *parent) : QObject(parent)
 
     // 接收Modbus发送的数据信号，Motor这里转换成角度
     connect(modbus_com, &Modbus::send_data, this, &Motor::rev_data_from_modbus);
+
+    connect(modbus_com, &Modbus::send_spd, this, &Motor::rev_spd_from_modbus);
 }
 
 /***************************************************************
@@ -69,6 +71,17 @@ void Motor::set_target_angle(QString motor_target_angle)
 QString Motor::get_target_angle() const
 {
     return _input_angle;
+}
+
+/***************************************************************
+  *  @brief     设置电机速度
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
+void Motor::set_speed(QString motor_spd)
+{
+    modbus_com->get_input_spd(motor_spd);
 }
 
 /***************************************************************
@@ -193,6 +206,12 @@ void Motor::rev_data_from_modbus(int data)
     double angle = motor_read_num * 360 / 12800;
 
     emit send_angle_to_ui(angle);
+}
+
+void Motor::rev_spd_from_modbus(int data)
+{
+    double speed = (double)data;
+    emit send_spd_to_ui(speed);
 }
 
 /***************************************************************

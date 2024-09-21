@@ -36,6 +36,9 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
             connect(_motor, &Motor::send_angle_to_ui,
                     this, &showWin_angleEncoder::slot_get_angle);
 
+            connect(_motor, &Motor::send_spd_to_ui,
+                    this, &showWin_angleEncoder::slot_get_speed);
+
              qDebug() << "(In win)first new motor ";
         }
 
@@ -413,6 +416,13 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
     _motor_angle = motor_angle;
 }
 
+void showWin_angleEncoder::slot_get_speed(double motor_speed)
+{
+    _motor_speed = motor_speed;
+//    qDebug() << "(In Win)speed: " << motor_speed;
+    ui->lineE_motor_speed->setText(QString::number(qRound(motor_speed * 10.0) / 10.0));
+}
+
 /***************************************************************
   *  @brief     接收参数配置页面电机目标角度
   *  @param     无
@@ -421,7 +431,21 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
  **************************************************************/
 void showWin_angleEncoder::update_motor_tar_angle(const QString &text)
 {
-    _motor->set_target_angle(text);
+    double angle = text.toDouble() * 360;
+
+    _motor->set_target_angle(QString::number(angle));
+}
+
+/***************************************************************
+  *  @brief     接收参数配置页面电机速度
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
+void showWin_angleEncoder::update_motor_speed(const QString &text)
+{
+    qDebug() << "(In Win)spd: " << text;
+    _motor->set_speed(text);
 }
 
 /***************************************************************

@@ -10,6 +10,7 @@ paramWin_angleEncoder::paramWin_angleEncoder(QWidget *parent) :
     // ui界面
     ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
     ui->label_motor->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_motor_spd->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_pul_per_cir->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 
@@ -27,6 +28,9 @@ paramWin_angleEncoder::paramWin_angleEncoder(QWidget *parent) :
     // 连接电机目标角度和本地信号
     connect(ui->lineE_target_angle, &QLineEdit::textChanged,
             this, &paramWin_angleEncoder::motor_target_angle_changed);
+    // 连接电机速度和本地信号
+    connect(ui->lineE_motor_spd, &QLineEdit::textChanged,
+            this, &paramWin_angleEncoder::motor_speed_changed);
 }
 
 paramWin_angleEncoder::~paramWin_angleEncoder()
@@ -86,6 +90,9 @@ void paramWin_angleEncoder::on_btn_ok_clicked()
     connect(this, &paramWin_angleEncoder::motor_target_angle_changed,
             show_win_angle_encoder, &showWin_angleEncoder::update_motor_tar_angle);
 
+    // 连接参数窗口的电机速度和现实窗口的输出
+    connect(this, &paramWin_angleEncoder::motor_speed_changed,
+            show_win_angle_encoder, &showWin_angleEncoder::update_motor_speed);
 }
 
 /***************************************************************
