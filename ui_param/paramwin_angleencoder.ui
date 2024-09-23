@@ -13,7 +13,15 @@
   <property name="windowTitle">
    <string>参数设置_角位移编码器</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>712</width>
+     <height>396</height>
+    </rect>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QLabel" name="label">
@@ -309,7 +317,7 @@
              </size>
             </property>
             <property name="text">
-             <string/>
+             <string>3</string>
             </property>
            </widget>
           </item>
@@ -358,7 +366,7 @@
              </size>
             </property>
             <property name="text">
-             <string/>
+             <string>19200</string>
             </property>
            </widget>
           </item>

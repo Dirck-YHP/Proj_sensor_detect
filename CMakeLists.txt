@@ -15,7 +15,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets PrintSupport SerialPort SerialBus C
 
 add_executable(Proj_Sensor
     main.cpp
-    widget.cpp widget.h widget.ui
+#    widget.cpp widget.h widget.ui
     mainwindow.cpp mainwindow.h mainwindow.ui
     ui_param//paramwin_anglesensor.cpp ui_param/paramwin_anglesensor.h ui_param/paramwin_anglesensor.ui
     ui_param/paramwin_angleencoder.cpp ui_param/paramwin_angleencoder.h ui_param/paramwin_angleencoder.ui

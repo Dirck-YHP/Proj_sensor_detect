@@ -17,9 +17,6 @@ public:
     Modbus(QObject *parent = nullptr);
 
 public:
-    int put_read_num();     // 将协议读到的值传出去
-    double put_read_spd();
-
     QModbusDevice::State put_modbusdevice_state();      // 将电机当前状态传出去
 
     void get_input_angle(QString input_angle);  // 获取用户输入角度

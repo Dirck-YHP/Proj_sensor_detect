@@ -7,27 +7,6 @@ Modbus::Modbus(QObject *parent) : QObject(parent)
 }
 
 /***************************************************************
-  *  @brief     读命令——读电机当前绝对位置的值
-  *  @param     无
-  *  @note
-  *  @Sample usage:
- **************************************************************/
-int Modbus::put_read_num()
-{
-    // 读电机当前绝对位置的值
-    read(2, 2);
-
-    return _read_num;
-}
-
-double Modbus::put_read_spd()
-{
-    readSpeed(0, 2);
-
-    return _read_speed;
-}
-
-/***************************************************************
   *  @brief     返回当前连接状态
   *  @param     无
   *  @note
@@ -128,13 +107,15 @@ void Modbus::run_motor()
     int parameter = _input_angle * 12800 / 360;
     write_run(1, 2, parameter);
 
-//    // ====  设置速度  ====
-//    uint8_t data[4];
-//    uint32_t val = *((uint32_t*)(&_input_spd));
-//    data[0] = (val >> 24) & 0xff;
-//    data[1] = (val >> 16) & 0xff;
-//    data[2] = (val >> 8) & 0xff;
-//    data[3] = (val >> 0) & 0xff;
+    // ====  设置速度  ====
+    uint8_t data[4];
+    uint32_t val = *((uint32_t*)(&_input_spd));
+    qDebug() << val;
+    data[0] = (val >> 24) & 0xff;
+    data[1] = (val >> 16) & 0xff;
+    data[2] = (val >> 8) & 0xff;
+    data[3] = (val >> 0) & 0xff;
+    qDebug() << data;
 //    write_run(3, 2, _input_spd);
 
     // 确保写命令执行完之后再开始读取角度

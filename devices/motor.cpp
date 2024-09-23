@@ -184,17 +184,6 @@ QModbusDevice::State Motor::get_dev_state()
 }
 
 /***************************************************************
-  *  @brief     暂没用到——待删
-  *  @param     无
-  *  @note
-  *  @Sample usage:
- **************************************************************/
-int Motor::get_read_num() const
-{
-    return modbus_com->put_read_num();
-}
-
-/***************************************************************
   *  @brief     接收modbus发送来的数据，转换成角度，发信号给ui
   *  @param     无
   *  @note      槽函数

@@ -34,7 +34,6 @@ public:
     QModbusRtuSerialMaster *get_modbus_dev();
 
     QModbusDevice::State get_dev_state();   // 获取电机当前状态
-    int get_read_num() const;             // 获取协议读到的值
 private:
     // 线程相关变量
     Modbus *modbus_com;
