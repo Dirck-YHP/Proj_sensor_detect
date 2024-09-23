@@ -172,9 +172,10 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
-            QString currentDateTime = "AE_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString currentDateTime = "AE_" + _file_add_name + "_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
             QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
 
+            qDebug() << "(In Win)fileName: " <<file_name;
             file.setFileName(file_name);
             if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
                 return;
@@ -446,6 +447,12 @@ void showWin_angleEncoder::update_motor_speed(const QString &text)
 {
     qDebug() << "(In Win)spd: " << text;
     _motor->set_speed(text);
+}
+
+void showWin_angleEncoder::update_file_name(const QString &text)
+{
+    _file_add_name = text;
+    qDebug() << "(In Win)file_name: " << _file_add_name;
 }
 
 /***************************************************************

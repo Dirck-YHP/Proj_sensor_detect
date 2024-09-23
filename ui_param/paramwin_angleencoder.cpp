@@ -11,6 +11,7 @@ paramWin_angleEncoder::paramWin_angleEncoder(QWidget *parent) :
     ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
     ui->label_motor->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_motor_spd->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_file_name->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_pul_per_cir->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 
@@ -21,6 +22,7 @@ paramWin_angleEncoder::paramWin_angleEncoder(QWidget *parent) :
 
     ui->lineE_target_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->lineE_pulse_per_cir->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_file_name->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 
     ui->cBox_angle_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->cBox_file_save->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
@@ -31,6 +33,17 @@ paramWin_angleEncoder::paramWin_angleEncoder(QWidget *parent) :
     // 连接电机速度和本地信号
     connect(ui->lineE_motor_spd, &QLineEdit::textChanged,
             this, &paramWin_angleEncoder::motor_speed_changed);
+
+    connect(ui->lineE_file_name, &QLineEdit::textChanged,
+            this, &paramWin_angleEncoder::file_name);
+
+    // 默认不保存文件
+    QList<QWidget*> file_save_params;
+    file_save_params << ui->label_file_name
+                     << ui->lineE_file_name;
+    foreach(QWidget *file_save_param, file_save_params) {
+                file_save_param->setEnabled(false);
+            }
 }
 
 paramWin_angleEncoder::~paramWin_angleEncoder()
@@ -90,9 +103,17 @@ void paramWin_angleEncoder::on_btn_ok_clicked()
     connect(this, &paramWin_angleEncoder::motor_target_angle_changed,
             show_win_angle_encoder, &showWin_angleEncoder::update_motor_tar_angle);
 
-    // 连接参数窗口的电机速度和现实窗口的输出
+    // 连接参数窗口的电机速度和显示窗口的输出
     connect(this, &paramWin_angleEncoder::motor_speed_changed,
             show_win_angle_encoder, &showWin_angleEncoder::update_motor_speed);
+
+    // 连接参数窗口和显示窗口的文件名
+    connect(this, &paramWin_angleEncoder::file_name,
+            show_win_angle_encoder, &showWin_angleEncoder::update_file_name);
+
+    emit motor_target_angle_changed(ui->lineE_target_angle->text());
+    emit motor_speed_changed(ui->lineE_motor_spd->text());
+    emit file_name(ui->lineE_file_name->text());
 }
 
 /***************************************************************
@@ -128,10 +149,20 @@ void paramWin_angleEncoder::on_checkBox_no_need_device_stateChanged(int arg1)
  **************************************************************/
 void paramWin_angleEncoder::on_cBox_file_save_stateChanged(int arg1)
 {
+    QList<QWidget*> file_save_params;
+    file_save_params << ui->label_file_name
+                     << ui->lineE_file_name;
+
     if (arg1 == Qt::Checked) {
         m_file_save_dir = QFileDialog::getExistingDirectory(this, "请选择文件保存路径", "../", QFileDialog::ShowDirsOnly);
+        foreach(QWidget *file_save_param, file_save_params) {
+            file_save_param->setEnabled(true);
+        }
     } else if (arg1 == Qt::Unchecked) {
         m_file_save_dir = "";
+        foreach(QWidget *file_save_param, file_save_params) {
+            file_save_param->setEnabled(false);
+        }
     }
 
     if (!m_file_save_dir.isEmpty()) {

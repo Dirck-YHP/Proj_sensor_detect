@@ -37,6 +37,7 @@ signals:
 signals:
     void motor_target_angle_changed(const QString &text);
     void motor_speed_changed(const QString &text);
+    void file_name(const QString &text);
 
 private slots:
     void on_btn_back_mainW_clicked();   // 返回主界面
