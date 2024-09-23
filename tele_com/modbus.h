@@ -18,6 +18,8 @@ public:
 
 public:
     int put_read_num();     // 将协议读到的值传出去
+    double put_read_spd();
+
     QModbusDevice::State put_modbusdevice_state();      // 将电机当前状态传出去
 
     void get_input_angle(QString input_angle);  // 获取用户输入角度
@@ -38,9 +40,9 @@ private:
     void write_run(int address, int count, int parameter);      // 往地址写
     void read(int address, int count);                          // 从地址读
     void readSpeed(int address, int count);
+    void readMotorStatus(int address, int angleCount, int speedCount);
 
     void read_Data();
-    void read_speed();  // 读取当前电机运行速度
 
     bool checkPortAvailability(const QString &portName);
 private:

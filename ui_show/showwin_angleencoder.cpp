@@ -415,6 +415,7 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
 void showWin_angleEncoder::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
+    ui->lineE_motor_angle->setText(QString::number(qRound(motor_angle * 10.0) / 10.0));
 }
 
 void showWin_angleEncoder::slot_get_speed(double motor_speed)

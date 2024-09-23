@@ -20,6 +20,13 @@ int Modbus::put_read_num()
     return _read_num;
 }
 
+double Modbus::put_read_spd()
+{
+    readSpeed(0, 2);
+
+    return _read_speed;
+}
+
 /***************************************************************
   *  @brief     返回当前连接状态
   *  @param     无
@@ -260,45 +267,10 @@ void Modbus::write_run(int address, int count, int parameter)
   *  @note
   *  @Sample usage:
  **************************************************************/
-void Modbus::read(int address, int count)
+void Modbus::readMotorStatus(int address, int angleCount, int speedCount)
 {
-    // 创建一个读取请求
-    QModbusDataUnit readRequest(QModbusDataUnit::InputRegisters, address, count);
-    // 发送请求
-    auto *reply = _modbusDevice->sendReadRequest(readRequest, 1);
-    if (reply) {
-        if (!reply->isFinished()) {
-            connect(reply, &QModbusReply::finished, this, [=](){
-                _read_num = 0;
-                // 请求完成，处理结果
-                if (reply->error() == QModbusDevice::NoError) {
-                    const QModbusDataUnit result = reply->result();
-                    for(int i = 0; i < count; i++){
-                        int val = result.value(count - i - 1);
-                        _read_num += val;
-                        if(i != count - 1) _read_num = _read_num << 16;
-                    }
-//                    qDebug() << "Success Read!" ;
-                } else {
-                    // 请求出错，处理错误
-//                    qDebug() << "Error Read!" << reply->errorString();
-                }
-                // 删除已完成的回复
-                reply->deleteLater();
-            });
-        } else {
-            delete reply;
-        }
-    } else {
-        // 发送请求失败，处理错误
-        qDebug() << "(In modbus)Error Read Request!";
-    }
-}
-
-void Modbus::readSpeed(int address, int count)
-{
-    // 创建一个读取请求，读取4个寄存器（对应4字节浮点数）
-        QModbusDataUnit readRequest(QModbusDataUnit::InputRegisters, address, count);
+    // 创建一个读取请求，读取角度和速度的寄存器
+        QModbusDataUnit readRequest(QModbusDataUnit::InputRegisters, address, angleCount + speedCount);
         // 发送请求
         auto *reply = _modbusDevice->sendReadRequest(readRequest, 1);
         if (reply) {
@@ -306,11 +278,13 @@ void Modbus::readSpeed(int address, int count)
                 connect(reply, &QModbusReply::finished, this, [=]() mutable{
                     if (reply->error() == QModbusDevice::NoError) {
                         const QModbusDataUnit result = reply->result();
+                        // 处理角度
+                        quint32 raw_angle = (result.value(2) & 0xFFFF) | ((result.value(3) & 0xFFFF) << 16);
+                        _read_num = *reinterpret_cast<int*>(&raw_angle);
 
-                        // 将4个寄存器的值组合成浮点数
+                        // 处理速度
                         quint32 rawValue = (result.value(0) & 0xFFFF) | ((result.value(1) & 0xFFFF) << 16);
                         _read_speed = *reinterpret_cast<float*>(&rawValue);
-//                        qDebug() << "电机当前运行速度:" << _read_speed;
                     }
                     // 删除已完成的回复
                     reply->deleteLater();
@@ -320,7 +294,7 @@ void Modbus::readSpeed(int address, int count)
             }
         } else {
             // 发送请求失败，处理错误
-            qDebug() << "(In modbus)Error Read Speed Request!";
+            qDebug() << "(In modbus)Error Read Motor Status Request!";
         }
 }
 
@@ -333,25 +307,16 @@ void Modbus::readSpeed(int address, int count)
 void Modbus::read_Data()
 {
     if (BEGIN_READ) {
-        // 读取数据
-        int read_num = put_read_num();
-        // 发送数据
-        emit send_data(read_num);
+        readMotorStatus(0, 2, 2);
+        int read_angle = _read_num;
+        double read_spd = _read_speed;
 
-//        readSpeed(0, 2);
-//        double read_spd = _read_speed;
-//        emit send_spd(read_spd);
+        emit send_data(read_angle);
+        emit send_spd(read_spd);
     } else {
         qDebug() << "(In modbus)waiting for writing......";
     }
 }
-
-//void Modbus::read_speed()
-//{
-//    readSpeed(0, 2);
-//    double read_spd = _read_speed;
-//    emit send_spd(read_spd);
-//}
 
 /***************************************************************
   *  @brief     在Motor中connect，创建定时器，并建立连接
@@ -368,7 +333,6 @@ void Modbus::slot_modbus_init()
     // 创建定时 - Ps: 如果线程中需要定时一定要在线程中Start
     timer_modbus = new QTimer();
     connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_Data);
-//    connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_speed);
     qDebug() << "(In modbus)定时器配置完成。cur thread: " << QThread::currentThreadId();
 }
 
