@@ -126,8 +126,10 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
         qDebug() << "(In WIn)data size: " << save_data_buf_sensor.size();
 
         if (FILE_SAVE) {
-            QString currentDateTime = "PS_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString currentDateTime = "PS_" + _file_add_name + "_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
             QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
+
+            qDebug() << "(In Win)fileName: " <<file_name;
             file.setFileName(file_name);
             if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
                 return;
@@ -488,5 +490,11 @@ void showWin_pressureSensor::save_data()
     for (int i = 0; i < save_data_buf_sensor.size(); i++) {
         save_data_buf_sensor[i].clear();
     }
+}
+
+void showWin_pressureSensor::update_file_name(const QString &text)
+{
+    _file_add_name = text;
+    qDebug() << "(In Win)file_name: " << _file_add_name;
 }
 

@@ -36,6 +36,9 @@ private slots:
     void slot_plot_press_from_hydraSta(QVector<double> data);
     void save_data();
 
+public slots:
+    void update_file_name(const QString &text);
+
 signals:
     void signal_setConfigSerialPort();
     void signal_closeOpen();
@@ -56,6 +59,7 @@ private:
 
     // 文件保存
     QString _file_save_dir;
+    QString _file_add_name;     // 用户需要的文件名标识符
     QTimer _timer_savefile;
     QFile file;
     DataSave *_data_save = nullptr;

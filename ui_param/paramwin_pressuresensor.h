@@ -31,6 +31,8 @@ private:
 signals:
     void subWindowClosed();
 
+    void file_name(const QString &text);
+
 public:
     QString check_channel_choosed();
 

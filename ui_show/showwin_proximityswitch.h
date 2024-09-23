@@ -37,8 +37,8 @@ private slots:
     void on_btn_repeat_precise_clicked();   // 进行重复精度测量
     void save_data();
 
-public:
-    // 需要一个转化函数，根据读到的电压值判断是否“接触”
+public slots:
+    void update_file_name(const QString &text);
 
 private:
     int tmp_num = 100;
@@ -56,6 +56,7 @@ private:
 
     // 文件保存
     QString _file_save_dir;
+    QString _file_add_name;     // 用户需要的文件名标识符
     QTimer _timer_savefile;
     QFile file;
     DataSave *_data_save = nullptr;

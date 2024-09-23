@@ -31,6 +31,17 @@ paramWin_angleSensor::paramWin_angleSensor(QWidget *parent) :
     // 连接电机目标角度和本地信号
     connect(ui->lineE_target_angle, &QLineEdit::textChanged,
             this, &paramWin_angleSensor::motor_target_angle_changed);
+
+    connect(ui->lineE_file_name, &QLineEdit::textChanged,
+            this, &paramWin_angleSensor::file_name);
+
+    // 默认不保存文件
+    QList<QWidget*> file_save_params;
+    file_save_params << ui->label_file_name
+                     << ui->lineE_file_name;
+    foreach(QWidget *file_save_param, file_save_params) {
+                file_save_param->setEnabled(false);
+            }
 }
 
 paramWin_angleSensor::~paramWin_angleSensor()
@@ -66,6 +77,18 @@ void paramWin_angleSensor::on_btn_ok_clicked()
     // 连接参数窗口的电机目标输入和显示窗口的输出
     connect(this, &paramWin_angleSensor::motor_target_angle_changed,
             show_win_angle_sensor, &showWin_angleSensor::update_motor_tar_angle);
+
+    // 连接参数窗口的电机速度和显示窗口的输出
+    connect(this, &paramWin_angleSensor::motor_speed_changed,
+            show_win_angle_sensor, &showWin_angleSensor::update_motor_speed);
+
+    // 连接参数窗口和显示窗口的文件名
+    connect(this, &paramWin_angleSensor::file_name,
+            show_win_angle_sensor, &showWin_angleSensor::update_file_name);
+
+    emit motor_target_angle_changed(ui->lineE_target_angle->text());
+    emit motor_speed_changed(ui->lineE_motor_spd->text());
+    emit file_name(ui->lineE_file_name->text());
 }
 
 /***************************************************************
@@ -124,11 +147,21 @@ void paramWin_angleSensor::on_btn_back_mainW_clicked()
  **************************************************************/
 void paramWin_angleSensor::on_cBox_file_save_stateChanged(int arg1)
 {
+    QList<QWidget*> file_save_params;
+    file_save_params << ui->label_file_name
+                     << ui->lineE_file_name;
+
     if (arg1 == Qt::Checked) {
         m_file_save_dir = QFileDialog::getExistingDirectory(this, "Save file", "../", QFileDialog::ShowDirsOnly);
         qDebug() << m_file_save_dir;
+        foreach(QWidget *file_save_param, file_save_params) {
+            file_save_param->setEnabled(true);
+        }
     } else if (arg1 == Qt::Unchecked) {
         m_file_save_dir = "";
+        foreach(QWidget *file_save_param, file_save_params) {
+            file_save_param->setEnabled(false);
+        }
     }
 }
 

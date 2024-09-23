@@ -32,6 +32,7 @@ private:
 
 signals:
     void subWindowClosed();
+    void file_name(const QString &text);
 
 private slots:
     void on_btn_exit_clicked();

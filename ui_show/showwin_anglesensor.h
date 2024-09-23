@@ -50,6 +50,8 @@ private slots:
 
 public slots:
     void update_motor_tar_angle(const QString &text);
+    void update_motor_speed(const QString &text);
+    void update_file_name(const QString &text);
 
 signals:
     void signal_setConfigModbus();              // 点击“开始”时发送的配置信号
@@ -74,6 +76,7 @@ private:
 
     // 文件保存
     QString _file_save_dir;     // 文件保存路径，由外界传入
+    QString _file_add_name;     // 用户需要的文件名标识符
     QTimer _timer_savefile;     // 文件保存的频率
     QFile file;
     DataSave *_data_save = nullptr;

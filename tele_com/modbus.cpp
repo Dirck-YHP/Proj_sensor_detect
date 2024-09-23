@@ -107,18 +107,7 @@ void Modbus::run_motor()
     int parameter = _input_angle * 12800 / 360;
     write_run(1, 2, parameter);
 
-//    // ====  设置速度  ====
-//    uint8_t data[4];
-//    uint32_t val = *((uint32_t*)(&_input_spd));
-//    qDebug() << val;
-//    data[0] = (val >> 24) & 0xff;
-//    data[1] = (val >> 16) & 0xff;
-//    data[2] = (val >> 8) & 0xff;
-//    data[3] = (val >> 0) & 0xff;
-//    for (int i = 0; i < 4; i++) {
-//        qDebug() << data[i];
-//    }
-    qDebug() << _input_spd;
+//    qDebug() << _input_spd;
     write_spd(3, 2, _input_spd);
 
     // 确保写命令执行完之后再开始读取角度

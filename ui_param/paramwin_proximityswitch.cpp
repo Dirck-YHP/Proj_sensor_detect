@@ -30,6 +30,17 @@ paramWin_proximitySwitch::paramWin_proximitySwitch(QWidget *parent) :
     ui->btn_exit->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_back_mainW->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_load_data->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
+
+    connect(ui->lineE_file_name, &QLineEdit::textChanged,
+            this, &paramWin_proximitySwitch::file_name);
+
+    // 默认不保存文件
+    QList<QWidget*> file_save_params;
+    file_save_params << ui->label_file_name
+                     << ui->lineE_file_name;
+    foreach(QWidget *file_save_param, file_save_params) {
+                file_save_param->setEnabled(false);
+            }
 }
 
 paramWin_proximitySwitch::~paramWin_proximitySwitch()
@@ -85,6 +96,10 @@ void paramWin_proximitySwitch::on_btn_ok_clicked()
 
     _show_win_prox_switch = new showWin_proximitySwitch(m_file_save_dir, _proxi_switch);
     _show_win_prox_switch->show();
+
+    // 连接参数窗口和显示窗口的文件名
+    connect(this, &paramWin_proximitySwitch::file_name,
+            _show_win_prox_switch, &showWin_proximitySwitch::update_file_name);
 }
 
 /***************************************************************
@@ -136,11 +151,21 @@ QString paramWin_proximitySwitch::check_channel_choosed() {
  **************************************************************/
 void paramWin_proximitySwitch::on_cBox_file_save_stateChanged(int arg1)
 {
+    QList<QWidget*> file_save_params;
+    file_save_params << ui->label_file_name
+                     << ui->lineE_file_name;
+
     if (arg1 == Qt::Checked) {
         m_file_save_dir = QFileDialog::getExistingDirectory(this, "Save file", "../", QFileDialog::ShowDirsOnly);
         qDebug() << m_file_save_dir;
+        foreach(QWidget *file_save_param, file_save_params) {
+            file_save_param->setEnabled(true);
+        }
     } else if (arg1 == Qt::Unchecked) {
         m_file_save_dir = "";
+        foreach(QWidget *file_save_param, file_save_params) {
+            file_save_param->setEnabled(false);
+        }
     }
 }
 

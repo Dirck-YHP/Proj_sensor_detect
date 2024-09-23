@@ -40,6 +40,8 @@ private:
 signals:
     void subWindowClosed();
     void motor_target_angle_changed(const QString &text);
+    void motor_speed_changed(const QString &text);
+    void file_name(const QString &text);
 };
 
 #endif // PARAMWIN_ANGLESENSOR_H

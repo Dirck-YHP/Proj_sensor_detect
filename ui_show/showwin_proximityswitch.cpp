@@ -77,7 +77,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
-            QString currentDateTime = "PxS_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString currentDateTime = "PxS_" + _file_add_name + "_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
             QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
             file.setFileName(file_name);
             if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
@@ -323,4 +323,10 @@ void showWin_proximitySwitch::save_data()
 
     save_data_buf_variaresis.clear();                // 清空缓冲区
     save_data_buf_if_pulse.clear();
+}
+
+void showWin_proximitySwitch::update_file_name(const QString &text)
+{
+    _file_add_name = text;
+    qDebug() << "(In Win)file_name: " << _file_add_name;
 }

@@ -152,9 +152,10 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
-            QString currentDateTime = "AS_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+            QString currentDateTime = "AS_" + _file_add_name + "_" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
             QString file_name = _file_save_dir + "/" + currentDateTime + "_data.txt";
 
+            qDebug() << "(In Win)fileName: " <<file_name;
             file.setFileName(file_name);
             if (!file.open(QIODevice::Append | QIODevice::Text))    // 打开文件
                 return;
@@ -384,6 +385,24 @@ void showWin_angleSensor::slot_get_angle(double motor_angle)
 void showWin_angleSensor::update_motor_tar_angle(const QString &text)
 {
     _motor->set_target_angle(text);
+}
+
+/***************************************************************
+  *  @brief     接收参数配置页面电机速度
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
+void showWin_angleSensor::update_motor_speed(const QString &text)
+{
+    qDebug() << "(In Win)spd: " << text;
+    _motor->set_speed(text);
+}
+
+void showWin_angleSensor::update_file_name(const QString &text)
+{
+    _file_add_name = text;
+    qDebug() << "(In Win)file_name: " << _file_add_name;
 }
 
 /***************************************************************
