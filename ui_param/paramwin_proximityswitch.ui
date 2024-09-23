@@ -83,7 +83,7 @@
            <item>
             <widget class="QLabel" name="label_using_time">
              <property name="text">
-              <string>使用时间</string>
+              <string>装机时间</string>
              </property>
             </widget>
            </item>

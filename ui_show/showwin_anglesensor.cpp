@@ -384,7 +384,9 @@ void showWin_angleSensor::slot_get_angle(double motor_angle)
  **************************************************************/
 void showWin_angleSensor::update_motor_tar_angle(const QString &text)
 {
-    _motor->set_target_angle(text);
+    double angle = text.toDouble() * 360;
+
+    _motor->set_target_angle(QString::number(angle));
 }
 
 /***************************************************************
