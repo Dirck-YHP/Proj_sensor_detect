@@ -37,8 +37,8 @@ void Modbus::get_input_angle(QString input_angle)
  **************************************************************/
 void Modbus::get_input_spd(QString input_spd)
 {
-    _input_spd = input_spd.toDouble();
-    qDebug() << "(In modbus)spd:   " << _input_spd;
+    _input_spd = input_spd.toFloat();
+    qDebug() << "(In modbus)spd:" << _input_spd;
 }
 
 /***************************************************************
@@ -107,16 +107,19 @@ void Modbus::run_motor()
     int parameter = _input_angle * 12800 / 360;
     write_run(1, 2, parameter);
 
-    // ====  设置速度  ====
-    uint8_t data[4];
-    uint32_t val = *((uint32_t*)(&_input_spd));
-    qDebug() << val;
-    data[0] = (val >> 24) & 0xff;
-    data[1] = (val >> 16) & 0xff;
-    data[2] = (val >> 8) & 0xff;
-    data[3] = (val >> 0) & 0xff;
-    qDebug() << data;
-//    write_run(3, 2, _input_spd);
+//    // ====  设置速度  ====
+//    uint8_t data[4];
+//    uint32_t val = *((uint32_t*)(&_input_spd));
+//    qDebug() << val;
+//    data[0] = (val >> 24) & 0xff;
+//    data[1] = (val >> 16) & 0xff;
+//    data[2] = (val >> 8) & 0xff;
+//    data[3] = (val >> 0) & 0xff;
+//    for (int i = 0; i < 4; i++) {
+//        qDebug() << data[i];
+//    }
+    qDebug() << _input_spd;
+    write_spd(3, 2, _input_spd);
 
     // 确保写命令执行完之后再开始读取角度
     BEGIN_READ = true;
@@ -239,6 +242,47 @@ void Modbus::write_run(int address, int count, int parameter)
     } else {
         // 发送请求失败，处理错误
         qDebug() << "(In modbus)Error Write Request!";
+    }
+}
+
+void Modbus::write_spd(int address, int count, float speed)
+{
+    // 创建一个写入请求
+    QModbusDataUnit writeRequest(QModbusDataUnit::HoldingRegisters, address, count);
+
+    // 使用联合体将float转换为uint16_t
+    union {
+        float input;  // 输入的float值
+        uint16_t words[2];  // 输出的uint16_t值
+    } converter;
+
+    converter.input = speed;
+
+    // 设置写入请求的值
+    writeRequest.setValue(0, converter.words[0]);
+    writeRequest.setValue(1, converter.words[1]);
+
+    // 发送请求
+    if (auto *reply = _modbusDevice->sendWriteRequest(writeRequest, 1)) {
+        if (!reply->isFinished()) {
+            connect(reply, &QModbusReply::finished, this, [reply, this]() {
+                // 请求完成，处理结果
+                if (reply->error() == QModbusDevice::NoError) {
+                    // 请求成功
+                    qDebug() << "(In modbus)Succeed Write Float!";
+                } else {
+                    // 请求出错，处理错误
+                    qDebug() << "(In modbus)Error Write Float!";
+                }
+                // 删除已完成的回复
+                reply->deleteLater();
+            });
+        } else {
+            delete reply;
+        }
+    } else {
+        // 发送请求失败，处理错误
+        qDebug() << "(In modbus)Error Write Request Float!";
     }
 }
 

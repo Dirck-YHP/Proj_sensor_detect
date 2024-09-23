@@ -35,8 +35,7 @@ public:
     QModbusRtuSerialMaster *get_modbus_dev();
 private:
     void write_run(int address, int count, int parameter);      // 往地址写
-    void read(int address, int count);                          // 从地址读
-    void readSpeed(int address, int count);
+    void write_spd(int address, int count, float speed);
     void readMotorStatus(int address, int angleCount, int speedCount);
 
     void read_Data();
@@ -44,7 +43,7 @@ private:
     bool checkPortAvailability(const QString &portName);
 private:
     double _input_angle;
-    double _input_spd;
+    float _input_spd;
     bool _angle_calibration = false;
 
     bool BEGIN_READ = false;
