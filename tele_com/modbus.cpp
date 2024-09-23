@@ -121,18 +121,18 @@ void Modbus::run_motor()
     int parameter = _input_angle * 12800 / 360;
     write_run(1, 2, parameter);
 
-    // ====  设置速度  ====
-    uint8_t data[4];
-    uint32_t val = *((uint32_t*)(&_input_spd));
-    data[0] = (val >> 24) & 0xff;
-    data[1] = (val >> 16) & 0xff;
-    data[2] = (val >> 8) & 0xff;
-    data[3] = (val >> 0) & 0xff;
+//    // ====  设置速度  ====
+//    uint8_t data[4];
+//    uint32_t val = *((uint32_t*)(&_input_spd));
+//    data[0] = (val >> 24) & 0xff;
+//    data[1] = (val >> 16) & 0xff;
+//    data[2] = (val >> 8) & 0xff;
+//    data[3] = (val >> 0) & 0xff;
 //    write_run(3, 2, _input_spd);
 
     // 确保写命令执行完之后再开始读取角度
     BEGIN_READ = true;
-    qDebug() << "(In modbus)2 RUN FINISH";
+    qDebug() << "(In modbus)2 RUN FINISH!!!!!!!!!!!!!!!";
 }
 
 /***************************************************************
@@ -337,18 +337,21 @@ void Modbus::read_Data()
         int read_num = put_read_num();
         // 发送数据
         emit send_data(read_num);
+
+//        readSpeed(0, 2);
+//        double read_spd = _read_speed;
+//        emit send_spd(read_spd);
     } else {
         qDebug() << "(In modbus)waiting for writing......";
     }
 }
 
-void Modbus::read_speed()
-{
-    readSpeed(0, 2);
-    double read_num = _read_speed;
-//    qDebug() << "(In modbus)motor speed : " << read_num;
-    emit send_spd(read_num);
-}
+//void Modbus::read_speed()
+//{
+//    readSpeed(0, 2);
+//    double read_spd = _read_speed;
+//    emit send_spd(read_spd);
+//}
 
 /***************************************************************
   *  @brief     在Motor中connect，创建定时器，并建立连接
@@ -365,7 +368,7 @@ void Modbus::slot_modbus_init()
     // 创建定时 - Ps: 如果线程中需要定时一定要在线程中Start
     timer_modbus = new QTimer();
     connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_Data);
-    connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_speed);
+//    connect(timer_modbus, &QTimer::timeout, this, &Modbus::read_speed);
     qDebug() << "(In modbus)定时器配置完成。cur thread: " << QThread::currentThreadId();
 }
 
