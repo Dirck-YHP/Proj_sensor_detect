@@ -14,6 +14,7 @@ paramWin_angleSensor::paramWin_angleSensor(QWidget *parent) :
     ui->label_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_4mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->label_20mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->label_motor_spd->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 
     ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_exit->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
@@ -23,6 +24,7 @@ paramWin_angleSensor::paramWin_angleSensor(QWidget *parent) :
     ui->lineE_4mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->lineE_20mA->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->lineE_target_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_motor_spd->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 
     ui->cBox_angle_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->cBox_file_save->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
@@ -41,6 +43,7 @@ paramWin_angleSensor::paramWin_angleSensor(QWidget *parent) :
                      << ui->lineE_file_name;
     foreach(QWidget *file_save_param, file_save_params) {
                 file_save_param->setEnabled(false);
+                file_save_param->setStyleSheet("font-size: 14pt;color:rgb(46,47,48);");
             }
 }
 
@@ -101,17 +104,21 @@ void paramWin_angleSensor::on_checkBox_no_need_device_stateChanged(int arg1)
 {
     QList<QWidget*> motor_params;       // 把电机相关的控件打包
     motor_params << ui->lineE_target_angle
-            << ui->label_motor;
+            << ui->label_motor
+            << ui->label_motor_spd
+            << ui->lineE_motor_spd;
 
     if (arg1 == Qt::Unchecked) {    // 如果需要工装，则电机相关可配置
 
         foreach(QWidget *motor_param, motor_params) {
             motor_param->setEnabled(true);
+            motor_param->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
         }
     } else if (arg1 == Qt::Checked) {   // 如果不需要工装，则电机参数不可配置
 
         foreach(QWidget *motor_param, motor_params) {
             motor_param->setEnabled(false);
+            motor_param->setStyleSheet("font-size: 14pt;color:rgb(46,47,48);");
         }
     }
 }
@@ -156,11 +163,13 @@ void paramWin_angleSensor::on_cBox_file_save_stateChanged(int arg1)
         qDebug() << m_file_save_dir;
         foreach(QWidget *file_save_param, file_save_params) {
             file_save_param->setEnabled(true);
+            file_save_param->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
         }
     } else if (arg1 == Qt::Unchecked) {
         m_file_save_dir = "";
         foreach(QWidget *file_save_param, file_save_params) {
             file_save_param->setEnabled(false);
+            file_save_param->setStyleSheet("font-size: 14pt;color:rgb(46,47,48);");
         }
     }
 }
