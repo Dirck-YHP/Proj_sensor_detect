@@ -229,88 +229,107 @@
   <widget class="QGroupBox" name="gridGroupBox">
    <property name="geometry">
     <rect>
-     <x>250</x>
+     <x>90</x>
      <y>514</y>
-     <width>511</width>
+     <width>671</width>
      <height>261</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLineEdit" name="lineE_pres_val_2">
-      <property name="text">
-       <string>30</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLineEdit" name="lineE_signal_current_3"/>
-    </item>
-    <item row="2" column="1">
+    <item row="2" column="2">
      <widget class="QLineEdit" name="lineE_supply_current_3"/>
     </item>
-    <item row="0" column="3">
-     <widget class="QLineEdit" name="lineE_pres_val_5">
-      <property name="text">
-       <string>60</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="lineE_supply_voltage_3"/>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLineEdit" name="lineE_supply_current_2"/>
-    </item>
-    <item row="3" column="0">
+    <item row="3" column="1">
      <widget class="QLineEdit" name="lineE_signal_voltage_2"/>
     </item>
-    <item row="1" column="2">
-     <widget class="QLineEdit" name="lineE_supply_voltage_4"/>
-    </item>
-    <item row="2" column="2">
-     <widget class="QLineEdit" name="lineE_supply_current_4"/>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLineEdit" name="lineE_signal_voltage_4"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="lineE_pres_val_3">
-      <property name="text">
-       <string>40</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
+    <item row="1" column="4">
      <widget class="QLineEdit" name="lineE_supply_voltage_5"/>
     </item>
-    <item row="2" column="3">
-     <widget class="QLineEdit" name="lineE_supply_current_5"/>
-    </item>
-    <item row="3" column="3">
-     <widget class="QLineEdit" name="lineE_signal_voltage_5"/>
-    </item>
     <item row="4" column="2">
-     <widget class="QLineEdit" name="lineE_signal_current_4"/>
+     <widget class="QLineEdit" name="lineE_signal_current_3"/>
     </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="lineE_signal_voltage_3"/>
-    </item>
-    <item row="4" column="3">
-     <widget class="QLineEdit" name="lineE_signal_current_5"/>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLineEdit" name="lineE_signal_current_2"/>
-    </item>
-    <item row="0" column="2">
+    <item row="0" column="3">
      <widget class="QLineEdit" name="lineE_pres_val_4">
       <property name="text">
        <string>50</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="3" column="2">
+     <widget class="QLineEdit" name="lineE_signal_voltage_3"/>
+    </item>
+    <item row="4" column="3">
+     <widget class="QLineEdit" name="lineE_signal_current_4"/>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="lineE_supply_voltage_3"/>
+    </item>
+    <item row="3" column="3">
+     <widget class="QLineEdit" name="lineE_signal_voltage_4"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="lineE_pres_val_2">
+      <property name="text">
+       <string>30</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
      <widget class="QLineEdit" name="lineE_supply_voltage_2"/>
+    </item>
+    <item row="2" column="4">
+     <widget class="QLineEdit" name="lineE_supply_current_5"/>
+    </item>
+    <item row="1" column="3">
+     <widget class="QLineEdit" name="lineE_supply_voltage_4"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="lineE_pres_val_3">
+      <property name="text">
+       <string>40</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="lineE_supply_current_2"/>
+    </item>
+    <item row="2" column="3">
+     <widget class="QLineEdit" name="lineE_supply_current_4"/>
+    </item>
+    <item row="4" column="4">
+     <widget class="QLineEdit" name="lineE_signal_current_5"/>
+    </item>
+    <item row="3" column="4">
+     <widget class="QLineEdit" name="lineE_signal_voltage_5"/>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLineEdit" name="lineE_pres_val_5">
+      <property name="text">
+       <string>60</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="lineE_signal_current_2"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLineEdit" name="lineE_pres_val_1">
+      <property name="text">
+       <string>20</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLineEdit" name="lineE_supply_voltage_1"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLineEdit" name="lineE_supply_current_1"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLineEdit" name="lineE_signal_voltage_1"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLineEdit" name="lineE_signal_current_1"/>
     </item>
    </layout>
   </widget>
@@ -350,64 +369,11 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineE_signal_current_1">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>724</y>
-     <width>119</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineE_signal_voltage_1">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>682</y>
-     <width>119</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineE_pres_val_1">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>556</y>
-     <width>119</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>20</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineE_supply_current_1">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>640</y>
-     <width>119</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineE_supply_voltage_1">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>598</y>
-     <width>119</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_11">
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>784</y>
+     <y>780</y>
      <width>71</width>
      <height>41</height>
     </rect>
@@ -439,11 +405,11 @@
     <string>误差：</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>784</y>
+     <x>250</x>
+     <y>780</y>
      <width>91</width>
      <height>41</height>
     </rect>
@@ -457,11 +423,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>784</y>
+     <x>380</x>
+     <y>780</y>
      <width>91</width>
      <height>41</height>
     </rect>
@@ -475,11 +441,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>784</y>
+     <x>510</x>
+     <y>780</y>
      <width>91</width>
      <height>41</height>
     </rect>
@@ -493,11 +459,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>660</x>
-     <y>784</y>
+     <x>640</x>
+     <y>780</y>
      <width>91</width>
      <height>41</height>
     </rect>

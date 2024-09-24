@@ -126,7 +126,7 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
             QString dir = "cDAQ2Mod2/port0/line" +
                     QString::number(4+2*ch_num) + ":" +
                     QString::number(5+2*ch_num);
-            qDebug() << "(In resis)dir: " << dir;
+//            qDebug() << "(In resis)dir: " << dir;
 
             channel_choosed.append(dir);
         }
@@ -174,6 +174,7 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
 {
     double vol = std::min(voltage, 4.9999);
     double resis = 0;
+    qDebug() << rType;
     switch (rType) {
     case RType::high:
         resis = vol * (1e6 + 3.5) / (5 - vol);
@@ -194,7 +195,7 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
         break;
     }
 
-    qDebug() << "(In resis)vol: " << vol << ", resis: " << resis;
+
     RType rTempType = RType::middle;
     // 下面的判断条件待定
     if (resis < 200) {
@@ -205,6 +206,7 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
         rTempType = RType::high;
     }
 
+    uInt8 writeArray[2] = {0, 0};
     // 下面进行测电阻档位选择
     if(rTempType != rType && allowChange){
         m_timer->start();
@@ -216,18 +218,17 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
         // 这里的数字io要根据用户的选择来变动
         DAQmxCreateDOChan(taskHandleSwitch, DI_str.toStdString().c_str(), "", DAQmx_Val_ChanPerLine);
 
-        uInt8 writeArray[2];
         int32 writeSuccessNum;
         if(rType == RType::low){
             writeArray[0] = 0;
             writeArray[1] = 1;
             qDebug() << "(In resis)R LOW!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }else if(rType == RType::middle){
-            writeArray[0] = 0;
+            writeArray[0] = 1;
             writeArray[1] = 0;
             qDebug() << "(In resis)R MIDDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }else if(rType == RType::high){
-            writeArray[0] = 1;
+            writeArray[0] = 0;
             writeArray[1] = 0;
             qDebug() << "(In resis)R HIGH!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }
@@ -236,6 +237,8 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
         qDebug() << QString::number(error);
         DAQmxClearTask(taskHandleSwitch);
     }
+
+        qDebug() << "(In resis)vol: " << vol << ", resis: " << resis << "x: " << writeArray[0] << " " << writeArray[1];
 
     return resis;
 }

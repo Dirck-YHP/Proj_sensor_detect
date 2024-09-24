@@ -138,6 +138,8 @@ showWin_angleEncoder::~showWin_angleEncoder()
  **************************************************************/
 void showWin_angleEncoder::on_btn_ok_clicked()
 {
+    _angle_encoder->stop_acquire();     // 停止采集
+
     if (_motor != nullptr) {
         delete _motor;
         qDebug() << "(In win)motor delete succeed";

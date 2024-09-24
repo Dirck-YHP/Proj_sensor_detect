@@ -187,6 +187,8 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
  **************************************************************/
 void showWin_pressureSensor::on_btn_ok_clicked()
 {
+    _pressure_sensor->stop_acquire();   // 停止采集
+
     if (_hydraulic_station != nullptr) {
         delete _hydraulic_station;
         qDebug() << "(In Win)HydraulicStation and delete succeed!";
@@ -251,22 +253,22 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     ui->plot_pressure->rescaleAxes();       // 自适应大小
     ui->plot_pressure->replot();
 
-    /*********************** 误差值画图 ****************************/
-    // 根据用户选择确定通道然后画图
-    int length_err = 1;
-    QVector<double> x_err(length_err);
-    int point_count_err = ui->plot_error->graph(0)->dataCount();
+//    /*********************** 误差值画图 ****************************/
+//    // 根据用户选择确定通道然后画图
+//    int length_err = 1;
+//    QVector<double> x_err(length_err);
+//    int point_count_err = ui->plot_error->graph(0)->dataCount();
 
-    // 确定画图的横轴
-    for (int i = 0; i < length; i++) {
-        x_err[i] = i + point_count_err;
-    }
+//    // 确定画图的横轴
+//    for (int i = 0; i < length; i++) {
+//        x_err[i] = i + point_count_err;
+//    }
 
-    // 画图
-    for (int i = 0; i < channel_num - 2; i++) {
-        QVector<double> y_err = QVector<double>{err_save[i]};
-        ui->plot_error->graph(i)->addData(x_err, y_err, true);
-    }
+//    // 画图
+//    for (int i = 0; i < channel_num - 2; i++) {
+//        QVector<double> y_err = QVector<double>{err_save[i]};
+//        ui->plot_error->graph(i)->addData(x_err, y_err, true);
+//    }
 
     ui->plot_error->rescaleAxes();       // 自适应大小
     ui->plot_error->replot();
@@ -423,24 +425,24 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
         }
     }
 
-    QString base_object_name = "lineE_pres_val_1";
-    QLineEdit *base_lineEdit = ui->gridLayout->findChild<QLineEdit*>(base_object_name);
-    double base_value = base_lineEdit->text().toDouble();
+//    QString base_object_name = "lineE_pres_val_1";
+//    QLineEdit *base_lineEdit = ui->gridLayout->findChild<QLineEdit*>(base_object_name);
+//    double base_value = base_lineEdit->text().toDouble();
 
-    for (int ch_num = 2; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num + 25)) {
-            QString baseName = "lineE_"; // 基础名称
-            QString objectName = baseName + "pres_val_" + QString::number(ch_num);
-            QLineEdit *lineEdit = ui->gridGroupBox->findChild<QLineEdit*>(objectName);
-            double value = lineEdit->text().toDouble();
+//    for (int ch_num = 2; ch_num <= 5; ch_num++) {
+//        if (selected_channel_arr.contains(ch_num + 25)) {
+//            QString baseName = "lineE_"; // 基础名称
+//            QString objectName = baseName + "pres_val_" + QString::number(ch_num);
+//            QLineEdit *lineEdit = ui->gridGroupBox->findChild<QLineEdit*>(objectName);
+//            double value = lineEdit->text().toDouble();
 
-            setLineEditsForRowValue(baseName + "error_percentage", ch_num, (value - base_value) / base_value);
-            setLineEditsForRowValue(baseName + "error_value", ch_num, value - base_value);
+//            setLineEditsForRowValue(baseName + "error_percentage", ch_num, (value - base_value) / base_value);
+//            setLineEditsForRowValue(baseName + "error_value", ch_num, value - base_value);
 
-            // 保存误差值，画图用
-            err_save.push_back(value - base_value);
-        }
-    }
+//            // 保存误差值，画图用
+//            err_save.push_back(value - base_value);
+//        }
+//    }
 }
 
 /***************************************************************

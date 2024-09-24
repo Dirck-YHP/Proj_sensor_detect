@@ -281,6 +281,8 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
  **************************************************************/
 void showWin_proximitySwitch::on_btn_ok_clicked()
 {
+    _proxi_switch->stop_acquire();
+
     if (_data_save != nullptr) {
         delete _data_save;
         qDebug() << "(In Win)data_save and delete succeed!";

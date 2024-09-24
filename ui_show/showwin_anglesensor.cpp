@@ -116,6 +116,8 @@ showWin_angleSensor::~showWin_angleSensor()
  **************************************************************/
 void showWin_angleSensor::on_btn_ok_clicked()
 {
+    _angle_sensor->stop_acquire();
+
     if (_motor != nullptr) {
         delete _motor;
         qDebug() << "(In Win)motor delete succeed";
@@ -236,27 +238,27 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、信号电压、信号电流、供电电流、角度、电池电量
-    qDebug() << "(In Win)处理之后的数据大小为：" << data.size();
+//    qDebug() << "(In Win)处理之后的数据大小为：" << data.size();
     /*********************** 供电电压 *****************************/
     double sup_vol = data[0];
-    ui->lineE_supply_voltage->setText(QString::number(sup_vol));
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol) + "V");
 
     /*********************** 信号电压 *****************************/
     double sig_vol = data[1];
-    ui->lineE_signal_voltage->setText(QString::number(sig_vol));
+    ui->lineE_signal_voltage->setText(QString::number(sig_vol) + "V");
 
     /*********************** 信号电流 *****************************/
     double sig_cur = data[2];
-    ui->lineE_signal_current->setText(QString::number(sig_cur));
+    ui->lineE_signal_current->setText(QString::number(sig_cur) + "mA");
 
     /*********************** 供电电流 *****************************/
     double sup_cur = data[3];
-    ui->lineE_supply_current->setText(QString::number(sup_cur));
+    ui->lineE_supply_current->setText(QString::number(sup_cur) + "mA");
 
     /*********************** 传感器角度 ***************************/
     double angle_sensor = data[4];
     /************* 角度数值框显示 **************/
-    ui->lineE_sensor_angle->setText(QString::number(angle_sensor));
+    ui->lineE_sensor_angle->setText(QString::number(angle_sensor) + "°");
 
     /*********************** 电机角度 ***************************/
     /************* 电机转动圈数显示 ************/

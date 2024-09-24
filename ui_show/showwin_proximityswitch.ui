@@ -274,8 +274,8 @@
   <widget class="QLineEdit" name="lineEdit_if_pulse">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>550</y>
+     <x>10</x>
+     <y>300</y>
      <width>111</width>
      <height>31</height>
     </rect>

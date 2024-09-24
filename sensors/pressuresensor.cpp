@@ -158,7 +158,7 @@ void PressureSensor::rev_data_from_ni9205(QVector<double> data)
     // 信号电压、信号电流=供电电流、压力值 * (len - 2)
     for (int i = 1; i < len - 1; i++) {
         double sig_vol = data[i];
-        double sig_cur = sig_vol / 1;
+        double sig_cur = sig_vol / 1 * 1000;
         double press = map_from_cur_to_press(sig_cur);
         data_after_process.append(sig_vol);
         data_after_process.append(sig_cur);

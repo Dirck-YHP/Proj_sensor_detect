@@ -33,6 +33,8 @@ showWin_measureResis::~showWin_measureResis()
  **************************************************************/
 void showWin_measureResis::on_btn_ok_clicked()
 {
+    _resis->stop_acquire();
+
     this->close();
 }
 
@@ -75,7 +77,7 @@ void showWin_measureResis::slot_get_resis_and_show(QVector<double> data)
     // 接收到的data中数据顺序如下：
     // 电阻 * (len - 1)、电池电量
     int total_len = data.size();
-    qDebug() << "(In Win)处理之后的数据大小为：" << total_len;
+//    qDebug() << "(In Win)处理之后的数据大小为：" << total_len;
 
     /*********************** 电阻数值框显示 *************************/
     QString selected_channel_str = _resis->get_channel();
