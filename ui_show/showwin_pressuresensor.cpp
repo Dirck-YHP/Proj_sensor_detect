@@ -253,22 +253,24 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     ui->plot_pressure->rescaleAxes();       // 自适应大小
     ui->plot_pressure->replot();
 
-//    /*********************** 误差值画图 ****************************/
-//    // 根据用户选择确定通道然后画图
-//    int length_err = 1;
-//    QVector<double> x_err(length_err);
-//    int point_count_err = ui->plot_error->graph(0)->dataCount();
+    /*********************** 误差值画图 ****************************/
+    // 根据用户选择确定通道然后画图
+    int length_err = 1;
+    QVector<double> x_err(length_err);
+    int point_count_err = ui->plot_error->graph(0)->dataCount();
 
-//    // 确定画图的横轴
-//    for (int i = 0; i < length; i++) {
-//        x_err[i] = i + point_count_err;
-//    }
+    // 确定画图的横轴
+    for (int i = 0; i < length; i++) {
+        x_err[i] = i + point_count_err;
+    }
 
-//    // 画图
-//    for (int i = 0; i < channel_num - 2; i++) {
-//        QVector<double> y_err = QVector<double>{err_save[i]};
-//        ui->plot_error->graph(i)->addData(x_err, y_err, true);
-//    }
+    // 画图
+    for (int i = 0; i < channel_num - 2; i++) {
+        QVector<double> y_err = QVector<double>{err_save[i]};
+        ui->plot_error->graph(i)->addData(x_err, y_err, true);
+    }
+    // 清空
+    err_save.clear();
 
     ui->plot_error->rescaleAxes();       // 自适应大小
     ui->plot_error->replot();
@@ -347,6 +349,8 @@ void showWin_pressureSensor::set_visiable()
             setLineEditsForRowEnable(baseName + "signal_voltage", ch_num, true);
             setLineEditsForRowEnable(baseName + "supply_current", ch_num, true);
             setLineEditsForRowEnable(baseName + "supply_voltage", ch_num, true);
+            setLineEditsForRowEnable(baseName + "error_percentage", ch_num, true);
+            setLineEditsForRowEnable(baseName + "error_value", ch_num, true);
             QString label_name = "label_ch" + QString::number(ch_num);
             QLabel *label = this->findChild<QLabel*>(label_name);
             label->setEnabled(true);
@@ -357,6 +361,8 @@ void showWin_pressureSensor::set_visiable()
             setLineEditsForRowEnable(baseName + "signal_voltage", ch_num, false);
             setLineEditsForRowEnable(baseName + "supply_current", ch_num, false);
             setLineEditsForRowEnable(baseName + "supply_voltage", ch_num, false);
+            setLineEditsForRowEnable(baseName + "error_percentage", ch_num, false);
+            setLineEditsForRowEnable(baseName + "error_value", ch_num, false);
             QString label_name = "label_ch" + QString::number(ch_num);
             QLabel *label = this->findChild<QLabel*>(label_name);
             label->setEnabled(false);
@@ -397,6 +403,9 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
     int len = selected_channel_arr.size();
     len = 3;
 
+    double base_value = 0.0;
+    QVector<double> other_value;
+
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
         if (selected_channel_arr.contains(ch_num + 25)) {
             QString baseName = "lineE_"; // 基础名称
@@ -421,28 +430,33 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
             double pressure = data[3 + start_idx * len];
             setLineEditsForRowValue(baseName + "pres_val", ch_num, pressure);
 
+            if (ch_num == 1) {
+                base_value = pressure;
+            }else {
+                other_value.push_back(pressure);
+            }
+
             start_idx++;
         }
     }
 
-//    QString base_object_name = "lineE_pres_val_1";
-//    QLineEdit *base_lineEdit = ui->gridLayout->findChild<QLineEdit*>(base_object_name);
-//    double base_value = base_lineEdit->text().toDouble();
+//    qDebug() << "base: " << base_value;
+//    qDebug() << "  value: " << other_value;
 
-//    for (int ch_num = 2; ch_num <= 5; ch_num++) {
-//        if (selected_channel_arr.contains(ch_num + 25)) {
-//            QString baseName = "lineE_"; // 基础名称
-//            QString objectName = baseName + "pres_val_" + QString::number(ch_num);
-//            QLineEdit *lineEdit = ui->gridGroupBox->findChild<QLineEdit*>(objectName);
-//            double value = lineEdit->text().toDouble();
+    for (int ch_num = 2; ch_num <= 5; ch_num++) {
+        if (selected_channel_arr.contains(ch_num + 25)) {
+            QString baseName = "lineE_"; // 基础名称
+            QString objectName = baseName + "pres_val_" + QString::number(ch_num);
 
-//            setLineEditsForRowValue(baseName + "error_percentage", ch_num, (value - base_value) / base_value);
-//            setLineEditsForRowValue(baseName + "error_value", ch_num, value - base_value);
+            double value = other_value[ch_num - 2];
 
-//            // 保存误差值，画图用
-//            err_save.push_back(value - base_value);
-//        }
-//    }
+            setLineEditsForRowValue(baseName + "error_percentage", ch_num, (value - base_value) / value);
+            setLineEditsForRowValue(baseName + "error_value", ch_num, value - base_value);
+
+            // 保存误差值，画图用
+            err_save.push_back(value - base_value);
+        }
+    }
 }
 
 /***************************************************************
@@ -455,9 +469,24 @@ void showWin_pressureSensor::setLineEditsForRowValue(const QString &baseName, in
 {
     QString objectName = baseName + "_" + QString::number(ch_num);
     QLineEdit *lineEdit = ui->gridGroupBox->findChild<QLineEdit*>(objectName);
+    QString content = "";
 
     if (lineEdit) {
-        lineEdit->setText(QString::number(value));
+
+        if (baseName == "lineE_supply_voltage")
+            content = QString::number(qRound(value * 3 * 10.0) / 10.0) + "V";
+        else if (baseName == "lineE_signal_voltage")
+            content = QString::number(qRound(value * 10.0) / 10.0) + "V";
+        else if (baseName == "lineE_signal_current" | baseName == "lineE_supply_current")
+            content = QString::number(qRound(value * 10.0) / 10.0) + "mA";
+        else if (baseName == "lineE_pres_val")
+            content = QString::number(qRound(value * 10.0) / 10.0) + "bar";
+        else if (baseName == "lineE_error_percentage")
+            content = QString::number(qRound(value * 10.0) / 10.0 * 100) + "%";
+        else if (baseName == "lineE_error_value")
+            content = QString::number(qRound(value * 10.0) / 10.0) + "bar";
+
+        lineEdit->setText(content);
     } else {
         qDebug() << "LineEdit not found:" << objectName;
     }

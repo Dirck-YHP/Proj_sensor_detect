@@ -39,7 +39,7 @@ private slots:
     // 接收到来自传感器的数据然后显示出来
     void slot_get_vol_cur_and_show(QVector<double> data);          // 后续需要换名字，编码器9205只有电压电流且不画图
     void slot_get_pulse_and_plot(QVector<QVector<double>> data); // 后续需要换名字，编码器9403画脉冲图
-    void slot_get_angle_and_plot(QVector<double> data);          // 后续需要换名字，编码器9401同电机一起画图
+    void slot_get_angle_and_plot(QVector<double> data,  QVector<uInt32> data2, QVector<uInt32> data3);          // 后续需要换名字，编码器9401同电机一起画图
 
     void slot_get_angle(double motor_angle);    // 接收电机发过来的角度数据
     void slot_get_speed(double motor_speed);    // 接收电机发过来的速度

@@ -19,8 +19,17 @@ void DataAcquireCI::__init__(uInt32 pulses_per_rev) {
     DAQmxSetCIEncoderBInputTerm(_task, "CI", "/cDAQ2Mod1/PFI2");
     DAQmxSetCIEncoderZInputTerm(_task, "CI", "/cDAQ2Mod1/PFI4");
 
+    DAQmxCreateTask("A_edge_detc", &_task_A_edge);
+    DAQmxCreateTask("B_edge_detc", &_task_B_edge);
+    DAQmxCreateCICountEdgesChan(_task_A_edge, "cDAQ2Mod1/ctr1", "A_chan", DAQmx_Val_Rising, 0, DAQmx_Val_CountUp);
+    DAQmxCreateCICountEdgesChan(_task_B_edge, "cDAQ2Mod1/ctr2", "B_chan", DAQmx_Val_Rising, 0, DAQmx_Val_CountUp);
+    DAQmxSetCICountEdgesTerm(_task_A_edge, "A_chan", "/cDAQ2Mod1/PFI0");
+    DAQmxSetCICountEdgesTerm(_task_B_edge, "B_chan", "/cDAQ2Mod1/PFI2");
+
     // 开始任务
     DAQmxStartTask(_task);
+    DAQmxStartTask(_task_A_edge);
+    DAQmxStartTask(_task_B_edge);
 
     // 开始
     STOP = false;
@@ -38,6 +47,14 @@ void DataAcquireCI::stop_acquire()
     DAQmxStopTask(_task);
     DAQmxWaitUntilTaskDone(_task, -1);
     DAQmxClearTask(_task);
+
+    DAQmxStopTask(_task_A_edge);
+    DAQmxWaitUntilTaskDone(_task_A_edge, -1);
+    DAQmxClearTask(_task_A_edge);
+
+    DAQmxStopTask(_task_B_edge);
+    DAQmxWaitUntilTaskDone(_task_B_edge, -1);
+    DAQmxClearTask(_task_B_edge);
 }
 
 /***************************************************************
@@ -63,12 +80,14 @@ void DataAcquireCI::run() {
 
     while (!STOP) {
         DAQmxReadCounterF64(_task, -1, -1, data, DATA_SIZE, &_sampsPerChanRead, NULL);
+        DAQmxReadCounterU32(_task_A_edge, -1, -1, A_chan_detc, DATA_SIZE, &_sampsPerChanRead_A, NULL);
+        DAQmxReadCounterU32(_task_B_edge, -1, -1, B_chan_detc, DATA_SIZE, &_sampsPerChanRead_B, NULL);
 
 //        qDebug() << "(In acq_ci)" << _sampsPerChanRead;
         // 发送信号到上层【一维数组】
-        emit send_data(QVector<double>(data, data + _sampsPerChanRead));
-
-//        qDebug() << "(In acq_ci)angle: " << data[0];
+        emit send_data(QVector<double>(data, data + _sampsPerChanRead),
+                       QVector<uInt32>(A_chan_detc, A_chan_detc + _sampsPerChanRead_A),
+                       QVector<uInt32>(B_chan_detc, B_chan_detc + _sampsPerChanRead_B));
 
         // 延时20ms
         QThread::msleep(20);

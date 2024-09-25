@@ -166,7 +166,7 @@ void PressureSensor::rev_data_from_ni9205(QVector<double> data)
     }
 
     // 电池电量
-    double bat = data[len - 1];
+    double bat = data[len - 1] * 3;
     data_after_process.append(bat);
 
     // 组合成一个vector发出去，data中数据顺序如下：

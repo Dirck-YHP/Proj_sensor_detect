@@ -307,21 +307,29 @@ void showWin_angleEncoder::slot_get_pulse_and_plot(QVector<QVector<double> > dat
   *  @note      槽函数——
   *  @Sample usage:
  **************************************************************/
-void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
+void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3)
 {
     /*************************** 编码器 *****************************/
     /**************** 显示编码器角度累计值 ******************/
 //    qDebug() << "角度：" << data[0];
 
     double angle = data[0] - last_angle_encoder;
+    uInt32 A_chan = data2[0];
+    uInt32 B_chan = data3[0];
     if (fresh_enc) {
         angle = 0.0;
+        A_chan = 0;
+        B_chan = 0;
         last_angle_encoder = data[0];
         fresh_enc = false;
     }
 
     /***************** 编码器角度数值框显示 ******************/
     ui->lineE_encoder_angle->setText(QString::number(angle) + "°");
+
+    /***************** 编码器A B相上升沿数值框显示 ******************/
+    ui->lineE_encoder_A_pulse->setText(QString::number(A_chan));
+    ui->lineE_encoder_B_pulse->setText(QString::number(B_chan));
 
     /*************************** 电机 *****************************/
     /******************** 电机转动圈数显示 *********************/

@@ -69,10 +69,7 @@ private:
     Motor *_motor = nullptr;
     QTimer _timer_motor;        // 显示数值框显示频率的定时器【暂时没用】
     bool _if_need_motor;        // 是否需要电机，由外界传入
-    double _motor_angle;        // 电机的角度
-    int totalTurns = 0;
-    int last_turn = 0;
-    bool fresh_turn = false;    // 重新开始
+    double _motor_angle = 0.0;        // 电机的角度
 
     // 文件保存
     QString _file_save_dir;     // 文件保存路径，由外界传入

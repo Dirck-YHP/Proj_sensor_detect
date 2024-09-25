@@ -211,10 +211,10 @@ void AngleEncoder::rev_data_from_ni9403(QVector<QVector<double> > data_final)
   *  @note      这里是0~360°，需要上传绝对角度【画角度图，角度1】
   *  @Sample usage:
  **************************************************************/
-void AngleEncoder::rev_data_from_ni9401(QVector<double> data)
+void AngleEncoder::rev_data_from_ni9401(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3)
 {
 //    qDebug() << "(In AE)angle: " << data;
-    emit send_angle_to_ui(data);
+    emit send_angle_to_ui(data, data2, data3);
 }
 
 /***************************************************************

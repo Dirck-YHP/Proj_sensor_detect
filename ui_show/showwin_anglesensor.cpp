@@ -142,8 +142,6 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
 
-        totalTurns = 0;
-
         /********************** ni9205开始采集 **********************/
         _angle_sensor->start_acquire();
 
@@ -216,25 +214,6 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
  **************************************************************/
 void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
 {
-    /****************************** 旧板 *************************************/
-//    int length = angle.size();     // 每通道数据 数
-//    QVector<double> x(length);
-//    int point_count = ui->plot_angle->graph(0)->dataCount();
-
-//    // 确定画图的横轴
-//    for (int i = 0; i < length; i++) {
-//        x[i] = i + point_count;
-//    }
-
-//    // 画图，一共条曲线
-//    for (int i = 0; i < 1; i++) {
-//        ui->plot_angle->graph(i)->addData(x,
-//            QVector<double>(angle.begin() + i*length, angle.begin() + i*length + length), true);
-//    }
-//    ui->plot_angle->rescaleAxes();       // 自适应大小
-//    ui->plot_angle->replot();
-
-
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、信号电压、信号电流、供电电流、角度、电池电量
@@ -262,14 +241,9 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
 
     /*********************** 电机角度 ***************************/
     /************* 电机转动圈数显示 ************/
-    int cur_turn = _motor_angle / 360;
-    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
-        totalTurns += 1;
-    }
-    if (cur_turn == 0) fresh_turn = false;
+    double cur_turn = _motor_angle / 360;
 
-    last_turn = cur_turn;
-    ui->lineE_motor_circle->setText(QString::number(totalTurns));
+    ui->lineE_motor_circle->setText(QString::number(qRound(cur_turn * 10.0) / 10.0));
 
     /************** 角度数值框显示 ************/
     ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
@@ -337,45 +311,6 @@ void showWin_angleSensor::on_btn_angle_cali_clicked()
 void showWin_angleSensor::slot_get_angle(double motor_angle)
 {
     _motor_angle = motor_angle;
-//    qDebug() << "(In Win)motor angle: " << _motor_angle;
-
-//    /******************** 电机转动圈数显示 *********************/
-//    int cur_turn = _motor_angle / 360;
-////    qDebug() << "(In Win)turn: " << cur_turn << " last_turn: " << last_turn;
-//    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
-//        totalTurns += 1;
-////        qDebug() << "(In Win)++ ";
-//    }
-//    if (cur_turn == 0) fresh_turn = false;
-
-//    last_turn = cur_turn;
-//    ui->lineE_motor_circle->setText(QString::number(totalTurns));
-
-//    /******************** 角度数值框显示 *********************/
-//    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
-
-//    /******************** 角度画图 *********************/
-//    int length = 1;
-//    QVector<double> x(length);
-//    int point_count = ui->plot_angle->graph(1)->dataCount();
-
-//    // 确定画图的横轴
-//    for (int i = 0; i < length; i++) {
-//        x[i] = i + point_count;
-//    }
-
-//    // 画图，一次画一个点
-//    QVector<double> y = {_motor_angle};
-
-//    ui->plot_angle->graph(1)->addData(x, y, true);
-//    ui->plot_angle->rescaleAxes();       // 自适应大小
-//    ui->plot_angle->replot();
-
-//    /********************文件保存*********************/
-//    if (FILE_SAVE) {
-//        // 数据首先都放到缓冲区中
-//        _data_save->collectData(&save_data_buf_angle_motor, motor_angle);
-//    }
 }
 
 /***************************************************************
@@ -420,11 +355,6 @@ void showWin_angleSensor::on_btn_run_stop_toggled(bool checked)
     if (checked) {
         ui->btn_run_stop->setText("停止");
         qDebug() << "(In Win)UI 运行 cur id" << QThread::currentThreadId();
-
-        // 电机转动圈数清零
-        totalTurns = 0;
-        last_turn = 0;
-        fresh_turn = true;
 
         // 发送配置信号
         emit signal_setConfigModbus();

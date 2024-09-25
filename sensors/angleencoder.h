@@ -46,7 +46,7 @@ private slots:
     // 这三个函数负责接收来自采集卡的原始数据并做处理，然后发出去
     void rev_data_from_ni9205(QVector<double> data);
     void rev_data_from_ni9403(QVector<QVector<double>> data_final);
-    void rev_data_from_ni9401(QVector<double> data);
+    void rev_data_from_ni9401(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3);
 
 public slots:
     void slot_acq_delete();
@@ -54,7 +54,7 @@ public slots:
 signals:
     void send_vol_cur_to_ui(QVector<double> data);
     void send_pulse_to_ui(QVector<QVector<double>> data_final);
-    void send_angle_to_ui(QVector<double> data);
+    void send_angle_to_ui(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3);
 
     void signal_delete();
 };
