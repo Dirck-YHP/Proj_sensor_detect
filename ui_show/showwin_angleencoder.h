@@ -56,8 +56,8 @@ private:
     Ui::showWin_angleEncoder *ui;
     AngleEncoder *_angle_encoder;
 
-    double absolute_angle_encoder = 0;     // 编码器角度绝对值
     double last_angle_encoder = 0;         // 编码器上次角度
+    bool fresh_enc = false;
 
     // 电机
     Motor *_motor = nullptr;
@@ -65,9 +65,6 @@ private:
     bool _if_need_motor;        // 是否需要电机，由外界传入
     double _motor_angle = 0;        // 电机的角度
     double _motor_speed = 0;
-    int totalTurns = 0;
-    int last_turn = 0;
-    bool fresh_turn = false;    // 重新开始
 
     // 文件保存
     QString _file_save_dir;     // 文件保存路径，由外界传入

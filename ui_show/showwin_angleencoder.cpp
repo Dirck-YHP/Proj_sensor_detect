@@ -163,11 +163,9 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
-        // 编码器角度的绝对值归零
-        absolute_angle_encoder = 0;
-        last_angle_encoder = 0;
 
-        totalTurns = 0;
+        // 清零
+        last_angle_encoder = 0.0;
 
         /********************** 三张卡开始采集 **********************/
         _angle_encoder->start_acquire();
@@ -313,25 +311,14 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
 {
     /*************************** 编码器 *****************************/
     /**************** 显示编码器角度累计值 ******************/
-    double angleChange = data[0] - last_angle_encoder;
-    if (angleChange != 0) {        // 角度变化
-        if (angleChange < -300) {
-            absolute_angle_encoder += angleChange + 360;
-//            qDebug() << "360: " << absolute_angle_encoder;
-        } else if (angleChange > 300) {
-            absolute_angle_encoder += angleChange - 360;
-//            qDebug() << "-360: " << absolute_angle_encoder;
+//    qDebug() << "角度：" << data[0];
 
-        } else {
-            absolute_angle_encoder += angleChange;
-        }
+    double angle = data[0] - last_angle_encoder;
+    if (fresh_enc) {
+        angle = 0.0;
+        last_angle_encoder = data[0];
+        fresh_enc = false;
     }
-
-    double angle = absolute_angle_encoder;
-//    qDebug() << "(In Win)angle: " << angle << " " << data[0] << " " << last_angle_encoder;
-
-    // 更新上次角度值
-    last_angle_encoder = data[0];
 
     /***************** 编码器角度数值框显示 ******************/
     ui->lineE_encoder_angle->setText(QString::number(angle) + "°");
@@ -339,17 +326,12 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
     /*************************** 电机 *****************************/
     /******************** 电机转动圈数显示 *********************/
 //    qDebug() << "(In Win)motor angle: " << _motor_angle;
-    int cur_turn = _motor_angle / 360;
-    if (last_turn != cur_turn && _motor_angle != 0 && fresh_turn == false) {
-        totalTurns += 1;
-    }
-    if (cur_turn == 0) fresh_turn = false;
+    double cur_turn = _motor_angle / 360;
 
-    last_turn = cur_turn;
-    ui->lineE_motor_circle->setText(QString::number(totalTurns));
+    ui->lineE_motor_circle->setText(QString::number(qRound(cur_turn * 10.0) / 10.0));
 
     /******************** 角度数值框显示 *********************/
-    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
+//    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
 
     /************************* 角度画图 ***************************/
     int length = 1;
@@ -374,7 +356,7 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data)
     /************************* 文件保存 ***************************/
     if (FILE_SAVE) {
         // 数据首先都放到缓冲区中
-        _data_save->collectData(&save_data_buf_angle_encoder, absolute_angle_encoder);
+        _data_save->collectData(&save_data_buf_angle_encoder, angle);
         _data_save->collectData(&save_data_buf_angle_motor, _motor_angle);
     }
 }
@@ -470,16 +452,14 @@ void showWin_angleEncoder::on_btn_run_stop_toggled(bool checked)
         ui->btn_run_stop->setText("停止");
         qDebug() << "(In win)UI 运行 cur id" << QThread::currentThreadId();
 
-        // 电机转动圈数清零
-        totalTurns = 0;
-        last_turn = 0;
-        fresh_turn = true;
+        fresh_enc = true;
 
         // 发送配置信号
         emit signal_setConfigModbus();
 
     } else {
         ui->btn_run_stop->setText("运行");
+
         qDebug() << "(In win)UI 停止 cur id" << QThread::currentThreadId();
 
         // 发送关闭信号

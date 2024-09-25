@@ -36,10 +36,11 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
 
     // 添加图 画距离 和 画触发信号
     // 一张图就够了，根据是否触发判断当前这个点要不要画的特殊一点
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 2; i++) {
         ui->plot_distance->addGraph();
-        ui->plot_distance->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
     }
+    ui->plot_distance->graph(0)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
+    ui->plot_distance->graph(1)->setPen(QPen(QColor(255, 0, 0)));
 
     /********************** 9205相关 **********************/
     connect(_proxi_switch, &ProximitySwitch::send_vol_cur_pul_dis_to_ui,
@@ -204,10 +205,15 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
 
     /*************** 画 “触发点” ****************/
     if (if_changed) {
-//        ui->plot_distance->graph(0)->setPen(QPen(Qt::red));
+//        pulse_dis.push_back(_distance);
+        QVector<double> y_pulse = {_distance};
+
+        ui->plot_distance->graph(1)->setLineStyle(QCPGraph::LineStyle::lsNone);
+        ui->plot_distance->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+        ui->plot_distance->graph(1)->addData(x, y_pulse, true);
         qDebug() << "---- YES ----";
     } else {
-//        ui->plot_distance->graph(0)->setPen(QPen(Qt::blue));
+
     }
 
     // 画图，一次画一个点

@@ -147,6 +147,7 @@ void ProximitySwitch::start_acquire()
                             chToStr(CH_VR_DIS) + "," +
                             chToStr(CH_BAT);
 
+    qDebug() << "fi: " << channel_final;
     data_acquire_ai->get_channel(channel_final);
 
     QThreadPool::globalInstance()->start(data_acquire_ai);
@@ -181,7 +182,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
     }
 
     // 供电电压
-    double sup_vol = data[0];
+    double sup_vol = data[0] * 3;
 
     // 信号电压、信号电流、是否触发
     double sig_vol = data[1];
@@ -191,7 +192,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 //    qDebug() << "(In PxS)if_pulse" << if_pulse;
 
     // 供电电流
-    double sup_cur = data[2] / 5000;
+    double sup_cur = data[2] / 1;
 
     // 滑动变阻器计算距离
     double cur = data[3] / 1;
