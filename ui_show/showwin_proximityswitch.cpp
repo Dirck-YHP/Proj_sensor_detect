@@ -171,19 +171,19 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
 {
     /*********************** 供电电压 ************************/
     double sup_vol = data[0];
-    ui->lineE_supply_voltage->setText(QString::number(sup_vol));
+    ui->lineE_supply_voltage->setText(QString::number(qRound(sup_vol * 10.0) / 10.0) + "V");
 
     /*********************** 信号电压 ************************/
     double sig_vol = data[1];
-    ui->lineE_signal_voltage->setText(QString::number(sig_vol));
+    ui->lineE_signal_voltage->setText(QString::number(qRound(sig_vol * 10.0) / 10.0) + "V");
 
     /*********************** 信号电流 ************************/
     double sig_cur = data[2];
-    ui->lineE_signal_current->setText(QString::number(sig_cur));
+    ui->lineE_signal_current->setText(QString::number(qRound(sig_cur * 10.0) / 10.0) + "mA");
 
     /*********************** 供电电流 ************************/
     double sup_cur = data[3];
-    ui->lineE_supply_current->setText(QString::number(sup_cur));
+    ui->lineE_supply_current->setText(QString::number(qRound(sup_cur * 10.0) / 10.0) + "mA");
 
     /*********************** 是否触发 ************************/
     bool if_Pulse = data[4];
@@ -205,11 +205,10 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
 
     /*************** 画 “触发点” ****************/
     if (if_changed) {
-//        pulse_dis.push_back(_distance);
         QVector<double> y_pulse = {_distance};
 
         ui->plot_distance->graph(1)->setLineStyle(QCPGraph::LineStyle::lsNone);
-        ui->plot_distance->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+        ui->plot_distance->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
         ui->plot_distance->graph(1)->addData(x, y_pulse, true);
         qDebug() << "---- YES ----";
     } else {

@@ -53,7 +53,6 @@ private:
 
     double _distance;               // 距离
     bool _if_pulse = false;         // 是否触发
-    QVector<double> pulse_dis;
 
     // 文件保存
     QString _file_save_dir;
