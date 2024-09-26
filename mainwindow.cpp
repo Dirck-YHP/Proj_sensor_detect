@@ -11,7 +11,7 @@ mainWindow::mainWindow(QWidget *parent) :
     ui->btn_exit->setStyleSheet("color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_start->setStyleSheet("color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_data_export->setStyleSheet("color:rgb(254,254,254);background-color:rgb(84,80,107);");
-    ui->cbox_choose_sensor->setStyleSheet("color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->cbox_choose_sensor->setStyleSheet("font:bold 24pt Arial;color:rgb(254,254,254);background-color:rgb(84,80,107);");
 
     // 板子上电，待测
 //    Assist::board_init();

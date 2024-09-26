@@ -61,7 +61,7 @@ void Assist::board_init()
     DAQmxCreateTask("ASSIST", &taskHandleSwitch);
 
     // 这里的数字io要根据用户的选择来变动
-    DAQmxCreateDOChan(taskHandleSwitch, "cDAQ2Mod2/port0/line31", "", DAQmx_Val_ChanPerLine);
+    DAQmxCreateDOChan(taskHandleSwitch, "cDAQ1Mod2/port0/line31", "", DAQmx_Val_ChanPerLine);
 
     uInt8 writeArray[1];
     int32 writeSuccessNum;

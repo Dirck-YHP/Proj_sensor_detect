@@ -18,7 +18,7 @@ void DataAcquireDI::__init__()
 
     // 配置通道
     for (int i = 0; i < CHANNEL_NUM; i++) {
-        QString lines = "cDAQ2Mod2/port0/line" + QString::number(i);
+        QString lines = "cDAQ1Mod2/port0/line" + QString::number(i);
         DAQmxCreateDIChan(_task, lines.toUtf8(), "", DAQmx_Val_ChanPerLine);
     }
 

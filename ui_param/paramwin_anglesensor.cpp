@@ -43,7 +43,7 @@ paramWin_angleSensor::paramWin_angleSensor(QWidget *parent) :
                      << ui->lineE_file_name;
     foreach(QWidget *file_save_param, file_save_params) {
                 file_save_param->setEnabled(false);
-                file_save_param->setStyleSheet("font-size: 14pt;color:rgb(46,47,48);");
+                file_save_param->setStyleSheet("font-size: 14pt;color:rgb(180,180,180);");
             }
 }
 
@@ -118,7 +118,7 @@ void paramWin_angleSensor::on_checkBox_no_need_device_stateChanged(int arg1)
 
         foreach(QWidget *motor_param, motor_params) {
             motor_param->setEnabled(false);
-            motor_param->setStyleSheet("font-size: 14pt;color:rgb(46,47,48);");
+            motor_param->setStyleSheet("font-size: 14pt;color:rgb(180,180,180);");
         }
     }
 }
@@ -169,7 +169,7 @@ void paramWin_angleSensor::on_cBox_file_save_stateChanged(int arg1)
         m_file_save_dir = "";
         foreach(QWidget *file_save_param, file_save_params) {
             file_save_param->setEnabled(false);
-            file_save_param->setStyleSheet("font-size: 14pt;color:rgb(46,47,48);");
+            file_save_param->setStyleSheet("font-size: 14pt;color:rgb(180,180,180);");
         }
     }
 }

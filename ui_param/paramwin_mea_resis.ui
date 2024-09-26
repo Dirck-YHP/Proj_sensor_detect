@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>672</width>
-    <height>381</height>
+    <width>990</width>
+    <height>598</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>2000</width>
-       <height>50</height>
+       <width>77777</width>
+       <height>80</height>
       </size>
      </property>
      <property name="font">
@@ -41,7 +41,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="label_channel">
@@ -54,7 +54,7 @@
        <property name="maximumSize">
         <size>
          <width>200</width>
-         <height>20</height>
+         <height>7777</height>
         </size>
        </property>
        <property name="text">
@@ -70,6 +70,12 @@
         </property>
         <item row="0" column="4">
          <widget class="QCheckBox" name="checkBox_ch_5">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>通道5</string>
           </property>
@@ -77,6 +83,12 @@
         </item>
         <item row="0" column="1">
          <widget class="QCheckBox" name="checkBox_ch_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>通道2</string>
           </property>
@@ -84,6 +96,12 @@
         </item>
         <item row="0" column="2">
          <widget class="QCheckBox" name="checkBox_ch_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>通道3</string>
           </property>
@@ -91,6 +109,12 @@
         </item>
         <item row="0" column="3">
          <widget class="QCheckBox" name="checkBox_ch_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>通道4</string>
           </property>
@@ -98,6 +122,12 @@
         </item>
         <item row="0" column="0">
          <widget class="QCheckBox" name="checkBox_ch_1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>通道1</string>
           </property>
@@ -108,10 +138,16 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="4" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="btn_back_mainW">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>200</width>
@@ -125,6 +161,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_ok">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>200</width>
@@ -138,6 +180,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_exit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>200</width>
@@ -150,6 +198,26 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="3" column="0">
+    <widget class="Line" name="line">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb（255,255,255）</string>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="Line" name="line_2">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb（255,255,255）</string>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
