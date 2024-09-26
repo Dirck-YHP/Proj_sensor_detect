@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QVector<double>>("QVector<double>");      // 注册自定义类型
     qRegisterMetaType<int32>("int32");
     qRegisterMetaType<QVector<QVector<double>>>("QVector<QVector<double>>");
+    qRegisterMetaType<QVector<uInt32>>("QVector<uInt32>");
     qRegisterMetaType<QSerialPort::SerialPortError>("QSerialPort::SerialPortError");
 
 //    Widget w;

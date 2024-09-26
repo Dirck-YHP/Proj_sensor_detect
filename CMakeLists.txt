@@ -58,6 +58,7 @@ add_executable(Proj_Sensor
 
     functionality/datasave.cpp functionality/datasave.h
     functionality/dataexport.cpp functionality/dataexport.h
+    functionality/errorprompt.cpp functionality/errorprompt.h
 )
 
 target_include_directories(Proj_Sensor PRIVATE

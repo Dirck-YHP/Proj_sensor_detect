@@ -314,13 +314,15 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector
 //    qDebug() << "角度：" << data[0];
 
     double angle = data[0] - last_angle_encoder;
-    uInt32 A_chan = data2[0];
-    uInt32 B_chan = data3[0];
+    uInt32 A_chan = data2[0] - last_A_chan;
+    uInt32 B_chan = data3[0] - last_B_chan;
     if (fresh_enc) {
         angle = 0.0;
         A_chan = 0;
         B_chan = 0;
         last_angle_encoder = data[0];
+        last_A_chan = data2[0];
+        last_B_chan = data3[0];
         fresh_enc = false;
     }
 

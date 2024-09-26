@@ -14,17 +14,17 @@ DataAcquireCI::DataAcquireCI()
 void DataAcquireCI::__init__(uInt32 pulses_per_rev) {
     // 创建任务
     DAQmxCreateTask("NI9401", &_task);
-    DAQmxCreateCIAngEncoderChan(_task, "cDAQ2Mod1/ctr0", "CI", DAQmx_Val_X4, false, 0, DAQmx_Val_AHighBHigh, DAQmx_Val_Degrees, pulses_per_rev, 0, NULL);
-    DAQmxSetCIEncoderAInputTerm(_task, "CI", "/cDAQ2Mod1/PFI0");
-    DAQmxSetCIEncoderBInputTerm(_task, "CI", "/cDAQ2Mod1/PFI2");
-    DAQmxSetCIEncoderZInputTerm(_task, "CI", "/cDAQ2Mod1/PFI4");
+    DAQmxCreateCIAngEncoderChan(_task, "cDAQ1Mod1/ctr0", "CI", DAQmx_Val_X4, false, 0, DAQmx_Val_AHighBHigh, DAQmx_Val_Degrees, pulses_per_rev, 0, NULL);
+    DAQmxSetCIEncoderAInputTerm(_task, "CI", "/cDAQ1Mod1/PFI0");
+    DAQmxSetCIEncoderBInputTerm(_task, "CI", "/cDAQ1Mod1/PFI2");
+    DAQmxSetCIEncoderZInputTerm(_task, "CI", "/cDAQ1Mod1/PFI4");
 
     DAQmxCreateTask("A_edge_detc", &_task_A_edge);
     DAQmxCreateTask("B_edge_detc", &_task_B_edge);
-    DAQmxCreateCICountEdgesChan(_task_A_edge, "cDAQ2Mod1/ctr1", "A_chan", DAQmx_Val_Rising, 0, DAQmx_Val_CountUp);
-    DAQmxCreateCICountEdgesChan(_task_B_edge, "cDAQ2Mod1/ctr2", "B_chan", DAQmx_Val_Rising, 0, DAQmx_Val_CountUp);
-    DAQmxSetCICountEdgesTerm(_task_A_edge, "A_chan", "/cDAQ2Mod1/PFI0");
-    DAQmxSetCICountEdgesTerm(_task_B_edge, "B_chan", "/cDAQ2Mod1/PFI2");
+    DAQmxCreateCICountEdgesChan(_task_A_edge, "cDAQ1Mod1/ctr1", "A_chan", DAQmx_Val_Rising, 0, DAQmx_Val_CountUp);
+    DAQmxCreateCICountEdgesChan(_task_B_edge, "cDAQ1Mod1/ctr2", "B_chan", DAQmx_Val_Rising, 0, DAQmx_Val_CountUp);
+    DAQmxSetCICountEdgesTerm(_task_A_edge, "A_chan", "/cDAQ1Mod1/PFI0");
+    DAQmxSetCICountEdgesTerm(_task_B_edge, "B_chan", "/cDAQ1Mod1/PFI2");
 
     // 开始任务
     DAQmxStartTask(_task);

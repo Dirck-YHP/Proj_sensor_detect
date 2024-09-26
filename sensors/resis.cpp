@@ -123,7 +123,7 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
 
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
         if (selected_channel_arr.contains(ch_num + 9)) {
-            QString dir = "cDAQ2Mod2/port0/line" +
+            QString dir = "cDAQ1Mod2/port0/line" +
                     QString::number(4+2*ch_num) + ":" +
                     QString::number(5+2*ch_num);
 //            qDebug() << "(In resis)dir: " << dir;

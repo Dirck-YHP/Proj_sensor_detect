@@ -10,6 +10,8 @@
 #include "lowpassfilter.h"
 #include "simpleQtLogger.h"
 #include "assist.h"
+#include "errorprompt.h"
+
 
 enum CHANNEL_9205 {
     CH_SUPV,                        // 供电电压

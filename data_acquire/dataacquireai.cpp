@@ -22,9 +22,14 @@ void DataAcquireAI::run()
 
     while (!STOP) {
         // 读数据
-        DAQmxReadAnalogF64(_task, _numSampsPerChan, -1, DAQmx_Val_GroupByChannel,
+        int result = DAQmxReadAnalogF64(_task, _numSampsPerChan, -1, DAQmx_Val_GroupByChannel,
                            data, DATA_SIZE, &_sampsPerChanRead, NULL);
-//        qDebug() << data[1];
+//        qDebug() << result;
+//        if (result < 0) {
+//            ErrorPrompt prompt;
+//            prompt.showError(ErrorType::NetworkError);
+//            exit(1);
+//        }
         // 获取通道
         DAQmxGetTaskNumChans(_task, &_channel_num);
 
@@ -37,7 +42,6 @@ void DataAcquireAI::run()
         if(_sampsPerChanRead > 0) emit send_data(QVector<double>(data, data + _sampsPerChanRead * _channel_num));
         else {
             qDebug() << "没有采集到数据！";
-
         }
         QThread::msleep(10);
     }
@@ -63,7 +67,7 @@ void DataAcquireAI::__init__(QString channel)
     for (int i = 0; i < idx.size(); i++) {
         double U = choose_min_max(idx[i]);
 
-        QString physicalChannel = "cDAQ2Mod3/ai" + QString::number(idx[i]);
+        QString physicalChannel = "cDAQ1Mod3/ai" + QString::number(idx[i]);
         DAQmxCreateAIVoltageChan(_task, physicalChannel.toUtf8(), "",
                                  DAQmx_Val_RSE, -U, U, DAQmx_Val_Volts, NULL);
     }

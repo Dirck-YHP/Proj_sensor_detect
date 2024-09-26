@@ -57,6 +57,8 @@ private:
     AngleEncoder *_angle_encoder;
 
     double last_angle_encoder = 0;         // 编码器上次角度
+    uInt32 last_A_chan = 0;
+    uInt32 last_B_chan = 0;
     bool fresh_enc = false;
 
     // 电机
