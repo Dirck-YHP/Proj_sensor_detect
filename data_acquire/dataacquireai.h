@@ -72,6 +72,7 @@ public:
 
 signals:
     void send_data(QVector<double> data);       // 将采集到的数据发送给上层
+    void sig_err(bool err);
 
 public:
     void get_channel(QString channel);

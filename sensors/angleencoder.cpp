@@ -25,6 +25,14 @@ AngleEncoder::AngleEncoder(QObject *parent) : QObject(parent)
 
     connect(data_acquire_ci, &DataAcquireCI::send_data,
             this, &AngleEncoder::rev_data_from_ni9401);
+
+    // 接收错误信号
+    connect(data_acquire_ai, &DataAcquireAI::sig_err,
+            this, &AngleEncoder::slot_get_err);
+    connect(data_acquire_di, &DataAcquireDI::sig_err,
+            this, &AngleEncoder::slot_get_err);
+    connect(data_acquire_ci, &DataAcquireCI::sig_err,
+            this, &AngleEncoder::slot_get_err);
 }
 
 /***************************************************************
@@ -215,6 +223,12 @@ void AngleEncoder::rev_data_from_ni9401(QVector<double> data, QVector<uInt32> da
 {
 //    qDebug() << "(In AE)angle: " << data;
     emit send_angle_to_ui(data, data2, data3);
+}
+
+void AngleEncoder::slot_get_err(bool err)
+{
+    qDebug() << "(In AE)get err sig!!";
+    emit sig_err_to_ui(err);
 }
 
 /***************************************************************

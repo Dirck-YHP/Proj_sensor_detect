@@ -16,21 +16,26 @@ void DataAcquireDI::__init__()
     // 创建任务
     DAQmxCreateTask("NI9403", &_task);
 
+    // 开始
+    STOP = false;
+
+    int result = 0;
     // 配置通道
     for (int i = 0; i < CHANNEL_NUM; i++) {
         QString lines = "cDAQ1Mod2/port0/line" + QString::number(i);
-        DAQmxCreateDIChan(_task, lines.toUtf8(), "", DAQmx_Val_ChanPerLine);
+        result |= DAQmxCreateDIChan(_task, lines.toUtf8(), "", DAQmx_Val_ChanPerLine);
     }
 
     // 配置定时器
-    DAQmxCfgSampClkTiming(_task, NULL, _sample_rate, DAQmx_Val_Rising, DAQmx_Val_ContSamps, _sampsPerChanToAcquire);
+    result |= DAQmxCfgSampClkTiming(_task, NULL, _sample_rate, DAQmx_Val_Rising, DAQmx_Val_ContSamps, _sampsPerChanToAcquire);
 
     // 开始任务
     DAQmxStartTask(_task);
 
-    // 开始
-    STOP = false;
-
+    if (result < 0) {
+        emit sig_err(true);
+        STOP = true;
+    }
 }
 
 /***************************************************************
@@ -57,10 +62,17 @@ void DataAcquireDI::run() {
     // 初始化配置
     __init__();
 
+    int result = 0;
     while (!STOP) {
         // 读取数据
-        DAQmxReadDigitalLines(_task, _numSampsPerChan, -1, DAQmx_Val_GroupByChannel,
+        result |= DAQmxReadDigitalLines(_task, _numSampsPerChan, -1, DAQmx_Val_GroupByChannel,
                               data, DATA_SIZE, &_sampsPerChanRead, &_numBytesPerSamp, NULL);
+
+        if (result < 0) {
+            emit sig_err(true);
+            STOP = true;
+            continue;
+        }
 
         // 将数据存到该二维数组中，size:(CHANNEL_NUM, _sampsPerChanRead)
         QVector<QVector<double>> data_final(CHANNEL_NUM, QVector<double>(_sampsPerChanRead, 0));

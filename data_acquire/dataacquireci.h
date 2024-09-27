@@ -36,6 +36,9 @@ private:
 
 signals:
     void send_data(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3);
+
+    void sig_err(bool err);
+
 };
 
 #endif // DATAACQUIRECI_H

@@ -48,6 +48,8 @@ private slots:
     void rev_data_from_ni9403(QVector<QVector<double>> data_final);
     void rev_data_from_ni9401(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3);
 
+    void slot_get_err(bool err);
+
 public slots:
     void slot_acq_delete();
 
@@ -55,6 +57,8 @@ signals:
     void send_vol_cur_to_ui(QVector<double> data);
     void send_pulse_to_ui(QVector<QVector<double>> data_final);
     void send_angle_to_ui(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3);
+
+    void sig_err_to_ui(bool err);     // 发送错误信号给界面
 
     void signal_delete();
 };

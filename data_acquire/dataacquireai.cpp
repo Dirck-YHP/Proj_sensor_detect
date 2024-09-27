@@ -24,12 +24,11 @@ void DataAcquireAI::run()
         // 读数据
         int result = DAQmxReadAnalogF64(_task, _numSampsPerChan, -1, DAQmx_Val_GroupByChannel,
                            data, DATA_SIZE, &_sampsPerChanRead, NULL);
-//        qDebug() << result;
-//        if (result < 0) {
-//            ErrorPrompt prompt;
-//            prompt.showError(ErrorType::NetworkError);
-//            exit(1);
-//        }
+        if (result < 0) {
+            emit sig_err(true);
+            STOP = true;
+            continue;
+        }
         // 获取通道
         DAQmxGetTaskNumChans(_task, &_channel_num);
 
@@ -57,6 +56,10 @@ void DataAcquireAI::__init__(QString channel)
 {
     QVector<int> idx;
 
+    // 开始
+    STOP = false;
+    int result = 0;
+
     // 创建任务
     DAQmxCreateTask("NI9205", &_task);
 
@@ -68,18 +71,20 @@ void DataAcquireAI::__init__(QString channel)
         double U = choose_min_max(idx[i]);
 
         QString physicalChannel = "cDAQ1Mod3/ai" + QString::number(idx[i]);
-        DAQmxCreateAIVoltageChan(_task, physicalChannel.toUtf8(), "",
+        result |= DAQmxCreateAIVoltageChan(_task, physicalChannel.toUtf8(), "",
                                  DAQmx_Val_RSE, -U, U, DAQmx_Val_Volts, NULL);
     }
 
     // 配置定时器
-    DAQmxCfgSampClkTiming(_task, NULL, _sample_rate, DAQmx_Val_Rising, DAQmx_Val_ContSamps, _sampsPerChanToAcquire);
+    result |= DAQmxCfgSampClkTiming(_task, NULL, _sample_rate, DAQmx_Val_Rising, DAQmx_Val_ContSamps, _sampsPerChanToAcquire);
+
+    if (result < 0) {
+        emit sig_err(true);
+        STOP = true;
+    }
 
     // 开始任务
     DAQmxStartTask(_task);
-
-    // 开始
-    STOP = false;
 
     // 创建滤波器
     for (int i = 0; i < idx.size(); i++) {

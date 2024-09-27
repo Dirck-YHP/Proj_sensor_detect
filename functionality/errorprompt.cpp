@@ -26,5 +26,4 @@ void ErrorPrompt::showError(ErrorType type)
     }
 
     QMessageBox::warning(m_parent, "操作失误", message);
-
 }

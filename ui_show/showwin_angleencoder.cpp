@@ -119,6 +119,10 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
     /********************** 对象析构 **********************/
     connect(this, &showWin_angleEncoder::signal_delete,
             _angle_encoder, &AngleEncoder::slot_acq_delete);
+
+    /********************** 错误检测 **********************/
+    connect(_angle_encoder, &AngleEncoder::sig_err_to_ui,
+            this, &showWin_angleEncoder::slot_get_err);
 }
 
 showWin_angleEncoder::~showWin_angleEncoder()
@@ -166,6 +170,8 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 
         // 清零
         last_angle_encoder = 0.0;
+
+        sig_error = false;
 
         /********************** 三张卡开始采集 **********************/
         _angle_encoder->start_acquire();
@@ -368,6 +374,18 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector
         // 数据首先都放到缓冲区中
         _data_save->collectData(&save_data_buf_angle_encoder, angle);
         _data_save->collectData(&save_data_buf_angle_motor, _motor_angle);
+    }
+}
+
+void showWin_angleEncoder::slot_get_err(bool err)
+{
+    qDebug() << "(In Win)get err!——" << err;
+
+    if (!sig_error) {
+        sig_error = true;
+
+        ErrorPrompt e_pmt;
+        e_pmt.showError(ErrorType::NetworkError);
     }
 }
 

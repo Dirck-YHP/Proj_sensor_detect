@@ -36,6 +36,9 @@ public:
 
 signals:
     void send_data(QVector<QVector<double>> data_final);        // 将采集到的数据发送给上层
+
+    void sig_err(bool err);
+
 };
 
 
