@@ -21,21 +21,24 @@ public:
 
 private:
     TaskHandle _task;
-    TaskHandle _task_A_edge, _task_B_edge;
+    TaskHandle _task_A_edge;
+    TaskHandle _task_two_edge_sep, _task_period;
     bool STOP = false;
     uInt32 _pulses_per_rev;
 
     const int DATA_SIZE = 1000;
     double* data = new double[DATA_SIZE];
     uInt32* A_chan_detc = new uInt32[DATA_SIZE];
-    uInt32* B_chan_detc = new uInt32[DATA_SIZE];
+    double* period = new double[DATA_SIZE];
+    double* two_edge_sep = new double[DATA_SIZE];
 
     int32 _sampsPerChanRead;
     int32 _sampsPerChanRead_A;
-    int32 _sampsPerChanRead_B;
+    int32 _sampsPerChanRead_period;
+    int32 _sampsPerChanRead_two_edge_sep;
 
 signals:
-    void send_data(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3);
+    void send_data(QVector<double> data, QVector<uInt32> data2, QVector<double> data3, QVector<double> data4);
 
     void sig_err(bool err);
 

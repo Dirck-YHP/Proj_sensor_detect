@@ -12,24 +12,34 @@ DataAcquireCI::DataAcquireCI()
   *  @Sample usage:
  **************************************************************/
 void DataAcquireCI::__init__(uInt32 pulses_per_rev) {
-    // 创建任务
-    DAQmxCreateTask("NI9401", &_task);
-
     // 开始
     STOP = false;
 
+    // ----- 计数器一：角度  -----
+    DAQmxCreateTask("NI9401", &_task);
     int result = DAQmxCreateCIAngEncoderChan(_task, "cDAQ1Mod1/ctr0", "CI", DAQmx_Val_X4, false, 0, DAQmx_Val_AHighBHigh, DAQmx_Val_Degrees, pulses_per_rev, 0, NULL);
-
     result |= DAQmxSetCIEncoderAInputTerm(_task, "CI", "/cDAQ1Mod1/PFI0");
     result |= DAQmxSetCIEncoderBInputTerm(_task, "CI", "/cDAQ1Mod1/PFI2");
     result |= DAQmxSetCIEncoderZInputTerm(_task, "CI", "/cDAQ1Mod1/PFI4");
 
+    //  ----- 计数器二：A相脉冲数  -----
     result |= DAQmxCreateTask("A_edge_detc", &_task_A_edge);
-    result |= DAQmxCreateTask("B_edge_detc", &_task_B_edge);
     result |= DAQmxCreateCICountEdgesChan(_task_A_edge, "cDAQ1Mod1/ctr1", "A_chan", DAQmx_Val_Rising, 0, DAQmx_Val_CountUp);
-    result |= DAQmxCreateCICountEdgesChan(_task_B_edge, "cDAQ1Mod1/ctr2", "B_chan", DAQmx_Val_Rising, 0, DAQmx_Val_CountUp);
     result |= DAQmxSetCICountEdgesTerm(_task_A_edge, "A_chan", "/cDAQ1Mod1/PFI0");
-    result |= DAQmxSetCICountEdgesTerm(_task_B_edge, "B_chan", "/cDAQ1Mod1/PFI2");
+
+    // 计数器三：两边沿间隔
+    result |= DAQmxCreateTask("Two_edge_interval", &_task_two_edge_sep);
+    result |= DAQmxCreateCITwoEdgeSepChan(_task_two_edge_sep, "cDAQ1Mod1/ctr2", "Two_edge_interval", 1e-6, 0.1, DAQmx_Val_Seconds,
+                                          DAQmx_Val_Rising, DAQmx_Val_Rising, NULL);
+    result |= DAQmxSetCITwoEdgeSepFirstTerm(_task_two_edge_sep, "Two_edge_interval", "/cDAQ1Mod1/PFI0");
+    result |= DAQmxSetCITwoEdgeSepSecondTerm(_task_two_edge_sep, "Two_edge_interval", "/cDAQ1Mod1/PFI2");
+
+    // 计数器四：周期
+    result |= DAQmxCreateTask("Period", &_task_period);
+    result |= DAQmxCreateCIPeriodChan(_task_period, "cDAQ1Mod1/ctr3", "Period", 1e-6, 0.1, DAQmx_Val_Seconds, DAQmx_Val_Rising,
+                                      DAQmx_Val_LowFreq1Ctr, 0.001, 4, NULL);
+    result |= DAQmxSetCIPeriodTerm(_task_period, "Period", "/cDAQ1Mod1/PFI0");
+
 
     if (result < 0) {
         emit sig_err(true);
@@ -39,7 +49,8 @@ void DataAcquireCI::__init__(uInt32 pulses_per_rev) {
     // 开始任务
     DAQmxStartTask(_task);
     DAQmxStartTask(_task_A_edge);
-    DAQmxStartTask(_task_B_edge);
+    DAQmxStartTask(_task_period);
+    DAQmxStartTask(_task_two_edge_sep);
 
 
 }
@@ -61,9 +72,13 @@ void DataAcquireCI::stop_acquire()
     DAQmxWaitUntilTaskDone(_task_A_edge, -1);
     DAQmxClearTask(_task_A_edge);
 
-    DAQmxStopTask(_task_B_edge);
-    DAQmxWaitUntilTaskDone(_task_B_edge, -1);
-    DAQmxClearTask(_task_B_edge);
+    DAQmxStopTask(_task_period);
+    DAQmxWaitUntilTaskDone(_task_period, -1);
+    DAQmxClearTask(_task_period);
+
+    DAQmxStopTask(_task_two_edge_sep);
+    DAQmxWaitUntilTaskDone(_task_two_edge_sep, -1);
+    DAQmxClearTask(_task_two_edge_sep);
 }
 
 /***************************************************************
@@ -91,7 +106,8 @@ void DataAcquireCI::run() {
     while (!STOP) {
         result |= DAQmxReadCounterF64(_task, -1, -1, data, DATA_SIZE, &_sampsPerChanRead, NULL);
         result |= DAQmxReadCounterU32(_task_A_edge, -1, -1, A_chan_detc, DATA_SIZE, &_sampsPerChanRead_A, NULL);
-        result |= DAQmxReadCounterU32(_task_B_edge, -1, -1, B_chan_detc, DATA_SIZE, &_sampsPerChanRead_B, NULL);
+        DAQmxReadCounterF64(_task_period, -1, 0, period, DATA_SIZE, &_sampsPerChanRead_period, NULL);
+        DAQmxReadCounterF64(_task_two_edge_sep, -1, 0, two_edge_sep, DATA_SIZE, &_sampsPerChanRead_two_edge_sep, NULL);
 
         if (result < 0) {
             emit sig_err(true);
@@ -99,12 +115,12 @@ void DataAcquireCI::run() {
             continue;
         }
 
-//        qDebug() << "(In acq_ci)" << _sampsPerChanRead;
-        // 发送信号到上层【一维数组】
         emit send_data(QVector<double>(data, data + _sampsPerChanRead),
                        QVector<uInt32>(A_chan_detc, A_chan_detc + _sampsPerChanRead_A),
-                       QVector<uInt32>(B_chan_detc, B_chan_detc + _sampsPerChanRead_B));
+                       QVector<double>(period, period + _sampsPerChanRead_period),
+                       QVector<double>(two_edge_sep, two_edge_sep + _sampsPerChanRead_two_edge_sep));
 
+//        qDebug() << "(In acq_ci)" << two_edge_sep[0];
         // 延时20ms
         QThread::msleep(20);
     }

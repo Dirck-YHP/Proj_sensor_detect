@@ -170,7 +170,8 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 
         // 清零
         last_angle_encoder = 0.0;
-
+        B_chan = 0;
+        last_angle = 0;
         sig_error = false;
 
         /********************** 三张卡开始采集 **********************/
@@ -313,22 +314,33 @@ void showWin_angleEncoder::slot_get_pulse_and_plot(QVector<QVector<double> > dat
   *  @note      槽函数——
   *  @Sample usage:
  **************************************************************/
-void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector<uInt32> data2, QVector<uInt32> data3)
+void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector<uInt32> data2, QVector<double> data3, QVector<double> data4)
 {
     /*************************** 编码器 *****************************/
     /**************** 显示编码器角度累计值 ******************/
-//    qDebug() << "角度：" << data[0];
+    double angle = data[0] - last_angle_encoder;    // Last_angle_encoder表示的是每次电机重新运行时上一次的角度
+    double incre_pulse = abs(angle - last_angle) / 360 * _angle_encoder->get_pul_per_cir().toDouble();
+    qDebug() << "--: " << incre_pulse << " " << (incre_pulse - (uInt32)incre_pulse >= 0.5 ? ((uInt32)incre_pulse + 1) : (uInt32)incre_pulse);
 
-    double angle = data[0] - last_angle_encoder;
-    uInt32 A_chan = data2[0] - last_A_chan;
-    uInt32 B_chan = data3[0] - last_B_chan;
+    A_chan = data2[0] - last_A_chan;
+
+    B_chan += incre_pulse;
+
+    static double period = 0, two_edge_sep = 0;
+
+    if (data3.size())
+        period = data3[0];
+    if (data4.size())
+        two_edge_sep = data4[0];
+
+    // 每次电机重新运行时候，数据需要清零
     if (fresh_enc) {
         angle = 0.0;
         A_chan = 0;
         B_chan = 0;
+        last_angle = 0;
         last_angle_encoder = data[0];
         last_A_chan = data2[0];
-        last_B_chan = data3[0];
         fresh_enc = false;
     }
 
@@ -337,7 +349,21 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector
 
     /***************** 编码器A B相上升沿数值框显示 ******************/
     ui->lineE_encoder_A_pulse->setText(QString::number(A_chan));
-    ui->lineE_encoder_B_pulse->setText(QString::number(B_chan));
+
+    uInt32 _B_chan = 0;
+    if (angle - last_angle >= 0) {
+        _B_chan = (B_chan - (uInt32)B_chan >= 0.5 ? ((uInt32)B_chan + 1) : (uInt32)B_chan);
+    } else {
+        _B_chan = (B_chan - (uInt32)B_chan >= 0.25 ? ((uInt32)B_chan + 1) : (uInt32)B_chan);
+    }
+    ui->lineE_encoder_B_pulse->setText(QString::number(_B_chan));
+
+    /***************** 编码器A B相周期和上升沿间隔值框显示 ******************/
+    ui->lineE_period->setText(QString::number(period));
+    ui->lineE_two_edge_sep->setText(QString::number(two_edge_sep));
+//    qDebug() << "(In Win)percentage: " << ((period != 0) ? two_edge_sep / period : 0);
+
+    last_angle = angle;
 
     /*************************** 电机 *****************************/
     /******************** 电机转动圈数显示 *********************/

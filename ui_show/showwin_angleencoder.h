@@ -40,7 +40,7 @@ private slots:
     // 接收到来自传感器的数据然后显示出来
     void slot_get_vol_cur_and_show(QVector<double> data);          // 后续需要换名字，编码器9205只有电压电流且不画图
     void slot_get_pulse_and_plot(QVector<QVector<double>> data); // 后续需要换名字，编码器9403画脉冲图
-    void slot_get_angle_and_plot(QVector<double> data,  QVector<uInt32> data2, QVector<uInt32> data3);          // 后续需要换名字，编码器9401同电机一起画图
+    void slot_get_angle_and_plot(QVector<double> data,  QVector<uInt32> data2, QVector<double> data3, QVector<double> data4);
 
     void slot_get_err(bool err);
 
@@ -59,10 +59,13 @@ private:
     Ui::showWin_angleEncoder *ui;
     AngleEncoder *_angle_encoder;
 
-    double last_angle_encoder = 0;         // 编码器上次角度
+    double last_angle_encoder = 0;         // 电机单次运行时 编码器的角度
+    double last_angle = 0;                  // 每次接收到的编码器的角度值
     uInt32 last_A_chan = 0;
-    uInt32 last_B_chan = 0;
     bool fresh_enc = false;
+
+    double B_chan = 0;
+    uInt32 A_chan = 0;
 
     // 电机
     Motor *_motor = nullptr;

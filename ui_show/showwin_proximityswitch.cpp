@@ -172,7 +172,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
 
     /*********************** 信号电压 ************************/
     double sig_vol = data[1];
-    ui->lineE_signal_voltage->setText(QString::number(qRound(sig_vol * 10.0) / 10.0) + "V");
+    ui->lineE_signal_voltage->setText(QString::number(qRound(sig_vol / 5.1 * 25.1 * 10.0) / 10.0) + "V");
 
     /*********************** 信号电流 ************************/
     double sig_cur = data[2];
