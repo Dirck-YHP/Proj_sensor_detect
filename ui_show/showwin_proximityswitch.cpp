@@ -9,9 +9,6 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
 {
     ui->setupUi(this);
 
-    // 根据用户选择的通道动态改变界面的label内容
-    ui->label_channel->setText("通道：" + _proxi_switch->get_channel());
-
     /********************** 文件保存相关 **********************/
     if (_file_save_dir != "") {
         FILE_SAVE = true;
