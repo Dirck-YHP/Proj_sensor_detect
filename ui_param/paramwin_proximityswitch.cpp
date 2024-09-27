@@ -101,6 +101,8 @@ void paramWin_proximitySwitch::on_btn_ok_clicked()
     // 连接参数窗口和显示窗口的文件名
     connect(this, &paramWin_proximitySwitch::file_name,
             _show_win_prox_switch, &showWin_proximitySwitch::update_file_name);
+
+    emit file_name(ui->lineE_file_name->text());
 }
 
 /***************************************************************

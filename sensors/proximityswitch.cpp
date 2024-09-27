@@ -193,7 +193,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 
     // 供电电流
     double sup_cur = data[2] / 1;
-    qDebug() << sup_cur;
+//    qDebug() << sup_cur;
 
     // 滑动变阻器计算距离
     double cur = data[3] / 1;

@@ -91,6 +91,8 @@ void paramWin_pressureSensor::on_btn_ok_clicked()
     // 连接参数窗口和显示窗口的文件名
     connect(this, &paramWin_pressureSensor::file_name,
             show_win_press_sensor, &showWin_pressureSensor::update_file_name);
+
+    emit file_name(ui->lineE_file_name->text());
 }
 
 /***************************************************************
