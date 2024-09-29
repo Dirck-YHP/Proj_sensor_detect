@@ -43,6 +43,8 @@ private slots:
     void slot_get_angle(double motor_angle);    // 接收电机发过来的角度数据
     void save_data();                           // 保存数据
 
+    void slot_get_err(bool err);
+
     void on_btn_run_stop_toggled(bool checked);
     void on_btn_stop_now_clicked();
 
@@ -66,10 +68,12 @@ private:
     AngleSensor *_angle_sensor;
 
     // 电机
+    double last_angle_sensor = 0;         // 电机单次运行时 传感器的角度
     Motor *_motor = nullptr;
     QTimer _timer_motor;        // 显示数值框显示频率的定时器【暂时没用】
     bool _if_need_motor;        // 是否需要电机，由外界传入
     double _motor_angle = 0.0;        // 电机的角度
+    bool fresh_enc = false;
 
     // 文件保存
     QString _file_save_dir;     // 文件保存路径，由外界传入
@@ -84,6 +88,8 @@ private:
 
     // 画图
     int channel_num;
+
+    bool sig_error = false;
 };
 
 #endif // SHOWWIN_ANGLESENSOR_H

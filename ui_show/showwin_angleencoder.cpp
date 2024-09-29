@@ -42,17 +42,6 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
              qDebug() << "(In win)first new motor ";
         }
 
-//        // 这个定时器的目的是数值框的显示，因为接收数据的频率很高，但是数值框显示频率没必要那么高
-//        _timer_motor.setInterval(500);
-//        connect(&_timer_motor, &QTimer::timeout, this, [=](){
-//            // 这里接收电机返回的角度值并显示
-
-////                if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
-////                    ui->lineE_motor_angle->setText(QString::number(_motor_angle, 'f', 1));
-////                }
-//        });
-//        _timer_motor.start();
-
     } else {
         // 如果不需要电机就都不可见
         ui->btn_run_stop->setVisible(false);
@@ -85,7 +74,7 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
     ui->plot_angle->yAxis->setLabel("Y");
     ui->plot_angle->yAxis->setRange(-10, 10);
 
-    // 两条曲线
+    // 两条曲线：一条是编码器角度，另一条是电机角度
     for (int i = 0; i < 2; i++) {
         ui->plot_angle->addGraph();
         ui->plot_angle->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
@@ -102,7 +91,6 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
         ui->plot_impulse->addGraph();
         ui->plot_impulse->graph(i)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
     }
-
 
     /********************** ni 9205相关 **********************/
     connect(_angle_encoder, &AngleEncoder::send_vol_cur_to_ui,
@@ -158,7 +146,7 @@ void showWin_angleEncoder::on_btn_ok_clicked()
 }
 
 /***************************************************************
-  *  @brief     这里目前只涉及画图？
+  *  @brief
   *  @param     无
   *  @note      槽函数——开始测量/结束测量键
   *  @Sample usage:
@@ -240,7 +228,6 @@ void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、A项信号电压、A项信号电流、B项信号电压、B项信号电流、供电电流、电池电量
-//    qDebug() << "(In win)处理之后的数据大小为：" << data.size();
     /*********************** 供电电压 *****************************/
     double sup_vol = qRound(data[0] * 3 * 10.0) / 10.0;
     ui->lineE_supply_voltage->setText(QString::number(sup_vol) + "V");
@@ -319,13 +306,14 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector
     /*************************** 编码器 *****************************/
     /**************** 显示编码器角度累计值 ******************/
     double angle = data[0] - last_angle_encoder;    // Last_angle_encoder表示的是每次电机重新运行时上一次的角度
+    // 脉冲增量 = 角度增量的绝对值 / 360° * 每圈脉冲数
     double incre_pulse = abs(angle - last_angle) / 360 * _angle_encoder->get_pul_per_cir().toDouble();
-    qDebug() << "--: " << incre_pulse << " " << (incre_pulse - (uInt32)incre_pulse >= 0.5 ? ((uInt32)incre_pulse + 1) : (uInt32)incre_pulse);
 
+    // A B相脉冲数
     A_chan = data2[0] - last_A_chan;
-
     B_chan += incre_pulse;
 
+    // 周期 和 上升沿间隔
     static double period = 0, two_edge_sep = 0;
 
     if (data3.size())
@@ -361,13 +349,12 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector
     /***************** 编码器A B相周期和上升沿间隔值框显示 ******************/
     ui->lineE_period->setText(QString::number(period));
     ui->lineE_two_edge_sep->setText(QString::number(two_edge_sep));
-//    qDebug() << "(In Win)percentage: " << ((period != 0) ? two_edge_sep / period : 0);
 
+    // 保存当前角度，计算角度增量时需要
     last_angle = angle;
 
     /*************************** 电机 *****************************/
     /******************** 电机转动圈数显示 *********************/
-//    qDebug() << "(In Win)motor angle: " << _motor_angle;
     double cur_turn = _motor_angle / 360;
 
     ui->lineE_motor_circle->setText(QString::number(qRound(cur_turn * 10.0) / 10.0));
@@ -403,6 +390,12 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector
     }
 }
 
+/***************************************************************
+  *  @brief     处理数据采集类的错误信号，给用户一个弹窗
+  *  @param     无
+  *  @note      槽函数——接收错误信号
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::slot_get_err(bool err)
 {
     qDebug() << "(In Win)get err!——" << err;
@@ -456,10 +449,15 @@ void showWin_angleEncoder::slot_get_angle(double motor_angle)
     ui->lineE_motor_angle->setText(QString::number(qRound(motor_angle * 10.0) / 10.0));
 }
 
+/***************************************************************
+  *  @brief     接收电机发送来的电机当前速度并在数值框中显示
+  *  @param     无
+  *  @note      槽函数——
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::slot_get_speed(double motor_speed)
 {
     _motor_speed = motor_speed;
-//    qDebug() << "(In Win)speed: " << motor_speed;
     ui->lineE_motor_speed->setText(QString::number(qRound(motor_speed * 10.0) / 10.0));
 }
 
@@ -488,6 +486,12 @@ void showWin_angleEncoder::update_motor_speed(const QString &text)
     _motor->set_speed(text);
 }
 
+/***************************************************************
+  *  @brief     文件名中添加用户自定义标识
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
 void showWin_angleEncoder::update_file_name(const QString &text)
 {
     _file_add_name = text;

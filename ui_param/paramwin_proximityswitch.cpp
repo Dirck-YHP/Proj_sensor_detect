@@ -31,6 +31,7 @@ paramWin_proximitySwitch::paramWin_proximitySwitch(QWidget *parent) :
     ui->btn_back_mainW->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_load_data->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
 
+    // 连接文本改变信号和参数窗口文件名信号
     connect(ui->lineE_file_name, &QLineEdit::textChanged,
             this, &paramWin_proximitySwitch::file_name);
 

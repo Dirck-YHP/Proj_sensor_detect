@@ -36,7 +36,7 @@ signals:
 public:
     QString check_channel_choosed();
 
-const QString range_4mA = "0";
+const QString range_4mA = "0";      // 4mA对应的压力值就是0
 
 private slots:
     void on_btn_back_mainW_clicked();

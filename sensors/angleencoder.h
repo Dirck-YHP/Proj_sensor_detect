@@ -25,10 +25,6 @@ private:
     DataAcquireDI *data_acquire_di = nullptr;     // NI 9403
     DataAcquireCI *data_acquire_ci = nullptr;     // NI 9401
 
-//    DataAcquireAI *data_acquire_ai;     // NI 9205
-//    DataAcquireDI *data_acquire_di;     // NI 9403
-//    DataAcquireCI *data_acquire_ci;     // NI 9401
-
 public:
     void set_label(QString label);
     QString get_label() const;
@@ -48,6 +44,7 @@ private slots:
     void rev_data_from_ni9403(QVector<QVector<double>> data_final);
     void rev_data_from_ni9401(QVector<double> data, QVector<uInt32> data2, QVector<double> data3, QVector<double> data4);
 
+    // 接收采集卡发送的错误信号
     void slot_get_err(bool err);
 
 public slots:

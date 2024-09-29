@@ -9,6 +9,10 @@ AngleSensor::AngleSensor(QObject *parent) : QObject(parent)
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
             this, &AngleSensor::rev_data_from_ni9205);
+
+    // 接收错误信号
+    connect(data_acquire_ai, &DataAcquireAI::sig_err,
+            this, &AngleSensor::slot_get_err);
 }
 
 /***************************************************************
@@ -87,8 +91,6 @@ QString AngleSensor::get_channel() const
  **************************************************************/
 void AngleSensor::start_acquire()
 {
-//    data_acquire_ai = new DataAcquireAI;
-
     // 供电电压(0) + 角位移传感器(1,2) + 电池电量(31)
     channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
@@ -97,9 +99,6 @@ void AngleSensor::start_acquire()
 
     data_acquire_ai->get_channel(channel_final);            // 把传感器获取到的通道传给数据采集
     QThreadPool::globalInstance()->start(data_acquire_ai);  // 丢进线程池
-
-//    connect(data_acquire_ai, &DataAcquireAI::send_data,
-//            this, &AngleSensor::rev_data_from_ni9205);
 }
 
 /***************************************************************
@@ -156,6 +155,18 @@ void AngleSensor::rev_data_from_ni9205(QVector<double> data)
 }
 
 /***************************************************************
+  *  @brief     接收底层错误信号
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
+void AngleSensor::slot_get_err(bool err)
+{
+    qDebug() << "(In AS)get err sig!!";
+    emit sig_err_to_ui(err);
+}
+
+/***************************************************************
   *  @brief     在win中connect，窗口关闭，删除对象
   *  @param     无
   *  @note      槽函数——负责删除对象
@@ -181,10 +192,3 @@ double AngleSensor::map_from_cur_to_angle(double current)
 {
     return current;
 }
-
-
-
-
-
-
-

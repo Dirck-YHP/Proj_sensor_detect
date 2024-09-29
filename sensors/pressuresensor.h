@@ -40,11 +40,16 @@ private slots:
     // 这个函数负责接收来自采集卡的原始数据并做处理，然后发出去
     void rev_data_from_ni9205(QVector<double> data);
 
+    // 接收采集卡发送的错误信号
+    void slot_get_err(bool err);
+
 public slots:
     void slot_acq_delete();
 
 signals:
     void send_vol_cur_pres_to_ui(QVector<double> data);
+
+    void sig_err_to_ui(bool err);     // 发送错误信号给界面
 };
 
 #endif // PRESSURESENSOR_H

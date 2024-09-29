@@ -80,9 +80,6 @@ void Resis::start_acquire()
 
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
-
-//    connect(data_acquire_ai, &DataAcquireAI::send_data,
-//            this, &Resis::rev_data_from_ni9205);
 }
 
 /***************************************************************

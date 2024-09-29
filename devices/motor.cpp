@@ -36,6 +36,7 @@ Motor::Motor(QObject *parent) : QObject(parent)
     // 接收Modbus发送的数据信号，Motor这里转换成角度
     connect(modbus_com, &Modbus::send_data, this, &Motor::rev_data_from_modbus);
 
+    // 接收Modbus发送的毒素信号，Motor这里转发到ui
     connect(modbus_com, &Modbus::send_spd, this, &Motor::rev_spd_from_modbus);
 }
 
@@ -197,6 +198,12 @@ void Motor::rev_data_from_modbus(int data)
     emit send_angle_to_ui(angle);
 }
 
+/***************************************************************
+  *  @brief     接收modbus发送来的速度，发信号给ui
+  *  @param     无
+  *  @note      槽函数
+  *  @Sample usage:
+ **************************************************************/
 void Motor::rev_spd_from_modbus(int data)
 {
     double speed = (double)data;

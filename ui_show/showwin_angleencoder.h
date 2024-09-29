@@ -64,8 +64,8 @@ private:
     uInt32 last_A_chan = 0;
     bool fresh_enc = false;
 
-    double B_chan = 0;
-    uInt32 A_chan = 0;
+    double B_chan = 0;          // 通道B的脉冲数（由A和角度计算得到）
+    uInt32 A_chan = 0;          // 通道A的脉冲数（直接采集得到）
 
     // 电机
     Motor *_motor = nullptr;

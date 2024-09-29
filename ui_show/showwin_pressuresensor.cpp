@@ -92,6 +92,10 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
     /********************** 对象析构 **********************/
     connect(this, &showWin_pressureSensor::signal_delete,
             _pressure_sensor, &PressureSensor::slot_acq_delete);
+
+    /********************** 错误检测 **********************/
+    connect(_pressure_sensor, &PressureSensor::sig_err_to_ui,
+            this, &showWin_pressureSensor::slot_get_err);
 }
 
 showWin_pressureSensor::~showWin_pressureSensor()
@@ -293,6 +297,24 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
 }
 
 /***************************************************************
+  *  @brief     处理数据采集类的错误信号，给用户一个弹窗
+  *  @param     无
+  *  @note      槽函数——接收错误信号
+  *  @Sample usage:
+ **************************************************************/
+void showWin_pressureSensor::slot_get_err(bool err)
+{
+    qDebug() << "(In Win)get err!——" << err;
+
+    if (!sig_error) {
+        sig_error = true;
+
+        ErrorPrompt e_pmt;
+        e_pmt.showError(ErrorType::NetworkError);
+    }
+}
+
+/***************************************************************
   *  @brief     画来自液压站的压力值
   *
   *  @param     0708：目前data改成了size为 1
@@ -302,32 +324,6 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
 void showWin_pressureSensor::slot_plot_press_from_hydraSta(QVector<double> data)
 {
     _pressure = data[0];
-
-//    /******************** 压力数值框显示 *********************/
-//    ui->lineE_hydra_val->setText(QString::number(_pressure) + "Pa.?");
-
-//    /********************* 压力画图 **********************/
-//    int length = 1;
-//    QVector<double> x(length);
-//    int point_count = ui->plot_pressure->graph(1)->dataCount();
-
-//    // 确定画图的横轴
-//    for (int i = 0; i < length; i++) {
-//        x[i] = i + point_count;
-//    }
-
-//    // 画图，一次画一个点
-//    QVector<double> y = {_pressure};
-//    ui->plot_pressure->graph(1)->addData(x, y, true);
-
-//    ui->plot_pressure->rescaleAxes();       // 自适应大小
-//    ui->plot_pressure->replot();
-
-//    /********************文件保存*********************/
-//    // 数据首先都放到缓冲区中
-//    if (FILE_SAVE) {
-//        _data_save->collectData(&save_data_buf_hydra, data[0]);
-//    }
 }
 
 /***************************************************************
@@ -503,11 +499,6 @@ void showWin_pressureSensor::save_data()
     QTextStream out(&file);
     out.setCodec("UTF-8");
     // 遍历数据并写入文件
-//    qDebug() << "(In W_file_save)size1: " << save_data_buf_hydra.size();
-//    for (int i = 0; i < save_data_buf_sensor.size(); i++) {
-//        qDebug() << "(In W_file_save)size_" << i << " " << save_data_buf_sensor[i].size();
-//    }
-
     for (int i = 0; i < save_data_buf_hydra.size(); i++) {
         out << time_stamp << ":  ";
         for (int j = 0; j < save_data_buf_sensor.size(); j++) {

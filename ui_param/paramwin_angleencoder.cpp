@@ -28,6 +28,7 @@ paramWin_angleEncoder::paramWin_angleEncoder(QWidget *parent) :
     ui->cBox_angle_sensor_type->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->cBox_file_save->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
     ui->checkBox_no_need_device->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+
     // 连接电机目标角度和本地信号
     connect(ui->lineE_target_angle, &QLineEdit::textChanged,
             this, &paramWin_angleEncoder::motor_target_angle_changed);
@@ -35,6 +36,7 @@ paramWin_angleEncoder::paramWin_angleEncoder(QWidget *parent) :
     connect(ui->lineE_motor_spd, &QLineEdit::textChanged,
             this, &paramWin_angleEncoder::motor_speed_changed);
 
+    // 连接文本改变信号和参数窗口文件名信号
     connect(ui->lineE_file_name, &QLineEdit::textChanged,
             this, &paramWin_angleEncoder::file_name);
 
@@ -93,7 +95,7 @@ void paramWin_angleEncoder::on_btn_ok_clicked()
     /********************* 是否需要工装 *******************/
     if (!ui->checkBox_no_need_device->isChecked()) {
         IF_NEED_MOTOR = true;
-    } else {    // 需要工装
+    } else {
         IF_NEED_MOTOR = false;
     }
 
@@ -113,6 +115,7 @@ void paramWin_angleEncoder::on_btn_ok_clicked()
     connect(this, &paramWin_angleEncoder::file_name,
             show_win_angle_encoder, &showWin_angleEncoder::update_file_name);
 
+    // 建立连接之后直接发送信号，即设置初始值
     emit motor_target_angle_changed(ui->lineE_target_angle->text());
     emit motor_speed_changed(ui->lineE_motor_spd->text());
     emit file_name(ui->lineE_file_name->text());
@@ -159,13 +162,13 @@ void paramWin_angleEncoder::on_cBox_file_save_stateChanged(int arg1)
     file_save_params << ui->label_file_name
                      << ui->lineE_file_name;
 
-    if (arg1 == Qt::Checked) {
+    if (arg1 == Qt::Checked) {      // 保存文件
         m_file_save_dir = QFileDialog::getExistingDirectory(this, "请选择文件保存路径", "../", QFileDialog::ShowDirsOnly);
         foreach(QWidget *file_save_param, file_save_params) {
             file_save_param->setEnabled(true);
             file_save_param->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
         }
-    } else if (arg1 == Qt::Unchecked) {
+    } else if (arg1 == Qt::Unchecked) {     // 不保存文件
         m_file_save_dir = "";
         foreach(QWidget *file_save_param, file_save_params) {
             file_save_param->setEnabled(false);
@@ -173,6 +176,7 @@ void paramWin_angleEncoder::on_cBox_file_save_stateChanged(int arg1)
         }
     }
 
+    // 保存文件之后给用户一个提示
     if (!m_file_save_dir.isEmpty()) {
         QMessageBox::information(this, "Info", "路径选择成功");
     } else {

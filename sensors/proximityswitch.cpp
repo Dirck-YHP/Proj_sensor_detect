@@ -9,6 +9,10 @@ ProximitySwitch::ProximitySwitch(QObject *parent) : QObject(parent)
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
             this, &ProximitySwitch::rev_data_from_ni9205);
+
+    // 接收错误信号
+    connect(data_acquire_ai, &DataAcquireAI::sig_err,
+            this, &ProximitySwitch::slot_get_err);
 }
 
 /***************************************************************
@@ -211,6 +215,18 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
                                          bat};
 
     emit send_vol_cur_pul_dis_to_ui(data_after_process);
+}
+
+/***************************************************************
+  *  @brief     接收底层错误信号
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
+void ProximitySwitch::slot_get_err(bool err)
+{
+    qDebug() << "(In PxS)get err sig!!";
+    emit sig_err_to_ui(err);
 }
 
 /***************************************************************

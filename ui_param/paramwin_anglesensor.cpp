@@ -34,6 +34,7 @@ paramWin_angleSensor::paramWin_angleSensor(QWidget *parent) :
     connect(ui->lineE_target_angle, &QLineEdit::textChanged,
             this, &paramWin_angleSensor::motor_target_angle_changed);
 
+    // 连接文本改变信号和参数窗口文件名信号
     connect(ui->lineE_file_name, &QLineEdit::textChanged,
             this, &paramWin_angleSensor::file_name);
 
@@ -69,7 +70,7 @@ void paramWin_angleSensor::on_btn_ok_clicked()
     /********************* 是否需要工装 *******************/
     if (!ui->checkBox_no_need_device->isChecked()) {
         IF_NEED_MOTOR = true;
-    } else {    // 需要工装
+    } else {
         IF_NEED_MOTOR = false;
     }
 
@@ -89,6 +90,7 @@ void paramWin_angleSensor::on_btn_ok_clicked()
     connect(this, &paramWin_angleSensor::file_name,
             show_win_angle_sensor, &showWin_angleSensor::update_file_name);
 
+    // 建立连接之后直接发送信号，即设置初始值
     emit motor_target_angle_changed(ui->lineE_target_angle->text());
     emit motor_speed_changed(ui->lineE_motor_spd->text());
     emit file_name(ui->lineE_file_name->text());

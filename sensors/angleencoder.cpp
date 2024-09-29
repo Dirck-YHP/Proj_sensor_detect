@@ -112,8 +112,6 @@ QString AngleEncoder::get_channel() const
 void AngleEncoder::start_acquire()
 {
     //--------------------------NI 9205--------------------------------------
-//    data_acquire_ai = new DataAcquireAI;
-
     // 供电电压(0) + 角位移编码器 A+(3) B+(5) supc(9) + 电池电量(31)
     channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
@@ -123,24 +121,13 @@ void AngleEncoder::start_acquire()
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
 
-//    connect(data_acquire_ai, &DataAcquireAI::send_data,
-//            this, &AngleEncoder::rev_data_from_ni9205);
-
     //--------------------------NI 9403--------------------------------------
-//    data_acquire_di = new DataAcquireDI;
     QThreadPool::globalInstance()->start(data_acquire_di);
 
-//    connect(data_acquire_di, &DataAcquireDI::send_data,
-//            this, &AngleEncoder::rev_data_from_ni9403);
-
     //--------------------------NI 9401--------------------------------------
-//    data_acquire_ci = new DataAcquireCI;
     data_acquire_ci->get_pulses_per_rev(get_pul_per_cir().toUInt());
 
     QThreadPool::globalInstance()->start(data_acquire_ci);
-
-//    connect(data_acquire_ci, &DataAcquireCI::send_data,
-//            this, &AngleEncoder::rev_data_from_ni9401);
 }
 
 /***************************************************************
@@ -225,6 +212,12 @@ void AngleEncoder::rev_data_from_ni9401(QVector<double> data, QVector<uInt32> da
     emit send_angle_to_ui(data, data2, data3, data4);
 }
 
+/***************************************************************
+  *  @brief     接收底层错误信号
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
 void AngleEncoder::slot_get_err(bool err)
 {
     qDebug() << "(In AE)get err sig!!";

@@ -37,6 +37,8 @@ private slots:
     void on_btn_repeat_precise_clicked();   // 进行重复精度测量
     void save_data();
 
+    void slot_get_err(bool err);
+
 public slots:
     void update_file_name(const QString &text);
 
@@ -64,6 +66,8 @@ private:
     QVector<SensorData> save_data_buf_variaresis;        // 来自滑动变阻器的要保存的数据
     QVector<SensorData> save_data_buf_if_pulse;          // 来自接近开关的要保存的数据
     int time_stamp = 0;
+
+    bool sig_error = false;
 
 signals:
     void signal_delete();

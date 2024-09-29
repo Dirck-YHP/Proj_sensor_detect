@@ -46,6 +46,10 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
     /********************** 对象析构 **********************/
     connect(this, &showWin_proximitySwitch::signal_delete,
             _proxi_switch, &ProximitySwitch::slot_acq_delete);
+
+    /********************** 错误检测 **********************/
+    connect(_proxi_switch, &ProximitySwitch::sig_err_to_ui,
+            this, &showWin_proximitySwitch::slot_get_err);
 }
 
 showWin_proximitySwitch::~showWin_proximitySwitch()
@@ -327,6 +331,24 @@ void showWin_proximitySwitch::save_data()
 
     save_data_buf_variaresis.clear();                // 清空缓冲区
     save_data_buf_if_pulse.clear();
+}
+
+/***************************************************************
+  *  @brief     处理数据采集类的错误信号，给用户一个弹窗
+  *  @param     无
+  *  @note      槽函数——接收错误信号
+  *  @Sample usage:
+ **************************************************************/
+void showWin_proximitySwitch::slot_get_err(bool err)
+{
+    qDebug() << "(In Win)get err!——" << err;
+
+    if (!sig_error) {
+        sig_error = true;
+
+        ErrorPrompt e_pmt;
+        e_pmt.showError(ErrorType::NetworkError);
+    }
 }
 
 void showWin_proximitySwitch::update_file_name(const QString &text)

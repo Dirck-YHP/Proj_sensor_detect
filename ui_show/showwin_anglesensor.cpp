@@ -40,17 +40,6 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
              qDebug() << "(In Win)first new motor ";
         }
 
-//        // 这个定时器的目的是数值框的显示，因为接收数据的频率很高，但是数值框显示频率没必要那么高
-//        _timer_motor.setInterval(500);
-//        connect(&_timer_motor, &QTimer::timeout, this, [=](){
-//            // 这里接收电机返回的角度值并显示
-
-////                if (_motor->get_dev_state() == QModbusDevice::ConnectedState) {
-////                    ui->lineE_motor_angle->setText(QString::number(_motor_angle, 'f', 1));
-////                }
-//        });
-//        _timer_motor.start();
-
     } else {
         // 如果不需要电机就都不可见
         ui->btn_run_stop->setVisible(false);
@@ -97,6 +86,10 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
     /********************** 对象析构 **********************/
     connect(this, &showWin_angleSensor::signal_delete,
             _angle_sensor, &AngleSensor::slot_acq_delete);
+
+    /********************** 错误检测 **********************/
+    connect(_angle_sensor, &AngleSensor::sig_err_to_ui,
+            this, &showWin_angleSensor::slot_get_err);
 }
 
 showWin_angleSensor::~showWin_angleSensor()
@@ -142,13 +135,12 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
 
+        // 清零
+        last_angle_sensor = 0.0;
+        sig_error = false;
+
         /********************** ni9205开始采集 **********************/
         _angle_sensor->start_acquire();
-
-//        /***************** 接收传感器发送的电压电流角度 *******************/
-//        connect(_angle_sensor, &AngleSensor::send_vol_cur_angle_to_ui,
-//                this, &showWin_angleSensor::slot_get_vol_cur_angle_and_show);
-
 
         /********************** 文件保存相关 **********************/
         if (FILE_SAVE) {
@@ -235,7 +227,15 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     ui->lineE_supply_current->setText(QString::number(sup_cur) + "mA");
 
     /*********************** 传感器角度 ***************************/
-    double angle_sensor = data[4];
+    double angle_sensor = data[4] - last_angle_sensor;
+
+    // 每次电机重新运行时候，数据需要清零
+    if (fresh_enc) {
+        angle_sensor = 0.0;
+        last_angle_sensor = data[4];
+        fresh_enc = false;
+    }
+
     /************* 角度数值框显示 **************/
     ui->lineE_sensor_angle->setText(QString::number(angle_sensor) + "°");
 
@@ -356,6 +356,8 @@ void showWin_angleSensor::on_btn_run_stop_toggled(bool checked)
         ui->btn_run_stop->setText("停止");
         qDebug() << "(In Win)UI 运行 cur id" << QThread::currentThreadId();
 
+        fresh_enc = true;
+
         // 发送配置信号
         emit signal_setConfigModbus();
 
@@ -404,4 +406,22 @@ void showWin_angleSensor::save_data()
 
     save_data_buf_angle_sensor.clear();        // 清空缓冲区
     save_data_buf_angle_motor.clear();
+}
+
+/***************************************************************
+  *  @brief     处理数据采集类的错误信号，给用户一个弹窗
+  *  @param     无
+  *  @note      槽函数——接收错误信号
+  *  @Sample usage:
+ **************************************************************/
+void showWin_angleSensor::slot_get_err(bool err)
+{
+    qDebug() << "(In Win)get err!——" << err;
+
+    if (!sig_error) {
+        sig_error = true;
+
+        ErrorPrompt e_pmt;
+        e_pmt.showError(ErrorType::NetworkError);
+    }
 }

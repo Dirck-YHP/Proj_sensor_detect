@@ -9,6 +9,10 @@ PressureSensor::PressureSensor(QObject *parent) : QObject(parent)
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
             this, &PressureSensor::rev_data_from_ni9205);
+
+    // 接收错误信号
+    connect(data_acquire_ai, &DataAcquireAI::sig_err,
+            this, &PressureSensor::slot_get_err);
 }
 
 /***************************************************************
@@ -107,8 +111,6 @@ QString PressureSensor::get_channel() const
  **************************************************************/
 void PressureSensor::start_acquire()
 {
-//    data_acquire_ai = new DataAcquireAI;
-
     // 供电电压(0) + 压力传感器(26),...,(30) + 电池电量(31)
     channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
@@ -117,9 +119,6 @@ void PressureSensor::start_acquire()
 
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
-
-//    connect(data_acquire_ai, &DataAcquireAI::send_data,
-//            this, &PressureSensor::rev_data_from_ni9205);
 }
 
 /***************************************************************
@@ -188,6 +187,18 @@ void PressureSensor::slot_acq_delete()
         delete data_acquire_ai;
         qDebug() << "(In PS)delete acq_ai succeed!!!!!!!!!!";
     }
+}
+
+/***************************************************************
+  *  @brief     接收底层错误信号
+  *  @param     无
+  *  @note
+  *  @Sample usage:
+ **************************************************************/
+void PressureSensor::slot_get_err(bool err)
+{
+    qDebug() << "(In PS)get err sig!!";
+    emit sig_err_to_ui(err);
 }
 
 /***************************************************************

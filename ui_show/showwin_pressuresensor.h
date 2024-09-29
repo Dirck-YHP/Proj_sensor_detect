@@ -36,6 +36,8 @@ private slots:
     void slot_plot_press_from_hydraSta(QVector<double> data);
     void save_data();
 
+    void slot_get_err(bool err);
+
 public slots:
     void update_file_name(const QString &text);
 
@@ -69,6 +71,8 @@ private:
     int time_stamp = 0;
 
     QVector<double> err_save;   // 保存误差值，用来画图
+
+    bool sig_error = false;
 
 private:
     void set_visiable();

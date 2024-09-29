@@ -13,9 +13,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QVector<uInt32>>("QVector<uInt32>");
     qRegisterMetaType<QSerialPort::SerialPortError>("QSerialPort::SerialPortError");
 
-//    Widget w;
-//    w.show();
-
     mainWindow mW;
     mW.setStyleSheet("background-color:rgb(67,67,67);");
     mW.show();
