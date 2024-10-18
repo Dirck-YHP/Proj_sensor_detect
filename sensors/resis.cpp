@@ -2,6 +2,8 @@
 
 Resis::Resis(QObject *parent) : QObject(parent)
 {
+    rType = QVector<RType>(5, RType::middle);
+
     if (data_acquire_ai == nullptr) {
         data_acquire_ai = new DataAcquireAI;
         qDebug() << "(In resis)new acq_ai succeed";
@@ -129,15 +131,16 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
         }
     }
 
+    qDebug() << len;
     // 电阻
     for (int i = 0; i <= len - 2; i++) {
         double vol = data[i];
-        double resis = map_from_vol_to_resis(vol, channel_choosed[i]);
+        double resis = map_from_vol_to_resis(vol, channel_choosed[i], i);
         data_after_process.append(resis);
     }
 
     // 电池电量
-    double bat = data[len - 1];
+    double bat = data[len - 1] * 3;
     data_after_process.append(bat);
 
     // 组合成一个vector发出去，data中数据顺序如下：
@@ -167,25 +170,28 @@ void Resis::slot_acq_delete()
   *  @note      功能函数：实现电压到电阻的映射
   *  @Sample usage:
  **************************************************************/
-double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
+double Resis::map_from_vol_to_resis(double voltage, QString DI_str, int idx)
 {
     double vol = std::min(voltage, 4.9999);
     double resis = 0;
-    qDebug() << rType;
-    switch (rType) {
+
+    switch (rType[idx]) {
     case RType::high:
         resis = vol * (1e6 + 3.5) / (5 - vol);
         // 下面对电阻值进行修正
+        resis = resis * 0.9825 + 3430.2;
 
         break;
     case RType::middle:
         resis = vol * (1e4 + 3.5) / (5 - vol);
         // 下面对电阻值进行修正
+        resis = resis * 1.0052 + 0.8268;
 
         break;
     case RType::low:
         resis = vol / ((1.25 / 120) + 5e-4);
         // 下面对电阻值进行修正
+        resis = resis * 1.0488 - 0.302;
 
         break;
     default:
@@ -195,20 +201,22 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
 
     RType rTempType = RType::middle;
     // 下面的判断条件待定
-    if (resis < 200) {
+    if (resis < 60) {
         rTempType = RType::low;
-    }else if(resis < 5e4 && resis > 220) {
+    }else if(resis < 2e3 && resis > 65) {
         rTempType = RType::middle;
-    }else if (resis > 5e4 && resis < 2e7) {
+    }else if (resis > 6e3 && resis < 2e7) {
         rTempType = RType::high;
     }
 
+//    qDebug() << "(In resis)vol: " << vol << " r: " << rTempType << ", resis: " << resis;
+
     uInt8 writeArray[2] = {0, 0};
     // 下面进行测电阻档位选择
-    if(rTempType != rType && allowChange){
+    if(rTempType != rType[idx] && allowChange){
         m_timer->start();
         allowChange = false;
-        rType = rTempType;
+        rType[idx] = rTempType;
         TaskHandle taskHandleSwitch;
         DAQmxCreateTask("ASSIST", &taskHandleSwitch);
 
@@ -216,15 +224,15 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
         DAQmxCreateDOChan(taskHandleSwitch, DI_str.toStdString().c_str(), "", DAQmx_Val_ChanPerLine);
 
         int32 writeSuccessNum;
-        if(rType == RType::low){
+        if(rType[idx] == RType::low){
             writeArray[0] = 0;
             writeArray[1] = 1;
             qDebug() << "(In resis)R LOW!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-        }else if(rType == RType::middle){
+        }else if(rType[idx] == RType::middle){
             writeArray[0] = 1;
             writeArray[1] = 0;
             qDebug() << "(In resis)R MIDDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-        }else if(rType == RType::high){
+        }else if(rType[idx] == RType::high){
             writeArray[0] = 0;
             writeArray[1] = 0;
             qDebug() << "(In resis)R HIGH!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
@@ -234,8 +242,5 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str)
         qDebug() << QString::number(error);
         DAQmxClearTask(taskHandleSwitch);
     }
-
-        qDebug() << "(In resis)vol: " << vol << ", resis: " << resis << "x: " << writeArray[0] << " " << writeArray[1];
-
     return resis;
 }

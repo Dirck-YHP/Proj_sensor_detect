@@ -23,6 +23,8 @@ private:
     QString _channel;           // 通道
     QString channel_final;
 
+    QPair<int, int> _range = {0, 20};
+
     DataAcquireAI *data_acquire_ai = nullptr;     // NI 9205
 
     const int THREAD_VOL_TO_PUL = 3;

@@ -1,12 +1,21 @@
 #ifndef RESIS_H
 #define RESIS_H
 
+#pragma once
 #include <QObject>
 #include <QDebug>
 #include <QThreadPool>
 #include <QTimer>
+#include <QVector>
 
 #include "data_acquire/dataacquireai.h"
+
+enum RType{
+    high = 0,
+    middle = 1,
+    low = 2,
+};
+
 
 class Resis : public QObject
 {
@@ -20,13 +29,8 @@ private:
 
     DataAcquireAI *data_acquire_ai = nullptr;     // NI 9205的数据
 
-    enum RType{
-        high = 0,
-        middle = 1,
-        low = 2,
-    };
+    QVector<RType> rType;
 
-    RType rType = RType::middle;
     QTimer* m_timer;
     bool allowChange;
 
@@ -37,7 +41,7 @@ public:
     void start_acquire();
     void stop_acquire();
 
-    double map_from_vol_to_resis(double voltage, QString DI_str);
+    double map_from_vol_to_resis(double voltage, QString DI_str, int idx);
 
 private slots:
     // 这个函数负责接收来自采集卡的原始数据并做处理，然后发出去

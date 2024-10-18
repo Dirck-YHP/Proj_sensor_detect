@@ -21,6 +21,8 @@ private slots:
     void on_btn_ok_clicked();
     void on_btn_start_finish_mea_toggled(bool checked);
 
+    void on_radioButton_0_clicked();
+
 public slots:
     void slot_get_resis_and_show(QVector<double> data);
 

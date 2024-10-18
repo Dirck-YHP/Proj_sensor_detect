@@ -223,12 +223,12 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     /*********************** 信号电流 *****************************/
     double sig_cur = data[2];
     // 补偿
-    sig_cur = 0.934 * data[2] - 0.0605 * data[3] - 0.227;
+    sig_cur = 0.934 * data[2] - 0.0605 * data[3] - 0.027;
     ui->lineE_signal_current->setText(QString::number(sig_cur, 'f', DIGIT) + "mA");
 
     /*********************** 供电电流 *****************************/
     double sup_cur = data[3];
-    sup_cur = 0.929 * data[3] - 0.0552 * data[2] - 0.0771;
+    sup_cur = 0.929 * data[3] - 0.0552 * data[2] - 0.0771 + 0.2;
     ui->lineE_supply_current->setText(QString::number(sup_cur, 'f', DIGIT) + "mA");
 
     /*********************** 传感器角度 ***************************/

@@ -190,5 +190,7 @@ void AngleSensor::slot_acq_delete()
  **************************************************************/
 double AngleSensor::map_from_cur_to_angle(double current)
 {
-    return current;
+    double angle = (current - 4) * (_range.second - _range.first) / (20 -4) + _range.first;
+
+    return angle;
 }

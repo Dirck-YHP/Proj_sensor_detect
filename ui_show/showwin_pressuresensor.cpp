@@ -417,27 +417,28 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
 
             /*********************** 信号电流 *****************************/
             double sig_cur = data[2 + start_idx * len];
-            if (ch_num == 1) {sig_cur = sig_cur * 0.9675 - 0.0601;}
-            else if (ch_num == 2) {sig_cur = sig_cur * 0.9593 - 0.0232;}
-            else if (ch_num == 3) {sig_cur = sig_cur * 0.9519 + 0.0161;}
-            else if (ch_num == 4) {sig_cur = sig_cur * 0.9458 + 0.0169;}
-            else if (ch_num == 5) {sig_cur = sig_cur * 0.9389 + 0.0419;}
+            if (ch_num == 1) {sig_cur = sig_cur * 0.9675 - 0.0601 + 0.1;}
+            else if (ch_num == 2) {sig_cur = sig_cur * 0.9593 - 0.0232 + 0.1;}
+            else if (ch_num == 3) {sig_cur = sig_cur * 0.9519 + 0.0161 + 0.1;}
+            else if (ch_num == 4) {sig_cur = sig_cur * 0.9458 + 0.0169 + 0.1;}
+            else if (ch_num == 5) {sig_cur = sig_cur * 0.9389 + 0.0419 + 0.1;}
 
             setLineEditsForRowValue(baseName + "signal_current", ch_num, sig_cur);
 
             /*********************** 供电电流 *****************************/
             double sup_cur = data[2 + start_idx * len];
-            if (ch_num == 1) {sup_cur = sup_cur * 0.9675 - 0.0601;}
-            else if (ch_num == 2) {sup_cur = sup_cur * 0.9593 - 0.0232;}
-            else if (ch_num == 3) {sup_cur = sup_cur * 0.9519 + 0.0161;}
-            else if (ch_num == 4) {sup_cur = sup_cur * 0.9458 + 0.0169;}
-            else if (ch_num == 5) {sup_cur = sup_cur * 0.9389 + 0.0419;}
+            if (ch_num == 1) {sup_cur = sup_cur * 0.9675 - 0.0601 + 0.1;}
+            else if (ch_num == 2) {sup_cur = sup_cur * 0.9593 - 0.0232 + 0.1;}
+            else if (ch_num == 3) {sup_cur = sup_cur * 0.9519 + 0.0161 + 0.1;}
+            else if (ch_num == 4) {sup_cur = sup_cur * 0.9458 + 0.0169 + 0.1;}
+            else if (ch_num == 5) {sup_cur = sup_cur * 0.9389 + 0.0419 + 0.1;}
 
             setLineEditsForRowValue(baseName + "supply_current", ch_num, sup_cur);
 
             /*********************** 压力值 *****************************/
-            double pressure = data[3 + start_idx * len];
-
+            double cur = sig_cur;
+            QPair<int, int> rag = _pressure_sensor->get_range();
+            double pressure = (cur - 4) * (rag.second - rag.first) / (20 - 4) + rag.first;
 
             setLineEditsForRowValue(baseName + "pres_val", ch_num, pressure);
 

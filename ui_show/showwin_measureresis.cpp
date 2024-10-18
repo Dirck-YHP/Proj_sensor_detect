@@ -11,6 +11,10 @@ showWin_measureResis::showWin_measureResis(Resis *mea_resis, QWidget *parent) :
     //  根据用户选择设置哪些可见
     set_visible();
 
+    /********************** 接收电阻值并显示 **********************/
+    connect(_resis, &Resis::send_resis_to_ui,
+            this, &showWin_measureResis::slot_get_resis_and_show);
+
     /********************** 对象析构 **********************/
     connect(this, &showWin_measureResis::signal_delete,
             mea_resis, &Resis::slot_acq_delete);
@@ -52,10 +56,6 @@ void showWin_measureResis::on_btn_start_finish_mea_toggled(bool checked)
 
         /********************** ni9205开始采集 **********************/
         _resis->start_acquire();
-
-        /********************** 接收电阻值并显示 **********************/
-        connect(_resis, &Resis::send_resis_to_ui,
-                this, &showWin_measureResis::slot_get_resis_and_show);
 
     } else {
         ui->btn_start_finish_mea->setText("开始测量");
@@ -139,5 +139,3 @@ void showWin_measureResis::set_visible()
         }
     }
 }
-
-

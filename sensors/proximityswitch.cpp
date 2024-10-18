@@ -253,7 +253,10 @@ void ProximitySwitch::slot_acq_delete()
  **************************************************************/
 double ProximitySwitch::map_from_cur_to_varDis(double current)
 {
-    current = current * 0.9917 + 0.3784;
+    // 电流补偿
+    current = current * 0.9917 + 0.3784 - 0.3;
 
-    return current;
+    double dis = (current - 4) * (_range.second - _range.first) / (20 -4) + _range.first;
+
+    return dis;
 }

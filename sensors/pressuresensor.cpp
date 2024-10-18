@@ -159,7 +159,7 @@ void PressureSensor::rev_data_from_ni9205(QVector<double> data)
         double sig_vol = data[i];
         double sig_cur = sig_vol / 1 * 1000;
 
-        double press = map_from_cur_to_press(sig_cur);
+        double press = sig_cur;
         data_after_process.append(sig_vol);
         data_after_process.append(sig_cur);
         data_after_process.append(press);
@@ -200,15 +200,4 @@ void PressureSensor::slot_get_err(bool err)
 {
     qDebug() << "(In PS)get err sig!!";
     emit sig_err_to_ui(err);
-}
-
-/***************************************************************
-  *  @brief
-  *  @param     无
-  *  @note      功能函数：实现电流到压力的映射（暂时还没映射）
-  *  @Sample usage:
- **************************************************************/
-double PressureSensor::map_from_cur_to_press(double current)
-{
-    return current;
 }
