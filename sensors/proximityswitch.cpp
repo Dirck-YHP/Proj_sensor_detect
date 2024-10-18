@@ -200,7 +200,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 //    qDebug() << sup_cur;
 
     // 滑动变阻器计算距离
-    double cur = data[3] / 1;
+    double cur = data[3] / 1 * 1000;
     double distance_var = map_from_cur_to_varDis(cur);
 
     // 电池电量
@@ -253,5 +253,7 @@ void ProximitySwitch::slot_acq_delete()
  **************************************************************/
 double ProximitySwitch::map_from_cur_to_varDis(double current)
 {
+    current = current * 0.9917 + 0.3784;
+
     return current;
 }

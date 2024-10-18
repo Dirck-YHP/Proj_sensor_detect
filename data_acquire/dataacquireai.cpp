@@ -142,9 +142,9 @@ double DataAcquireAI::choose_min_max(int channel)
     double U = 0.0;
     switch (channel) {
     case 0:     // 0 供电电压
-    case 1:     // 1 角位移传感器信号电压、信号电流、角度值
         U = 10;
         break;
+    case 1:     // 1 角位移传感器信号电压、信号电流、角度值
     case 2:     // 2 角位移传感器供电电流
         U = 0.2;
         break;
@@ -179,14 +179,15 @@ double DataAcquireAI::choose_min_max(int channel)
         U = 10;
         break;
     case 25:    // 25 滑动变阻器距离
-        U = 5.0;
+        U = 0.2;
         break;
     case 26:    // 26~30 压力传感器信号电压、信号电流、压力值
     case 27:
     case 28:
     case 29:
     case 30:
-
+        U = 0.2;
+        break;
     case 31:
         U = 10;
         break;

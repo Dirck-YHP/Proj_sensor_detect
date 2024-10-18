@@ -14,7 +14,7 @@ mainWindow::mainWindow(QWidget *parent) :
     ui->cbox_choose_sensor->setStyleSheet("font:bold 24pt Arial;color:rgb(254,254,254);background-color:rgb(84,80,107);");
 
     // 板子上电，待测
-//    Assist::board_init();
+    Assist::board_init(true);
 }
 
 mainWindow::~mainWindow()

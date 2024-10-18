@@ -48,6 +48,7 @@ void showWin_measureResis::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
+        Assist::board_init(true);
 
         /********************** ni9205开始采集 **********************/
         _resis->start_acquire();

@@ -134,6 +134,7 @@ void showWin_angleSensor::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
+        Assist::board_init(true);
 
         // 清零
         last_angle_sensor = 0.0;
@@ -210,21 +211,25 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     // 接收到的data中数据顺序如下：
     // 供电电压、信号电压、信号电流、供电电流、角度、电池电量
 //    qDebug() << "(In Win)处理之后的数据大小为：" << data.size();
+    const int DIGIT = 1;
     /*********************** 供电电压 *****************************/
     double sup_vol = data[0];
-    ui->lineE_supply_voltage->setText(QString::number(sup_vol) + "V");
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol, 'f', DIGIT) + "V");
 
     /*********************** 信号电压 *****************************/
     double sig_vol = data[1];
-    ui->lineE_signal_voltage->setText(QString::number(sig_vol) + "V");
+    ui->lineE_signal_voltage->setText(QString::number(sig_vol, 'f', DIGIT) + "V");
 
     /*********************** 信号电流 *****************************/
     double sig_cur = data[2];
-    ui->lineE_signal_current->setText(QString::number(sig_cur) + "mA");
+    // 补偿
+    sig_cur = 0.934 * data[2] - 0.0605 * data[3] - 0.227;
+    ui->lineE_signal_current->setText(QString::number(sig_cur, 'f', DIGIT) + "mA");
 
     /*********************** 供电电流 *****************************/
     double sup_cur = data[3];
-    ui->lineE_supply_current->setText(QString::number(sup_cur) + "mA");
+    sup_cur = 0.929 * data[3] - 0.0552 * data[2] - 0.0771;
+    ui->lineE_supply_current->setText(QString::number(sup_cur, 'f', DIGIT) + "mA");
 
     /*********************** 传感器角度 ***************************/
     double angle_sensor = data[4] - last_angle_sensor;
@@ -237,16 +242,16 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
     }
 
     /************* 角度数值框显示 **************/
-    ui->lineE_sensor_angle->setText(QString::number(angle_sensor) + "°");
+    ui->lineE_sensor_angle->setText(QString::number(angle_sensor, 'f', DIGIT) + "°");
 
     /*********************** 电机角度 ***************************/
     /************* 电机转动圈数显示 ************/
     double cur_turn = _motor_angle / 360;
 
-    ui->lineE_motor_circle->setText(QString::number(qRound(cur_turn * 10.0) / 10.0));
+    ui->lineE_motor_circle->setText(QString::number(cur_turn, 'f', DIGIT) + "圈");
 
     /************** 角度数值框显示 ************/
-    ui->lineE_motor_angle->setText(QString::number(qRound(_motor_angle * 10.0) / 10.0));
+    ui->lineE_motor_angle->setText(QString::number(_motor_angle, 'f', DIGIT) + "°");
 
     /*********************** 角度画图 ***************************/
     int length = 1;
@@ -381,6 +386,8 @@ void showWin_angleSensor::on_btn_stop_now_clicked()
 //    _motor->disable_motor();
 
     ui->btn_run_stop->setChecked(false);
+
+    Assist::board_init(false);
 }
 
 /*******************************文件保存************************************/

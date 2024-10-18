@@ -55,7 +55,7 @@ QPair<QVector<double>, QVector<double>> Assist::make_di_plot_better(const QVecto
   *  @note      功能函数
   *  @Sample usage:
  **************************************************************/
-void Assist::board_init()
+void Assist::board_init(bool if_open)
 {
     TaskHandle taskHandleSwitch;
     DAQmxCreateTask("ASSIST", &taskHandleSwitch);
@@ -67,7 +67,15 @@ void Assist::board_init()
     int32 writeSuccessNum;
 
     // 给0 还是 给1 是通电
-    writeArray[0] = 0;
+    if (if_open) {
+        writeArray[0] = 1;
+        qDebug() << "(online)1";
+    }
+    else {
+
+        qDebug() << "(offline)0";
+        writeArray[0] = 0;
+    }
 
     int error = DAQmxWriteDigitalLines(taskHandleSwitch, 1, true, -1,
                                        DAQmx_Val_GroupByChannel, writeArray, &writeSuccessNum, NULL);

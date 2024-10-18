@@ -155,6 +155,7 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
+        Assist::board_init(true);
 
         // 清零
         last_angle_encoder = 0.0;
@@ -350,6 +351,8 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector
     ui->lineE_period->setText(QString::number(period));
     ui->lineE_two_edge_sep->setText(QString::number(two_edge_sep));
 
+    ui->lineE_phase_err_per->setText(QString::number(two_edge_sep / period));
+
     // 保存当前角度，计算角度增量时需要
     last_angle = angle;
 
@@ -534,8 +537,11 @@ void showWin_angleEncoder::on_btn_run_stop_toggled(bool checked)
 void showWin_angleEncoder::on_btn_stop_now_clicked()
 {
 //    _motor->disable_motor();
-
     ui->btn_run_stop->setChecked(false);
+
+    on_btn_start_finish_mea_toggled(false);
+
+    Assist::board_init(false);
 }
 
 /*******************************文件保存************************************/

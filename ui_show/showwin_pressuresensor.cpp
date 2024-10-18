@@ -115,6 +115,7 @@ void showWin_pressureSensor::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
+        Assist::board_init(true);
 
         /************************ 液压站相关 ************************/
         emit signal_setConfigSerialPort();      // 发送配置信号
@@ -416,14 +417,28 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
 
             /*********************** 信号电流 *****************************/
             double sig_cur = data[2 + start_idx * len];
+            if (ch_num == 1) {sig_cur = sig_cur * 0.9675 - 0.0601;}
+            else if (ch_num == 2) {sig_cur = sig_cur * 0.9593 - 0.0232;}
+            else if (ch_num == 3) {sig_cur = sig_cur * 0.9519 + 0.0161;}
+            else if (ch_num == 4) {sig_cur = sig_cur * 0.9458 + 0.0169;}
+            else if (ch_num == 5) {sig_cur = sig_cur * 0.9389 + 0.0419;}
+
             setLineEditsForRowValue(baseName + "signal_current", ch_num, sig_cur);
 
             /*********************** 供电电流 *****************************/
             double sup_cur = data[2 + start_idx * len];
+            if (ch_num == 1) {sup_cur = sup_cur * 0.9675 - 0.0601;}
+            else if (ch_num == 2) {sup_cur = sup_cur * 0.9593 - 0.0232;}
+            else if (ch_num == 3) {sup_cur = sup_cur * 0.9519 + 0.0161;}
+            else if (ch_num == 4) {sup_cur = sup_cur * 0.9458 + 0.0169;}
+            else if (ch_num == 5) {sup_cur = sup_cur * 0.9389 + 0.0419;}
+
             setLineEditsForRowValue(baseName + "supply_current", ch_num, sup_cur);
 
             /*********************** 压力值 *****************************/
             double pressure = data[3 + start_idx * len];
+
+
             setLineEditsForRowValue(baseName + "pres_val", ch_num, pressure);
 
             if (ch_num == 1) {
@@ -468,19 +483,20 @@ void showWin_pressureSensor::setLineEditsForRowValue(const QString &baseName, in
     QString content = "";
 
     if (lineEdit) {
+        const int DIGIT = 1;
 
         if (baseName == "lineE_supply_voltage")
-            content = QString::number(qRound(value * 3 * 10.0) / 10.0) + "V";
+            content = QString::number(value * 3, 'f', DIGIT) + "V";
         else if (baseName == "lineE_signal_voltage")
-            content = QString::number(qRound(value * 10.0) / 10.0) + "V";
+            content = QString::number(value, 'f', DIGIT) + "V";
         else if (baseName == "lineE_signal_current" | baseName == "lineE_supply_current")
-            content = QString::number(qRound(value * 10.0) / 10.0) + "mA";
+            content = QString::number(value, 'f', DIGIT) + "mA";
         else if (baseName == "lineE_pres_val")
-            content = QString::number(qRound(value * 10.0) / 10.0) + "bar";
+            content = QString::number(value, 'f', DIGIT) + "bar";
         else if (baseName == "lineE_error_percentage")
-            content = QString::number(qRound(value * 10.0) / 10.0 * 100) + "%";
+            content = QString::number(value * 100, 'f', DIGIT) + "%";
         else if (baseName == "lineE_error_value")
-            content = QString::number(qRound(value * 10.0) / 10.0) + "bar";
+            content = QString::number(value, 'f', DIGIT) + "bar";
 
         lineEdit->setText(content);
     } else {

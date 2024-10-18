@@ -69,6 +69,7 @@ void showWin_proximitySwitch::on_btn_start_finish_mea_toggled(bool checked)
 {
     if (checked) {
         ui->btn_start_finish_mea->setText("结束测量");
+        Assist::board_init(true);
 
         /************************ 接近开关 + 滑动变阻器 ************************/
         // 由于滑动变阻器也是通过9205采集数据计算得到距离，而全局只能存在一个数据采集类的对象
@@ -224,7 +225,7 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     ui->plot_distance->replot();
 
     /*************** 数值框显示 ****************/
-    ui->lineE_sensing_dis->setText(QString::number(_distance) + "mm");
+    ui->lineE_sensing_dis->setText(QString::number(_distance, 'f', 1) + "mm");
 
     /********************** 重复精度测量 **********************/
 

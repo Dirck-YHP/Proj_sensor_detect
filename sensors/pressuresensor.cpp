@@ -158,6 +158,7 @@ void PressureSensor::rev_data_from_ni9205(QVector<double> data)
     for (int i = 1; i < len - 1; i++) {
         double sig_vol = data[i];
         double sig_cur = sig_vol / 1 * 1000;
+
         double press = map_from_cur_to_press(sig_cur);
         data_after_process.append(sig_vol);
         data_after_process.append(sig_cur);
