@@ -90,6 +90,8 @@ private:
     int channel_num;
 
     bool sig_error = false;
+
+    void UI_init();
 };
 
 #endif // SHOWWIN_ANGLESENSOR_H

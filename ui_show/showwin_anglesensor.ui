@@ -46,7 +46,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_15">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="label_bat">
            <property name="text">
             <string>电池电量：</string>
            </property>
@@ -79,7 +79,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="label_ang">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -117,7 +117,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QLabel" name="label_7">
+            <widget class="QLabel" name="label_supply_voltage">
              <property name="text">
               <string>供电回路电压：</string>
              </property>
@@ -144,7 +144,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QLabel" name="label_8">
+            <widget class="QLabel" name="label_supply_current">
              <property name="text">
               <string>供电回路电流：</string>
              </property>
@@ -175,7 +175,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
-            <widget class="QLabel" name="label_9">
+            <widget class="QLabel" name="label_signal_voltage">
              <property name="text">
               <string>信号回路电压：</string>
              </property>
@@ -202,7 +202,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
-            <widget class="QLabel" name="label_10">
+            <widget class="QLabel" name="label_signal_current">
              <property name="text">
               <string>信号回路电流：</string>
              </property>
@@ -235,7 +235,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <item>
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="label_motor_angle">
                <property name="text">
                 <string>电机转动角度：</string>
                </property>
@@ -262,7 +262,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_9">
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="label_motor_circle">
                <property name="text">
                 <string>电机转动圈数：</string>
                </property>
@@ -352,7 +352,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="label_sensor_angle">
            <property name="text">
             <string>传感器角度：</string>
            </property>
@@ -381,7 +381,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
-            <widget class="QLabel" name="label_11">
+            <widget class="QLabel" name="label_angle_err">
              <property name="text">
               <string>角度误差：</string>
              </property>
@@ -408,7 +408,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
-            <widget class="QLabel" name="label_12">
+            <widget class="QLabel" name="label_angle_err_per">
              <property name="text">
               <string>角度误差百分比：</string>
              </property>

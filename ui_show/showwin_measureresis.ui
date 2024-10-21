@@ -46,7 +46,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="label_bat">
            <property name="text">
             <string>电池电量：</string>
            </property>
@@ -73,7 +73,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="label_resis">
          <property name="text">
           <string> 电阻值：</string>
          </property>

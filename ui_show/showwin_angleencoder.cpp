@@ -15,6 +15,9 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
     plot_queue = QVector<QQueue<double>>(6);
 
     ui->setupUi(this);
+    /*-------------------- UI界面 --------------------------*/
+    UI_init();
+
 
     /********************** 电机相关 **********************/
     // 是否需要电机
@@ -44,12 +47,17 @@ showWin_angleEncoder::showWin_angleEncoder(QString file_save_dir,
 
     } else {
         // 如果不需要电机就都不可见
+        if (_motor == nullptr) {
+            _motor = new Motor;
+        }
         ui->btn_run_stop->setVisible(false);
         ui->btn_stop_now->setVisible(false);
         ui->lineE_motor_angle->setVisible(false);
         ui->lineE_motor_circle->setVisible(false);
-        ui->label_5->setVisible(false);
-        ui->label_6->setVisible(false);
+        ui->lineE_motor_speed->setVisible(false);
+        ui->label_motor_angle->setVisible(false);
+        ui->label_motor_speed->setVisible(false);
+        ui->label_motor_circle->setVisible(false);
     }
 
     /********************** 文件保存相关 **********************/
@@ -120,6 +128,48 @@ showWin_angleEncoder::~showWin_angleEncoder()
     qDebug() << "------------------------";
 
     delete ui;
+}
+
+void showWin_angleEncoder::UI_init()
+{
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->label_bat->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_period->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_err_per->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_enc_angle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_enc_A_pulse->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_enc_B_pulse->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_motor_speed->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_two_edge_sep->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_supply_current->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_signal_current_A->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_signal_current_B->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_signal_voltage_A->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_signal_voltage_B->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+
+    ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_run_stop->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
+    ui->btn_start_finish_mea->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_stop_now->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
+
+    ui->lineE_two_edge_sep->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_motor_speed->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_encoder_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_phase_err_per->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_supply_current->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_encoder_A_pulse->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_encoder_B_pulse->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_signal_current_A->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_signal_current_B->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_signal_voltage_A->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_signal_voltage_B->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+
 }
 
 /***************************************************************
@@ -437,7 +487,6 @@ QVector<QVector<double>> showWin_angleEncoder::add_data_to_queue(QVector<QVector
 
     return data_after_queue;
 }
-
 
 /*******************************电机************************************/
 /***************************************************************

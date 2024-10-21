@@ -8,6 +8,10 @@ showWin_measureResis::showWin_measureResis(Resis *mea_resis, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    /*-------------------- UI界面 --------------------------*/
+    UI_init();
+
+
     //  根据用户选择设置哪些可见
     set_visible();
 
@@ -18,6 +22,27 @@ showWin_measureResis::showWin_measureResis(Resis *mea_resis, QWidget *parent) :
     /********************** 对象析构 **********************/
     connect(this, &showWin_measureResis::signal_delete,
             mea_resis, &Resis::slot_acq_delete);
+}
+
+void showWin_measureResis::UI_init()
+{
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->label_bat->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch1->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch2->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch3->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch4->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch5->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_resis->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+
+    ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_start_finish_mea->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+
+    ui->lineE_show_resis_1->setStyleSheet("font-size: 14pt;color:rgb(11,174,229);");
+    ui->lineE_show_resis_2->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_show_resis_3->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_show_resis_4->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_show_resis_5->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 }
 
 showWin_measureResis::~showWin_measureResis()
@@ -136,6 +161,7 @@ void showWin_measureResis::set_visible()
             QString label_name = "label_ch" + QString::number(ch_num);
             QLabel *label = this->findChild<QLabel*>(label_name);
             label->setEnabled(false);
+            label->setStyleSheet("color:rgb(254,254,254);");
         }
     }
 }

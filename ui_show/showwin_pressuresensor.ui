@@ -44,7 +44,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label_bat">
          <property name="text">
           <string>电池电量：</string>
          </property>
@@ -64,7 +64,7 @@
    <item row="1" column="0" colspan="6">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="label_pre">
        <property name="maximumSize">
         <size>
          <width>16777215</width>
@@ -91,7 +91,7 @@
    <item row="2" column="0" colspan="6">
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="label_err">
        <property name="maximumSize">
         <size>
          <width>16777215</width>
@@ -153,42 +153,42 @@
    <item row="4" column="0" rowspan="2">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="label_pre_">
        <property name="text">
         <string>压力值：</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="label_sup_vol">
        <property name="text">
         <string>供电回路电压：</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_8">
+      <widget class="QLabel" name="label_sup_cur">
        <property name="text">
         <string>供电回路电流：</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_9">
+      <widget class="QLabel" name="label_sig_vol">
        <property name="text">
         <string>信号回路电压：</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_10">
+      <widget class="QLabel" name="label_sig_cur">
        <property name="text">
         <string>信号回路电流：</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_11">
+      <widget class="QLabel" name="label_err_">
        <property name="text">
         <string>误差：</string>
        </property>
@@ -414,7 +414,7 @@
    <item row="1" column="6">
     <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="label_hydra_pre">
        <property name="maximumSize">
         <size>
          <width>16777215</width>

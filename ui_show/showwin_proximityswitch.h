@@ -69,6 +69,8 @@ private:
 
     bool sig_error = false;
 
+    void UI_init();
+
 signals:
     void signal_delete();
 };

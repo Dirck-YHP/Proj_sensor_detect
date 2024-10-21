@@ -9,6 +9,10 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
 {
     ui->setupUi(this);
 
+    /*-------------------- UI界面 --------------------------*/
+    UI_init();
+
+
     /********************** 文件保存相关 **********************/
     if (_file_save_dir != "") {
         FILE_SAVE = true;
@@ -50,6 +54,25 @@ showWin_proximitySwitch::showWin_proximitySwitch(QString file_save_dir, Proximit
     /********************** 错误检测 **********************/
     connect(_proxi_switch, &ProximitySwitch::sig_err_to_ui,
             this, &showWin_proximitySwitch::slot_get_err);
+}
+
+void showWin_proximitySwitch::UI_init()
+{
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->label_bat->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_dis->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_dis_avg->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_dis_max->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_dis_min->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_sensing_dis->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_signal_current->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_signal_voltage->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_supply_current->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+
+    ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_start_finish_mea->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_repeat_precise->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
 }
 
 showWin_proximitySwitch::~showWin_proximitySwitch()

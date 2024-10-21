@@ -74,6 +74,8 @@ private:
 
     bool sig_error = false;
 
+    void UI_init();
+
 private:
     void set_visiable();
     void setLineEditsForRowEnable(const QString &baseName, int ch_num, bool isEnable);

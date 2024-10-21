@@ -94,6 +94,8 @@ private:
     QVector<QVector<double>> add_data_to_queue(QVector<QVector<double>> data);      // 滑动显示处理函数
     int channel_num;                            // 后续新板子通道是定死的
 
+    void UI_init();
+
 public slots:
     void update_motor_tar_angle(const QString &text);
     void update_motor_speed(const QString &text);

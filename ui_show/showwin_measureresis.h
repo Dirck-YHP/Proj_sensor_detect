@@ -32,6 +32,8 @@ private:
 
     void set_visible();
 
+    void UI_init();
+
 signals:
     void signal_delete();
 };

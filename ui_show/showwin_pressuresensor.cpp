@@ -9,6 +9,10 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
 {
     ui->setupUi(this);
 
+    /*-------------------- UI界面 --------------------------*/
+    UI_init();
+
+
     // 根据用户选择的压力传感器的接入通道来决定哪些可见
     set_visiable();
 
@@ -96,6 +100,30 @@ showWin_pressureSensor::showWin_pressureSensor(QString file_save_dir, PressureSe
     /********************** 错误检测 **********************/
     connect(_pressure_sensor, &PressureSensor::sig_err_to_ui,
             this, &showWin_pressureSensor::slot_get_err);
+}
+
+void showWin_pressureSensor::UI_init()
+{
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->label_bat->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch1->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch2->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch3->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch4->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_ch5->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_err->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_pre->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_err_->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_pre_->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_sig_cur->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_sig_vol->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_sup_cur->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_sup_vol->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_hydra_pre->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+
+    ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_start_finish_mea->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+
 }
 
 showWin_pressureSensor::~showWin_pressureSensor()

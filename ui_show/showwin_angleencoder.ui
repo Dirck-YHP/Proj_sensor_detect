@@ -65,7 +65,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="label_bat">
            <property name="text">
             <string>电池电量：</string>
            </property>
@@ -115,7 +115,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="label_ang">
            <property name="minimumSize">
             <size>
              <width>600</width>
@@ -168,7 +168,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="label_enc_angle">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -201,7 +201,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
-              <widget class="QLabel" name="label_12">
+              <widget class="QLabel" name="label_enc_A_pulse">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -234,7 +234,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QLabel" name="label_16">
+              <widget class="QLabel" name="label_enc_B_pulse">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -267,7 +267,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
-              <widget class="QLabel" name="label_17">
+              <widget class="QLabel" name="label_err_per">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -315,7 +315,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QLabel" name="label_13">
+          <widget class="QLabel" name="label_pul">
            <property name="minimumSize">
             <size>
              <width>600</width>
@@ -362,7 +362,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="label_motor_angle">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -395,7 +395,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="label_motor_circle">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -428,7 +428,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <item>
-              <widget class="QLabel" name="label_11">
+              <widget class="QLabel" name="label_motor_speed">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -541,7 +541,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_10">
            <item>
-            <widget class="QLabel" name="label_7">
+            <widget class="QLabel" name="label_supply_voltage">
              <property name="text">
               <string>供电回路电压：</string>
              </property>
@@ -568,7 +568,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_11">
            <item>
-            <widget class="QLabel" name="label_8">
+            <widget class="QLabel" name="label_supply_current">
              <property name="text">
               <string>供电回路电流：</string>
              </property>
@@ -609,7 +609,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_12">
            <item>
-            <widget class="QLabel" name="label_9">
+            <widget class="QLabel" name="label_signal_voltage_A">
              <property name="text">
               <string>信号回路电压 A：</string>
              </property>
@@ -636,7 +636,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_13">
            <item>
-            <widget class="QLabel" name="label_10">
+            <widget class="QLabel" name="label_signal_current_A">
              <property name="text">
               <string>信号回路电流 A：</string>
              </property>
@@ -677,7 +677,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_14">
            <item>
-            <widget class="QLabel" name="label_14">
+            <widget class="QLabel" name="label_signal_voltage_B">
              <property name="text">
               <string>信号回路电压 B：</string>
              </property>
@@ -704,7 +704,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_15">
            <item>
-            <widget class="QLabel" name="label_15">
+            <widget class="QLabel" name="label_signal_current_B">
              <property name="text">
               <string>信号回路电流 B：</string>
              </property>
@@ -735,7 +735,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_22">
            <item>
-            <widget class="QLabel" name="label_18">
+            <widget class="QLabel" name="label_period">
              <property name="text">
               <string>period:</string>
              </property>
@@ -762,7 +762,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_23">
            <item>
-            <widget class="QLabel" name="label_19">
+            <widget class="QLabel" name="label_two_edge_sep">
              <property name="text">
               <string>interval</string>
              </property>

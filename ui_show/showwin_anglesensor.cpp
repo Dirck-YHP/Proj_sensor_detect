@@ -12,6 +12,8 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
     _file_save_dir(file_save_dir)
 {
     ui->setupUi(this);
+    /*-------------------- UI界面 --------------------------*/
+    UI_init();
 
     /********************** 电机相关 **********************/
     // 是否需要电机
@@ -41,13 +43,16 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
         }
 
     } else {
+        if (_motor == nullptr) {
+            _motor = new Motor;
+        }
         // 如果不需要电机就都不可见
         ui->btn_run_stop->setVisible(false);
         ui->btn_stop_now->setVisible(false);
         ui->lineE_motor_angle->setVisible(false);
         ui->lineE_motor_circle->setVisible(false);
-        ui->label_5->setVisible(false);
-        ui->label_6->setVisible(false);
+        ui->label_motor_angle->setVisible(false);
+        ui->label_motor_circle->setVisible(false);
     }
 
     /********************** 文件保存相关 **********************/
@@ -90,6 +95,39 @@ showWin_angleSensor::showWin_angleSensor(QString file_save_dir,
     /********************** 错误检测 **********************/
     connect(_angle_sensor, &AngleSensor::sig_err_to_ui,
             this, &showWin_angleSensor::slot_get_err);
+}
+
+void showWin_angleSensor::UI_init()
+{
+    ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
+    ui->label_ang->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_bat->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_angle_err->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_sensor_angle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_angle_err_per->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_signal_current->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_signal_voltage->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_supply_current->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    ui->label_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+
+    ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_run_stop->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
+    ui->btn_start_finish_mea->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
+    ui->btn_stop_now->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
+    ui->btn_angle_cali->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
+
+    ui->lineE_angle_err->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_angle_cali->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_sensor_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_angle_err_per->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_signal_current->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_signal_voltage->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_supply_current->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
 }
 
 showWin_angleSensor::~showWin_angleSensor()
