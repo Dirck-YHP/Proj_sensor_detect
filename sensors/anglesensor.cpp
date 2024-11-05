@@ -133,13 +133,15 @@ void AngleSensor::rev_data_from_ni9205(QVector<double> data)
     // 供电电压：
     double sup_vol = data[0] * 3;
 
-    // 信号电压、信号电流、角度
+    // 信号电压、信号电流
     double sig_vol = data[1];
     double sig_cur = sig_vol / 1 * 1000;
-    double angle = map_from_cur_to_angle(sig_cur);
 
     // 供电电流
     double sup_cur = data[2] / 1 * 1000;
+
+    // 角度
+    double angle = map_from_cur_to_angle(sig_cur, sup_cur);
 
     // 电池电量
     double bat = data[3] * 3;
@@ -188,8 +190,9 @@ void AngleSensor::slot_acq_delete()
   *  @note      功能函数：实现电流到角度的映射
   *  @Sample usage:
  **************************************************************/
-double AngleSensor::map_from_cur_to_angle(double current)
+double AngleSensor::map_from_cur_to_angle(double current1, double current2)
 {
+    double current = 0.934 * current1 - 0.0605 * current2 - 0.027;
     double angle = (current - 4) * (_range.second - _range.first) / (20 -4) + _range.first;
 
     return angle;

@@ -1,0 +1,5 @@
+C:/Users/Admini/Desktop/Proj_Sensor/build/Desktop_Qt_5_15_17_MinGW_32_bit-Debug/CMakeFiles/Proj_Sensor.dir
+C:/Users/Admini/Desktop/Proj_Sensor/build/Desktop_Qt_5_15_17_MinGW_32_bit-Debug/CMakeFiles/edit_cache.dir
+C:/Users/Admini/Desktop/Proj_Sensor/build/Desktop_Qt_5_15_17_MinGW_32_bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Admini/Desktop/Proj_Sensor/build/Desktop_Qt_5_15_17_MinGW_32_bit-Debug/CMakeFiles/Proj_Sensor_autogen_timestamp_deps.dir
+C:/Users/Admini/Desktop/Proj_Sensor/build/Desktop_Qt_5_15_17_MinGW_32_bit-Debug/CMakeFiles/Proj_Sensor_autogen.dir

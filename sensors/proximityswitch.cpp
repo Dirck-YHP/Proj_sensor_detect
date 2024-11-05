@@ -190,13 +190,13 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 
     // 信号电压、信号电流、是否触发
     double sig_vol = data[1];
-    double sig_cur = sig_vol / 5100;
+    double sig_cur = sig_vol / 5100 * 1000;
     double if_pulse = (sig_vol > THREAD_VOL_TO_PUL) ? 1 : 0;
 
 //    qDebug() << "(In PxS)if_pulse" << if_pulse;
 
     // 供电电流
-    double sup_cur = data[2] / 1;
+    double sup_cur = data[2] / 1 * 1000;
 //    qDebug() << sup_cur;
 
     // 滑动变阻器计算距离
@@ -254,7 +254,9 @@ void ProximitySwitch::slot_acq_delete()
 double ProximitySwitch::map_from_cur_to_varDis(double current)
 {
     // 电流补偿
+    // qDebug() << current;
     current = current * 0.9917 + 0.3784 - 0.3;
+    // qDebug() << current;
 
     double dis = (current - 4) * (_range.second - _range.first) / (20 -4) + _range.first;
 

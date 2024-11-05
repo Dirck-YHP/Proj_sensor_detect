@@ -118,16 +118,16 @@ void showWin_angleSensor::UI_init()
     ui->btn_stop_now->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
     ui->btn_angle_cali->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
 
-    ui->lineE_angle_err->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_angle_cali->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_sensor_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_angle_err_per->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_signal_current->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_signal_voltage->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_supply_current->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_angle_err->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_angle_cali->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_sensor_angle->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_angle_err_per->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_signal_current->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_signal_voltage->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_supply_current->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
 }
 
 showWin_angleSensor::~showWin_angleSensor()
@@ -290,6 +290,12 @@ void showWin_angleSensor::slot_get_vol_cur_angle_and_show(QVector<double> data)
 
     /************** 角度数值框显示 ************/
     ui->lineE_motor_angle->setText(QString::number(_motor_angle, 'f', DIGIT) + "°");
+
+    /************** 角度误差和百分比数值框显示 ************/
+    double err_ang = abs(angle_sensor - _motor_angle);
+    ui->lineE_angle_err->setText(QString::number(err_ang, 'f', DIGIT));
+    double err_per = err_ang / angle_sensor * 100;
+    ui->lineE_angle_err_per->setText(QString::number(err_per, 'f', DIGIT) + "%");
 
     /*********************** 角度画图 ***************************/
     int length = 1;

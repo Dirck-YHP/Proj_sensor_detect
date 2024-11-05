@@ -225,7 +225,7 @@
       <item row="0" column="4">
        <widget class="QLineEdit" name="lineE_pres_val_4">
         <property name="text">
-         <string>50</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -289,7 +289,7 @@
          </size>
         </property>
         <property name="text">
-         <string>20</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -321,14 +321,14 @@
       <item row="0" column="2">
        <widget class="QLineEdit" name="lineE_pres_val_2">
         <property name="text">
-         <string>30</string>
+         <string/>
         </property>
        </widget>
       </item>
       <item row="0" column="3">
        <widget class="QLineEdit" name="lineE_pres_val_3">
         <property name="text">
-         <string>40</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -364,7 +364,7 @@
       <item row="0" column="5">
        <widget class="QLineEdit" name="lineE_pres_val_5">
         <property name="text">
-         <string>60</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -388,6 +388,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>80</height>
+        </size>
+       </property>
        <property name="text">
         <string>开始测量</string>
        </property>
@@ -404,8 +410,14 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>80</height>
+        </size>
+       </property>
        <property name="text">
-        <string>确定</string>
+        <string>退出</string>
        </property>
       </widget>
      </item>

@@ -166,12 +166,12 @@ void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
     // 信号电压A+
     // 信号电流A+ = 信号电压A+ / 5kΩ
     double sig_vol_A = data[1] / 5.1 * 25.1;
-    double sig_cur_A = sig_vol_A / 5100;
+    double sig_cur_A = sig_vol_A / 25100;
 
     // 信号电压B+
     // 信号电流A+ = 信号电压A+ / 5kΩ
     double sig_vol_B = data[2] / 5.1 * 25.1;
-    double sig_cur_B = sig_vol_B / 5100;
+    double sig_cur_B = sig_vol_B / 25100;
 
     // 供电电流 = 电压 / 电阻(1Ω)
     double sup_cur = data[3] / 1;

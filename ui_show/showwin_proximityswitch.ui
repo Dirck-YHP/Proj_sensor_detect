@@ -248,7 +248,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>确定</string>
+        <string>退出</string>
        </property>
       </widget>
      </item>

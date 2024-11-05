@@ -14,7 +14,7 @@ Resis::Resis(QObject *parent) : QObject(parent)
 
     // 设置定时器，为了能够切换电阻挡位的时候维持两秒，不至于跳变
     m_timer = new QTimer(this);
-    m_timer->setInterval(2000);
+    m_timer->setInterval(500);
     allowChange = true;
     connect(m_timer, &QTimer::timeout, this, [=](){
         allowChange = true;
@@ -125,19 +125,21 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
             QString dir = "cDAQ1Mod2/port0/line" +
                     QString::number(4+2*ch_num) + ":" +
                     QString::number(5+2*ch_num);
-//            qDebug() << "(In resis)dir: " << dir;
+           // qDebug() << "(In resis)dir: " << dir;
 
             channel_choosed.append(dir);
         }
     }
 
-    qDebug() << len;
+    // qDebug() << len;
     // 电阻
     for (int i = 0; i <= len - 2; i++) {
         double vol = data[i];
         double resis = map_from_vol_to_resis(vol, channel_choosed[i], i);
         data_after_process.append(resis);
     }
+
+    qDebug() << "--------";
 
     // 电池电量
     double bat = data[len - 1] * 3;
@@ -209,7 +211,7 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str, int idx)
         rTempType = RType::high;
     }
 
-//    qDebug() << "(In resis)vol: " << vol << " r: " << rTempType << ", resis: " << resis;
+   qDebug() << "(In resis)vol: " << vol << " r: " << rTempType << ", resis: " << resis;
 
     uInt8 writeArray[2] = {0, 0};
     // 下面进行测电阻档位选择

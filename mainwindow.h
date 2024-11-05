@@ -26,10 +26,18 @@ public:
 
 private slots:
     void on_btn_exit_clicked();
-    void on_btn_start_clicked();
-    void on_btn_data_export_clicked();
 
     void showMainWindow();
+
+    void on_btn_AS_clicked();
+
+    void on_btn_AE_clicked();
+
+    void on_btn_PxS_clicked();
+
+    void on_btn_PS_clicked();
+
+    void on_btn_Resis_clicked();
 
 private:
     Ui::mainWindow *ui;

@@ -38,11 +38,11 @@ void showWin_measureResis::UI_init()
     ui->btn_ok->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_start_finish_mea->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
 
-    ui->lineE_show_resis_1->setStyleSheet("font-size: 14pt;color:rgb(11,174,229);");
-    ui->lineE_show_resis_2->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_show_resis_3->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_show_resis_4->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_show_resis_5->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_show_resis_1->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_show_resis_2->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_show_resis_3->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_show_resis_4->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_show_resis_5->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
 }
 
 showWin_measureResis::~showWin_measureResis()

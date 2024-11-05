@@ -196,19 +196,19 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
 {
     /*********************** 供电电压 ************************/
     double sup_vol = data[0];
-    ui->lineE_supply_voltage->setText(QString::number(qRound(sup_vol * 10.0) / 10.0) + "V");
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol) + "V");
 
     /*********************** 信号电压 ************************/
     double sig_vol = data[1];
-    ui->lineE_signal_voltage->setText(QString::number(qRound(sig_vol / 5.1 * 25.1 * 10.0) / 10.0) + "V");
+    ui->lineE_signal_voltage->setText(QString::number(sig_vol / 5.1 * 25.1) + "V");
 
     /*********************** 信号电流 ************************/
     double sig_cur = data[2];
-    ui->lineE_signal_current->setText(QString::number(qRound(sig_cur * 10.0) / 10.0) + "mA");
+    ui->lineE_signal_current->setText(QString::number(sig_cur) + "mA");
 
     /*********************** 供电电流 ************************/
     double sup_cur = data[3];
-    ui->lineE_supply_current->setText(QString::number(qRound(sup_cur * 10.0) / 10.0) + "mA");
+    ui->lineE_supply_current->setText(QString::number(sup_cur) + "mA");
 
     /*********************** 是否触发 ************************/
     bool if_Pulse = data[4];
@@ -254,10 +254,9 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
 
     if (_if_rep_mea) {      // 如果用户点击了“重复精度测量”
         if (if_changed) {   // 只有“触发”的时候才记录距离
-//            _dis_arr.push_back(_distance);
-            qDebug() << "(In Win)tmp_num: " << tmp_num;
-            _dis_arr.push_back(tmp_num);
-            tmp_num++;
+           _dis_arr.push_back(_distance);
+            qDebug() << "(In Win)dis: " << _distance;
+            // _dis_arr.push_back(tmp_num);
         }
 
 //        qDebug() << "(In Win)measuring... _dis_arr's size: " << _dis_arr.size();

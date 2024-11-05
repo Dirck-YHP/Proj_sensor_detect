@@ -155,20 +155,20 @@ void showWin_angleEncoder::UI_init()
     ui->btn_start_finish_mea->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_stop_now->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
 
-    ui->lineE_two_edge_sep->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_motor_speed->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_encoder_angle->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_phase_err_per->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_supply_current->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_encoder_A_pulse->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_encoder_B_pulse->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_signal_current_A->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_signal_current_B->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_signal_voltage_A->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
-    ui->lineE_signal_voltage_B->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);");
+    ui->lineE_two_edge_sep->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_motor_speed->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_encoder_angle->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_phase_err_per->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_supply_current->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_encoder_A_pulse->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_encoder_B_pulse->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_signal_current_A->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_signal_current_B->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_signal_voltage_A->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    ui->lineE_signal_voltage_B->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
 
 }
 
@@ -587,8 +587,6 @@ void showWin_angleEncoder::on_btn_stop_now_clicked()
 {
 //    _motor->disable_motor();
     ui->btn_run_stop->setChecked(false);
-
-    on_btn_start_finish_mea_toggled(false);
 
     Assist::board_init(false);
 }

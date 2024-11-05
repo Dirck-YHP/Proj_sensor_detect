@@ -35,7 +35,7 @@ public:
     void start_acquire();
     void stop_acquire();
 
-    double map_from_cur_to_angle(double current);
+    double map_from_cur_to_angle(double current1, double current2);
 
 public slots:
     void rev_data_from_ni9205(QVector<double> data);

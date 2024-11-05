@@ -83,6 +83,9 @@ void DataAcquireAI::__init__(QString channel)
         STOP = true;
     }
 
+    // 通道间切换时间
+    // DAQmxSetAIConvRate(_task, 1);
+
     // 开始任务
     DAQmxStartTask(_task);
 
