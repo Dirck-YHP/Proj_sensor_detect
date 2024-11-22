@@ -25,7 +25,7 @@ funcWin_DataExport::funcWin_DataExport(QWidget *parent) :
 
     // old code
     if (_data_export == nullptr) {
-        qDebug() << "new data_export!";
+        // qDebug() << "new data_export!";
         _data_export = new DataExport();
     }
 
@@ -37,7 +37,7 @@ funcWin_DataExport::~funcWin_DataExport()
 {
     if (_data_export != nullptr) {
         delete _data_export;
-        qDebug() << "delete data_export!";
+        // qDebug() << "delete data_export!";
     }
     delete ui;
 }
@@ -51,7 +51,7 @@ funcWin_DataExport::~funcWin_DataExport()
 void funcWin_DataExport::on_btn_ok_clicked()
 {
 
-//    qDebug() << "ip_addr: " << ui->lineE_ip->text() << " port: " << ui->lineE_port->text();
+//    // qDebug() << "ip_addr: " << ui->lineE_ip->text() << " port: " << ui->lineE_port->text();
 //    _data_export->socket_connect();
 }
 
@@ -88,10 +88,10 @@ void funcWin_DataExport::on_btn_choose_clicked()
             ui->textE->setText(QString::fromUtf8("open file: ").append(filePath).append("\n"));
         }
         else {
-            qDebug()<<"文件打开失败";
+            // qDebug()<<"文件打开失败";
         }
     } else {
-        qDebug()<<"文件路径出错";
+        // qDebug()<<"文件路径出错";
     }
 }
 
@@ -107,7 +107,7 @@ void funcWin_DataExport::on_btn_send_clicked()
     quint64 len = tcpSocket->write(head.toUtf8().data());
 
     if(len <= 0) {
-        qDebug()<<"头部信息发送失败 ";
+        // qDebug()<<"头部信息发送失败 ";
         file.close();
     }
 }
@@ -138,7 +138,7 @@ void funcWin_DataExport::HaveNewConnection()
     tcpSocket = tcpServer->nextPendingConnection();
     QString ip = tcpSocket->peerAddress().toString();
     quint16 port = tcpSocket->peerPort();
-    qDebug() << ip << " " << port;
+    // qDebug() << ip << " " << port;
 
     QString str = "Connected!";
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(RcvData()));
@@ -162,7 +162,7 @@ void funcWin_DataExport::SendFile()
         len = file.read(buf, sizeof(buf));
         len = tcpSocket->write(buf, len);
         sendSize += len;
-        qDebug() << cnt++;
+        // qDebug() << cnt++;
     } while(len > 0);
 
     // 文件发送完成

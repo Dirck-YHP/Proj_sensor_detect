@@ -69,17 +69,17 @@ void Assist::board_init(bool if_open)
     // 给0 还是 给1 是通电
     if (if_open) {
         writeArray[0] = 1;
-        qDebug() << "(online)1";
+        // qDebug() << "(online)1";
     }
     else {
 
-        qDebug() << "(offline)0";
+        // qDebug() << "(offline)0";
         writeArray[0] = 0;
     }
 
     int error = DAQmxWriteDigitalLines(taskHandleSwitch, 1, true, -1,
                                        DAQmx_Val_GroupByChannel, writeArray, &writeSuccessNum, NULL);
-    qDebug() << QString::number(error);
+    // qDebug() << QString::number(error);
     DAQmxClearTask(taskHandleSwitch);
-    qDebug() << "(In board)board init succeed!";
+    // qDebug() << "(In board)board init succeed!";
 }

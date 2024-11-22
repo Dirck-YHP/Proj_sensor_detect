@@ -22,6 +22,9 @@ showWin_measureResis::showWin_measureResis(Resis *mea_resis, QWidget *parent) :
     /********************** 对象析构 **********************/
     connect(this, &showWin_measureResis::signal_delete,
             mea_resis, &Resis::slot_acq_delete);
+
+    connect(this, &showWin_measureResis::signal_change_resis,
+            mea_resis, &Resis::slot_get_r_idx);
 }
 
 void showWin_measureResis::UI_init()
@@ -110,12 +113,23 @@ void showWin_measureResis::slot_get_resis_and_show(QVector<double> data)
     QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
 
     int start_idx = 0;
+    const int DIGIT = 1;
 
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num + 9)) {
+        if (selected_channel_arr.contains(15 - ch_num)) {
             QString lineE_name = "lineE_show_resis_" + QString::number(ch_num);
             QLineEdit *lineE = this->findChild<QLineEdit*>(lineE_name);
-            lineE->setText(QString::number(data[start_idx]));
+
+            if (data[start_idx] < 1000)
+                lineE->setText(QString::number(data[start_idx], 'f', DIGIT) + "Ω");
+            else if (data[start_idx] < 1000000) {
+                double show_r = data[start_idx] / 1000;
+                lineE->setText(QString::number(show_r, 'f', DIGIT) + "KΩ");
+            }
+            else {
+                double show_r = data[start_idx] / 1000000;
+                lineE->setText(QString::number(show_r, 'f', DIGIT) + "MΩ");
+            }
 
             start_idx++;
         }
@@ -125,11 +139,23 @@ void showWin_measureResis::slot_get_resis_and_show(QVector<double> data)
     double bat = data[total_len - 1];
     ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
     ui->pBar_battery->setMinimum(0);                   // 最小值
-    ui->pBar_battery->setMaximum(24);                   // 最大值
-    ui->pBar_battery->setValue(bat);                  // 当前进度
-    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+    ui->pBar_battery->setMaximum(25);                   // 最大值
+    double dProgress = (bat - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
+    // 定义电量档位
+    int batteryLevel;
+    if (dProgress <= 25.0) {
+        batteryLevel = 25;  // 第一档：25%
+    } else if (dProgress <= 50.0) {
+        batteryLevel = 50;  // 第二档：50%
+    } else if (dProgress <= 75.0) {
+        batteryLevel = 75;  // 第三档：75%
+    } else {
+        batteryLevel = 100; // 第四档：100%
+    }
+
+    ui->pBar_battery->setValue(batteryLevel);                  // 当前进度
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(batteryLevel, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 }
 
@@ -144,8 +170,9 @@ void showWin_measureResis::set_visible()
     QString selected_channel_str = _resis->get_channel();
     QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
 
+    qDebug() << "(In Win)" << selected_channel_arr;
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num + 9)) {
+        if (selected_channel_arr.contains(15 - ch_num)) {
             QString lineEdit_name = "lineE_show_resis_" + QString::number(ch_num);
             QLineEdit *lineEdit = this->findChild<QLineEdit*>(lineEdit_name);
             lineEdit->setEnabled(true);
@@ -165,3 +192,9 @@ void showWin_measureResis::set_visible()
         }
     }
 }
+
+void showWin_measureResis::on_comboBox_currentIndexChanged(int index)
+{
+    emit signal_change_resis(index);
+}
+

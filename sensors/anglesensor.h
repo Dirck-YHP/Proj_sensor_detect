@@ -6,6 +6,7 @@
 #include <QThreadPool>
 
 #include "data_acquire/dataacquireai.h"
+#include "data_acquire/lowpassfilter.h"
 #include "assist_func/assist.h"
 
 class AngleSensor : public QObject
@@ -35,7 +36,7 @@ public:
     void start_acquire();
     void stop_acquire();
 
-    double map_from_cur_to_angle(double current1, double current2);
+    double map_from_cur_to_angle(double current1);
 
 public slots:
     void rev_data_from_ni9205(QVector<double> data);

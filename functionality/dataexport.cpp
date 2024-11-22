@@ -3,7 +3,7 @@
 DataExport::DataExport(QObject *parent) : QObject(parent)
 {
     if (socket == nullptr) {
-        qDebug() << "new socket!";
+        // qDebug() << "new socket!";
         socket = new QTcpSocket();
     }
 }
@@ -12,7 +12,7 @@ DataExport::~DataExport()
 {
     if (socket != nullptr) {
         delete socket;
-        qDebug() << "delete socket!";
+        // qDebug() << "delete socket!";
     }
 }
 
@@ -31,12 +31,12 @@ void DataExport::socket_connect()
     socket->connectToHost(_ip_addr, _port.toInt());
 
     if (socket->waitForConnected(3000)) {
-        qDebug() << "Connected to the server!";
+        // qDebug() << "Connected to the server!";
         socket->write("Hello, server!");
         socket->flush();
         socket->waitForBytesWritten(3000);
         socket->disconnect();
     } else {
-        qDebug() << "Failed to connect to the server!";
+        // qDebug() << "Failed to connect to the server!";
     }
 }

@@ -31,7 +31,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -352,7 +352,7 @@
        <widget class="QLineEdit" name="lineE_supply_voltage_1">
         <property name="minimumSize">
          <size>
-          <width>80</width>
+          <width>120</width>
           <height>0</height>
          </size>
         </property>
@@ -371,7 +371,7 @@
       <item row="0" column="1" rowspan="5">
        <widget class="Line" name="line">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
        </widget>
       </item>

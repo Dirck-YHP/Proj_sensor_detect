@@ -4,7 +4,7 @@ PressureSensor::PressureSensor(QObject *parent) : QObject(parent)
 {
     if (data_acquire_ai == nullptr) {
         data_acquire_ai = new DataAcquireAI;
-        qDebug() << "(In PS)new acq_ai succeed";
+        // qDebug() << "(In PS)new acq_ai succeed";
     }
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
@@ -68,7 +68,7 @@ QPair<int, int> PressureSensor::get_range() const
  **************************************************************/
 void PressureSensor::set_channel(QString channel)
 {
-    qDebug() << "(In PS)way choosed: " << channel;
+    // qDebug() << "(In PS)way choosed: " << channel;
     QVector<int> selected_channel_arr  = Assist::extractNumbers(channel);
 
     _channel = "";
@@ -80,11 +80,17 @@ void PressureSensor::set_channel(QString channel)
                 _channel.append(",");
             }
 
-            if (i == 1) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_1));
-            if (i == 2) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_2));
+            /*  这里由于硬件连线问题，映射顺序做个调换
+                用户选择的 1   映射到   实际的 5
+                用户选择的 2   映射到   实际的 4
+                ...
+                以此类推
+            */
+            if (i == 1) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_5));
+            if (i == 2) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_4));
             if (i == 3) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_3));
-            if (i == 4) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_4));
-            if (i == 5) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_5));
+            if (i == 4) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_2));
+            if (i == 5) _channel.append(chToStr(CH_PRES_SIGV_SIGC_PRE_1));
 
             isFirst = false;
         }
@@ -115,7 +121,7 @@ void PressureSensor::start_acquire()
     channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
                             chToStr(CH_BAT);
-    qDebug() << "fi: " << channel_final;
+    // qDebug() << "fi: " << channel_final;
 
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
@@ -142,9 +148,9 @@ void PressureSensor::stop_acquire()
 void PressureSensor::rev_data_from_ni9205(QVector<double> data)
 {
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
-//    qDebug() << "(In PS)接收数据size: " << data.size();
+   // qDebug() << "(In PS)接收数据size: " << data.size();
     if (data.size() != Assist::extractNumbers(channel_final).size()) {
-        qDebug() << "(In PS):通道和接收数据的size不一致！";
+        // qDebug() << "(In PS):通道和接收数据的size不一致！";
         return;
     }
 
@@ -182,11 +188,11 @@ void PressureSensor::rev_data_from_ni9205(QVector<double> data)
  **************************************************************/
 void PressureSensor::slot_acq_delete()
 {
-    qDebug() << "(In PS)get delete sig";
+    // qDebug() << "(In PS)get delete sig";
 
     if (data_acquire_ai != nullptr) {
         delete data_acquire_ai;
-        qDebug() << "(In PS)delete acq_ai succeed!!!!!!!!!!";
+        // qDebug() << "(In PS)delete acq_ai succeed!!!!!!!!!!";
     }
 }
 
@@ -198,6 +204,6 @@ void PressureSensor::slot_acq_delete()
  **************************************************************/
 void PressureSensor::slot_get_err(bool err)
 {
-    qDebug() << "(In PS)get err sig!!";
+    // qDebug() << "(In PS)get err sig!!";
     emit sig_err_to_ui(err);
 }

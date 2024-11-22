@@ -134,7 +134,7 @@ void showWin_angleEncoder::UI_init()
 {
     ui->label->setStyleSheet("font:bold 18pt Arial;color:rgb(130,194,204);background-color:rgb(105,105,105);");
     ui->label_bat->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
-    ui->label_period->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    // ui->label_period->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
     ui->label_err_per->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
     ui->label_enc_angle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
     ui->label_enc_A_pulse->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
@@ -142,7 +142,7 @@ void showWin_angleEncoder::UI_init()
     ui->label_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
     ui->label_motor_speed->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
     ui->label_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
-    ui->label_two_edge_sep->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
+    // ui->label_two_edge_sep->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
     ui->label_supply_current->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
     ui->label_supply_voltage->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
     ui->label_signal_current_A->setStyleSheet("font-size: 14pt;color:rgb(67,67,67);");
@@ -155,7 +155,7 @@ void showWin_angleEncoder::UI_init()
     ui->btn_start_finish_mea->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(84,80,107);");
     ui->btn_stop_now->setStyleSheet("font-size: 14pt;color:rgb(254,254,254);background-color:rgb(146,189,108);");
 
-    ui->lineE_two_edge_sep->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
+    // ui->lineE_two_edge_sep->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
     ui->lineE_motor_angle->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
     ui->lineE_motor_speed->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
     ui->lineE_motor_circle->setStyleSheet("font-size: 14pt;color:rgb(0,0,0);");
@@ -244,7 +244,7 @@ void showWin_angleEncoder::on_btn_start_finish_mea_toggled(bool checked)
             // 保存缓冲区中残余的数据
             _timer_savefile.stop();
             qDebug() << "(In win)data_buf_size_when_close: "
-                     << save_data_buf_angle_encoder.size()
+                     // << save_data_buf_angle_encoder.size()
                      << save_data_buf_angle_motor.size();
 
             if (!save_data_buf_angle_motor.empty()) {
@@ -279,39 +279,52 @@ void showWin_angleEncoder::slot_get_vol_cur_and_show(QVector<double> data)
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、A项信号电压、A项信号电流、B项信号电压、B项信号电流、供电电流、电池电量
+    const int DIGIT = 1;
     /*********************** 供电电压 *****************************/
-    double sup_vol = qRound(data[0] * 3 * 10.0) / 10.0;
-    ui->lineE_supply_voltage->setText(QString::number(sup_vol) + "V");
+    double sup_vol = data[0] * 3;
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol, 'f', DIGIT) + "V");
 
     /*********************** A项信号电压 *****************************/
-    double sig_vol_A = qRound(data[1] * 10.0) / 10.0;
-    ui->lineE_signal_voltage_A->setText(QString::number(sig_vol_A) + "V");
+    double sig_vol_A = data[1];
+    ui->lineE_signal_voltage_A->setText(QString::number(sig_vol_A, 'f', DIGIT) + "V");
 
     /*********************** A项信号电流 *****************************/
-    double sig_cur_A = qRound(data[2] * 1000 * 10.0) / 10.0;
-    ui->lineE_signal_current_A->setText(QString::number(sig_cur_A) + "mA");
+    double sig_cur_A = data[2] * 1000;
+    ui->lineE_signal_current_A->setText(QString::number(sig_cur_A, 'f', DIGIT) + "mA");
 
     /*********************** B项信号电压 *****************************/
-    double sig_vol_B = qRound(data[3] * 10.0) / 10.0;
-    ui->lineE_signal_voltage_B->setText(QString::number(sig_vol_B) + "V");
+    double sig_vol_B = data[3];
+    ui->lineE_signal_voltage_B->setText(QString::number(sig_vol_B, 'f', DIGIT) + "V");
 
     /*********************** B项信号电流 *****************************/
-    double sig_cur_B = qRound(data[4] * 1000 * 10.0) / 10.0;
-    ui->lineE_signal_current_B->setText(QString::number(sig_cur_B) + "mA");
+    double sig_cur_B = data[4] * 1000;
+    ui->lineE_signal_current_B->setText(QString::number(sig_cur_B, 'f', DIGIT) + "mA");
 
     /*********************** 供电电流 *****************************/
-    double sup_cur = qRound(data[5] * 1000 * 10.0) / 10.0;
-    ui->lineE_supply_current->setText(QString::number(sup_cur) + "mA");
+    double sup_cur = data[5] * 1000;
+    ui->lineE_supply_current->setText(QString::number(sup_cur, 'f', DIGIT) + "mA");
 
     /*********************** 电池电量 *****************************/
     double bat = data[6];
     ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
     ui->pBar_battery->setMinimum(0);                   // 最小值
-    ui->pBar_battery->setMaximum(24);                   // 最大值
-    ui->pBar_battery->setValue(bat);                  // 当前进度
-    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+    ui->pBar_battery->setMaximum(25);                   // 最大值
+    double dProgress = (bat - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
+    // 定义电量档位
+    double batteryLevel;
+    if (dProgress <= 25.0) {
+        batteryLevel = 25.0;  // 第一档：25%
+    } else if (dProgress <= 50.0) {
+        batteryLevel = 50.0;  // 第二档：50%
+    } else if (dProgress <= 75.0) {
+        batteryLevel = 75.0;  // 第三档：75%
+    } else {
+        batteryLevel = 100.0; // 第四档：100%
+    }
+
+    ui->pBar_battery->setValue(batteryLevel);                  // 当前进度
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(batteryLevel, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 
 }
@@ -398,10 +411,11 @@ void showWin_angleEncoder::slot_get_angle_and_plot(QVector<double> data, QVector
     ui->lineE_encoder_B_pulse->setText(QString::number(_B_chan));
 
     /***************** 编码器A B相周期和上升沿间隔值框显示 ******************/
-    ui->lineE_period->setText(QString::number(period));
-    ui->lineE_two_edge_sep->setText(QString::number(two_edge_sep));
+    // ui->lineE_period->setText(QString::number(period));
+    // ui->lineE_two_edge_sep->setText(QString::number(two_edge_sep));
 
-    ui->lineE_phase_err_per->setText(QString::number(two_edge_sep / period));
+    double per_phase = two_edge_sep / period * 100;
+    ui->lineE_phase_err_per->setText(QString::number(per_phase, 'f', 1) + "%");
 
     // 保存当前角度，计算角度增量时需要
     last_angle = angle;

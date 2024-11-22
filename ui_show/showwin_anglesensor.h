@@ -48,7 +48,7 @@ private slots:
     void on_btn_run_stop_toggled(bool checked);
     void on_btn_stop_now_clicked();
 
-    void on_btn_angle_cali_clicked();
+    void on_btn_angle_cali_toggled(bool checked);
 
 public slots:
     void update_motor_tar_angle(const QString &text);
@@ -86,9 +86,15 @@ private:
     QVector<SensorData> save_data_buf_angle_motor;          // 来自电机的要保存的角度数据
     int time_stamp = 0;         // 时间戳，文件保存时的横坐标
 
+    // 传感器临时值
+    const double THREAD_ANGLE = (_angle_sensor->get_range().second - _angle_sensor->get_range().first) / 2 / 6;
+    const double ZERO_ANGLE = (_angle_sensor->get_range().second + _angle_sensor->get_range().first) / 2;
+    double temp_angle = 0;
+    double temp_abs_angle = 0;
+    int acc_cnt = 0;
+
     // 画图
     int channel_num;
-
     bool sig_error = false;
 
     void UI_init();

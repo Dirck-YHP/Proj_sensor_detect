@@ -422,19 +422,29 @@ void funcWin_DataReview::file_process_proxi()
             ui->custom_plot->yAxis->setLabel("Y");
             ui->custom_plot->yAxis->setRange(-10, 10);
 
-            // Graph数量 = 1
+            // Graph数量 = 2
             ui->custom_plot->addGraph();
+            ui->custom_plot->addGraph();
+
+            //
 
             // 根据y2判断是否画“触发”
             for (int i = 0; i < yData1.size(); i++) {
                 QVector<double> x = {xData[i]};
                 QVector<double> y = {yData1[i]};
-                if (yData2[i] == 1) {
-                    ui->custom_plot->graph(0)->setPen(QPen(Qt::red));
-                    ui->custom_plot->graph(0)->addData(x, y, true);
-                } else {
-                    ui->custom_plot->graph(0)->setPen(QPen(Qt::blue));
-                    ui->custom_plot->graph(0)->addData(x, y, true);
+                ui->custom_plot->graph(0)->addData(x, y, true);
+            }
+
+            ui->custom_plot->graph(0)->setPen(QPen(QColor(qrand() % 256, qrand() % 256, qrand() % 256)));
+            ui->custom_plot->graph(1)->setPen(QPen(QColor(255, 0, 0)));
+
+            for (int i = 0; i < yData2.size(); i++) {
+                QVector<double> x = {xData[i]};
+                QVector<double> y = {yData1[i]};
+                if (yData2[i]) {
+                    ui->custom_plot->graph(1)->setLineStyle(QCPGraph::LineStyle::lsNone);
+                    ui->custom_plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+                    ui->custom_plot->graph(1)->addData(x, y, true);
                 }
             }
 

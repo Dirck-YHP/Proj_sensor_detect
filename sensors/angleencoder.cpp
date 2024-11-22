@@ -4,17 +4,17 @@ AngleEncoder::AngleEncoder(QObject *parent) : QObject(parent)
 {
     if (data_acquire_ai == nullptr) {
         data_acquire_ai = new DataAcquireAI;
-        qDebug() << "(In AE)new acq_ai succeed";
+        // qDebug() << "(In AE)new acq_ai succeed";
     }
 
     if (data_acquire_di == nullptr) {
         data_acquire_di = new DataAcquireDI;
-        qDebug() << "(In AE)new acq_di succeed";
+        // qDebug() << "(In AE)new acq_di succeed";
     }
 
     if (data_acquire_ci == nullptr) {
         data_acquire_ci = new DataAcquireCI;
-        qDebug() << "(In AE)new acq_ci succeed";
+        // qDebug() << "(In AE)new acq_ci succeed";
     }
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
@@ -116,7 +116,7 @@ void AngleEncoder::start_acquire()
     channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
                             chToStr(CH_BAT);
-    qDebug() << "(In AE)fi: " << channel_final;
+    // qDebug() << "(In AE)fi: " << channel_final;
 
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
@@ -156,7 +156,7 @@ void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
 //    qDebug() << "(In AE)通道size: " << Assist::extractNumbers(channel_final).size()
 //             << " 接收数据size: " << data.size();
     if (data.size() != Assist::extractNumbers(channel_final).size()) {
-        qDebug() << "in AE:通道和接收数据的size不一致！";
+        // qDebug() << "in AE:通道和接收数据的size不一致！";
         return;
     }
 
@@ -167,14 +167,19 @@ void AngleEncoder::rev_data_from_ni9205(QVector<double> data)
     // 信号电流A+ = 信号电压A+ / 5kΩ
     double sig_vol_A = data[1] / 5.1 * 25.1;
     double sig_cur_A = sig_vol_A / 25100;
+    sig_vol_A = sig_vol_A * 1.1844 - 0.1841;
+    sig_cur_A = sig_cur_A * 1.2322 - 0.0073 / 1000;
 
     // 信号电压B+
     // 信号电流A+ = 信号电压A+ / 5kΩ
     double sig_vol_B = data[2] / 5.1 * 25.1;
     double sig_cur_B = sig_vol_B / 25100;
+    sig_vol_B = sig_vol_B * 1.1862 - 0.184;
+    sig_cur_B = sig_cur_B * 1.2322 - 0.0073 / 1000;
 
     // 供电电流 = 电压 / 电阻(1Ω)
     double sup_cur = data[3] / 1;
+    sup_cur = sup_cur * 0.8993 - 2.1652 / 1000;
 
     // 电池电量
     double bat = data[4] * 3;
@@ -220,7 +225,7 @@ void AngleEncoder::rev_data_from_ni9401(QVector<double> data, QVector<uInt32> da
  **************************************************************/
 void AngleEncoder::slot_get_err(bool err)
 {
-    qDebug() << "(In AE)get err sig!!";
+    // qDebug() << "(In AE)get err sig!!";
     emit sig_err_to_ui(err);
 }
 
@@ -232,20 +237,20 @@ void AngleEncoder::slot_get_err(bool err)
  **************************************************************/
 void AngleEncoder::slot_acq_delete()
 {
-    qDebug() << "(In AE)get delete sig";
+    // qDebug() << "(In AE)get delete sig";
 
     if (data_acquire_ai != nullptr) {
         delete data_acquire_ai;
-        qDebug() << "(In AE)delete acq_ai succeed!!!!!!!!!!";
+        // qDebug() << "(In AE)delete acq_ai succeed!!!!!!!!!!";
     }
 
     if (data_acquire_di != nullptr) {
         delete data_acquire_di;
-        qDebug() << "(In AE)delete acq_di succeed!!!!!!!!!!";
+        // qDebug() << "(In AE)delete acq_di succeed!!!!!!!!!!";
     }
 
     if (data_acquire_ci != nullptr) {
         delete data_acquire_ci;
-        qDebug() << "(In AE)delete acq_ci succeed!!!!!!!!!!";
+        // qDebug() << "(In AE)delete acq_ci succeed!!!!!!!!!!";
     }
 }

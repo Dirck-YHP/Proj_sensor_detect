@@ -34,6 +34,8 @@ private:
     QTimer* m_timer;
     bool allowChange;
 
+    int _idx;
+
 public:
     void set_channel(QString channel);
     QString get_channel() const;
@@ -48,6 +50,8 @@ private slots:
     void rev_data_from_ni9205(QVector<double> data);
 public slots:
     void slot_acq_delete();
+
+    void slot_get_r_idx(int idx);
 
 signals:
     void send_resis_to_ui(QVector<double> data);

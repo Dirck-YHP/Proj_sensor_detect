@@ -8,6 +8,7 @@
 #include <NIDAQmx.h>
 
 #include "data_acquire/dataacquireai.h"
+#include "data_acquire/lowpassfilter.h"
 
 class ProximitySwitch : public QObject
 {
@@ -28,6 +29,9 @@ private:
     DataAcquireAI *data_acquire_ai = nullptr;     // NI 9205
 
     const int THREAD_VOL_TO_PUL = 3;
+
+    // 低通滤波
+    QVector<double> taps = createLowpassFilter(200, 10, 1000);
 
 public:
     void set_label(QString label);  // 设置传感器类型

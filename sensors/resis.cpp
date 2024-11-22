@@ -6,7 +6,7 @@ Resis::Resis(QObject *parent) : QObject(parent)
 
     if (data_acquire_ai == nullptr) {
         data_acquire_ai = new DataAcquireAI;
-        qDebug() << "(In resis)new acq_ai succeed";
+        // qDebug() << "(In resis)new acq_ai succeed";
     }
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
@@ -14,7 +14,7 @@ Resis::Resis(QObject *parent) : QObject(parent)
 
     // 设置定时器，为了能够切换电阻挡位的时候维持两秒，不至于跳变
     m_timer = new QTimer(this);
-    m_timer->setInterval(500);
+    m_timer->setInterval(2000);
     allowChange = true;
     connect(m_timer, &QTimer::timeout, this, [=](){
         allowChange = true;
@@ -31,7 +31,7 @@ Resis::Resis(QObject *parent) : QObject(parent)
  **************************************************************/
 void Resis::set_channel(QString channel)
 {
-    qDebug() << "(In resis)way choosed: " << channel;
+    // qDebug() << "(In resis)way choosed: " << channel;
     QVector<int> selected_channel_arr  = Assist::extractNumbers(channel);
 
     _channel = "";
@@ -43,11 +43,17 @@ void Resis::set_channel(QString channel)
                 _channel.append(",");
             }
 
-            if (i == 1) _channel.append(chToStr(CH_R_1));
-            if (i == 2) _channel.append(chToStr(CH_R_2));
+            /*  这里由于硬件连线问题，映射顺序做个调换
+                用户选择的 1   映射到   实际的 5
+                用户选择的 2   映射到   实际的 4
+                ...
+                以此类推
+            */
+            if (i == 1) _channel.append(chToStr(CH_R_5));
+            if (i == 2) _channel.append(chToStr(CH_R_4));
             if (i == 3) _channel.append(chToStr(CH_R_3));
-            if (i == 4) _channel.append(chToStr(CH_R_4));
-            if (i == 5) _channel.append(chToStr(CH_R_5));
+            if (i == 4) _channel.append(chToStr(CH_R_2));
+            if (i == 5) _channel.append(chToStr(CH_R_1));
 
             isFirst = false;
         }
@@ -78,7 +84,7 @@ void Resis::start_acquire()
     // 电阻：(10),...,(14) + 电池电量(31)
     channel_final = get_channel() + "," +
                             chToStr(CH_BAT);
-    qDebug() << "(In resis)fi: " << channel_final;
+    // qDebug() << "(In resis)fi: " << channel_final;
 
     data_acquire_ai->get_channel(channel_final);
     QThreadPool::globalInstance()->start(data_acquire_ai);
@@ -108,7 +114,7 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
 //    qDebug() << "(In resis)通道size: " << channel_final.length() << " 接收数据size: " << data.size();
     if (data.size() != Assist::extractNumbers(channel_final).size()) {
-        qDebug() << "in resis:通道和接收数据的size不一致！";
+        // qDebug() << "in resis:通道和接收数据的size不一致！";
         return;
     }
 
@@ -120,12 +126,15 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
     QString selected_channel_str = get_channel();
     QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
 
+    // qDebug() << "(In resis)resis_vec: " << selected_channel_arr;
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num + 9)) {
+        // y1 = 15 - x
+        if (selected_channel_arr.contains(15 - ch_num)) {
+            // y2 = -2x + 16;       y2 = -2x + 17
             QString dir = "cDAQ1Mod2/port0/line" +
-                    QString::number(4+2*ch_num) + ":" +
-                    QString::number(5+2*ch_num);
-           // qDebug() << "(In resis)dir: " << dir;
+                    QString::number(-2*ch_num + 16) + ":" +
+                    QString::number(-2*ch_num + 17);
+            // qDebug() << "(In resis)dir: " << dir;
 
             channel_choosed.append(dir);
         }
@@ -139,7 +148,7 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
         data_after_process.append(resis);
     }
 
-    qDebug() << "--------";
+    // qDebug() << "--------";
 
     // 电池电量
     double bat = data[len - 1] * 3;
@@ -158,12 +167,18 @@ void Resis::rev_data_from_ni9205(QVector<double> data)
  **************************************************************/
 void Resis::slot_acq_delete()
 {
-    qDebug() << "(In resis)get delete sig";
+    // qDebug() << "(In resis)get delete sig";
 
     if (data_acquire_ai != nullptr) {
         delete data_acquire_ai;
-        qDebug() << "(In resis)delete acq_ai succeed!!!!!!!!!!";
+        // qDebug() << "(In resis)delete acq_ai succeed!!!!!!!!!!";
     }
+}
+
+void Resis::slot_get_r_idx(int idx)
+{
+    qDebug() << "(In resis)idx: " << idx;
+    _idx = idx;
 }
 
 /***************************************************************
@@ -181,19 +196,20 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str, int idx)
     case RType::high:
         resis = vol * (1e6 + 3.5) / (5 - vol);
         // 下面对电阻值进行修正
-        resis = resis * 0.9825 + 3430.2;
+        if (resis > 2e5)
+            resis = resis * 0.8576 + 32971;
 
         break;
     case RType::middle:
         resis = vol * (1e4 + 3.5) / (5 - vol);
         // 下面对电阻值进行修正
-        resis = resis * 1.0052 + 0.8268;
+        resis = resis * 1.008 - 1.8016;
 
         break;
     case RType::low:
         resis = vol / ((1.25 / 120) + 5e-4);
         // 下面对电阻值进行修正
-        resis = resis * 1.0488 - 0.302;
+        resis = resis * 1.0603 - 0.886;
 
         break;
     default:
@@ -202,16 +218,25 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str, int idx)
 
 
     RType rTempType = RType::middle;
+
+    // 测试代码
+    // if (_idx == 0)
+    //     rTempType = RType::high;
+    // else if (_idx == 1)
+    //     rTempType = RType::middle;
+    // else if (_idx == 2)
+    //     rTempType = RType::low;
+
     // 下面的判断条件待定
-    if (resis < 60) {
+    if (resis < 70) {
         rTempType = RType::low;
-    }else if(resis < 2e3 && resis > 65) {
+    }else if(resis < 2e3 && resis > 80) {
         rTempType = RType::middle;
     }else if (resis > 6e3 && resis < 2e7) {
         rTempType = RType::high;
     }
 
-   qDebug() << "(In resis)vol: " << vol << " r: " << rTempType << ", resis: " << resis;
+   // qDebug() << "(In resis)rT: " << rType[idx] << " r: " << rTempType << ", resis: " << resis;
 
     uInt8 writeArray[2] = {0, 0};
     // 下面进行测电阻档位选择
@@ -229,19 +254,18 @@ double Resis::map_from_vol_to_resis(double voltage, QString DI_str, int idx)
         if(rType[idx] == RType::low){
             writeArray[0] = 0;
             writeArray[1] = 1;
-            qDebug() << "(In resis)R LOW!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+            // qDebug() << "(In resis)R LOW!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }else if(rType[idx] == RType::middle){
             writeArray[0] = 1;
             writeArray[1] = 0;
-            qDebug() << "(In resis)R MIDDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+            // qDebug() << "(In resis)R MIDDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }else if(rType[idx] == RType::high){
             writeArray[0] = 0;
             writeArray[1] = 0;
-            qDebug() << "(In resis)R HIGH!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+            // qDebug() << "(In resis)R HIGH!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         }
         int error = DAQmxWriteDigitalLines(taskHandleSwitch, 1, true, -1,
                                            DAQmx_Val_GroupByChannel, writeArray, &writeSuccessNum, NULL);
-        qDebug() << QString::number(error);
         DAQmxClearTask(taskHandleSwitch);
     }
     return resis;

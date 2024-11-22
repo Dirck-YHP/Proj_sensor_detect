@@ -4,7 +4,7 @@ AngleSensor::AngleSensor(QObject *parent) : QObject(parent)
 {
     if (data_acquire_ai == nullptr) {
         data_acquire_ai = new DataAcquireAI;
-        qDebug() << "(In AS)new acq_ai succeed";
+        // qDebug() << "(In AS)new acq_ai succeed";
     }
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
@@ -95,7 +95,7 @@ void AngleSensor::start_acquire()
     channel_final = chToStr(CH_SUPV) + "," +
                             get_channel() + "," +
                             chToStr(CH_BAT);
-    qDebug() << "(In AS)fi: " << channel_final;
+    // qDebug() << "(In AS)fi: " << channel_final;
 
     data_acquire_ai->get_channel(channel_final);            // 把传感器获取到的通道传给数据采集
     QThreadPool::globalInstance()->start(data_acquire_ai);  // 丢进线程池
@@ -126,7 +126,7 @@ void AngleSensor::rev_data_from_ni9205(QVector<double> data)
 //    qDebug() << "(In AS)通道size: " << Assist::extractNumbers(channel_final).size()
 //             << " 接收数据size: " << data.size();
     if (data.size() != Assist::extractNumbers(channel_final).size()) {
-        qDebug() << "in AE:通道和接收数据的size不一致！";
+        // qDebug() << "in AE:通道和接收数据的size不一致！";
         return;
     }
 
@@ -136,12 +136,14 @@ void AngleSensor::rev_data_from_ni9205(QVector<double> data)
     // 信号电压、信号电流
     double sig_vol = data[1];
     double sig_cur = sig_vol / 1 * 1000;
+    sig_cur = 0.9103 * sig_cur - 0.6323;
 
     // 供电电流
     double sup_cur = data[2] / 1 * 1000;
+    sup_cur = 0.5718 * sup_cur + 3.8237;
 
     // 角度
-    double angle = map_from_cur_to_angle(sig_cur, sup_cur);
+    double angle = map_from_cur_to_angle(sig_cur);
 
     // 电池电量
     double bat = data[3] * 3;
@@ -164,7 +166,7 @@ void AngleSensor::rev_data_from_ni9205(QVector<double> data)
  **************************************************************/
 void AngleSensor::slot_get_err(bool err)
 {
-    qDebug() << "(In AS)get err sig!!";
+    // qDebug() << "(In AS)get err sig!!";
     emit sig_err_to_ui(err);
 }
 
@@ -176,11 +178,11 @@ void AngleSensor::slot_get_err(bool err)
  **************************************************************/
 void AngleSensor::slot_acq_delete()
 {
-    qDebug() << "(In AS)get delete sig";
+    // qDebug() << "(In AS)get delete sig";
 
     if (data_acquire_ai != nullptr) {
         delete data_acquire_ai;
-        qDebug() << "(In AS)delete acq_ai succeed!!!!!!!!!!";
+        // qDebug() << "(In AS)delete acq_ai succeed!!!!!!!!!!";
     }
 }
 
@@ -190,9 +192,8 @@ void AngleSensor::slot_acq_delete()
   *  @note      功能函数：实现电流到角度的映射
   *  @Sample usage:
  **************************************************************/
-double AngleSensor::map_from_cur_to_angle(double current1, double current2)
+double AngleSensor::map_from_cur_to_angle(double current)
 {
-    double current = 0.934 * current1 - 0.0605 * current2 - 0.027;
     double angle = (current - 4) * (_range.second - _range.first) / (20 -4) + _range.first;
 
     return angle;

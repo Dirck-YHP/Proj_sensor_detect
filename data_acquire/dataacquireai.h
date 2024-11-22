@@ -65,6 +65,7 @@ public:
     explicit DataAcquireAI(QObject *parent = nullptr);
     ~DataAcquireAI() {
         delete [] data;
+        delete [] data_final;
     };
 
     void run() override;
@@ -81,15 +82,16 @@ public:
 private:
     TaskHandle _task;
     QString _channel;
-    float64 _sample_rate = 50.0;
+    float64 _sample_rate = 5000;
     uint64_t _sampsPerChanToAcquire = 1000;
-    int32 _numSampsPerChan = 1;                // 每通道采样数
+    int32 _numSampsPerChan = 250;                // 每通道采样数
     uInt32 _channel_num;
     bool STOP = false;
 
-    const int DATA_SIZE = 1000;
+    const int DATA_SIZE = 5000;
 
     double* data = new double[DATA_SIZE];
+    double* data_final = new double[DATA_SIZE];
     int32 _sampsPerChanRead;
 
     // 低通滤波

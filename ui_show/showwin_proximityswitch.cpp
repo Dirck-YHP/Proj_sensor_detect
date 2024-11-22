@@ -194,21 +194,22 @@ void showWin_proximitySwitch::get_data_and_plot_distance(QVector<double> data)
  **************************************************************/
 void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> data)
 {
+    const int DIGIT = 1;
     /*********************** 供电电压 ************************/
     double sup_vol = data[0];
-    ui->lineE_supply_voltage->setText(QString::number(sup_vol) + "V");
+    ui->lineE_supply_voltage->setText(QString::number(sup_vol, 'f', DIGIT) + "V");
 
     /*********************** 信号电压 ************************/
     double sig_vol = data[1];
-    ui->lineE_signal_voltage->setText(QString::number(sig_vol / 5.1 * 25.1) + "V");
+    ui->lineE_signal_voltage->setText(QString::number(sig_vol / 5.1 * 25.1, 'f', DIGIT) + "V");
 
     /*********************** 信号电流 ************************/
     double sig_cur = data[2];
-    ui->lineE_signal_current->setText(QString::number(sig_cur) + "mA");
+    ui->lineE_signal_current->setText(QString::number(sig_cur, 'f', DIGIT) + "mA");
 
     /*********************** 供电电流 ************************/
     double sup_cur = data[3];
-    ui->lineE_supply_current->setText(QString::number(sup_cur) + "mA");
+    ui->lineE_supply_current->setText(QString::number(sup_cur, 'f', DIGIT) + "mA");
 
     /*********************** 是否触发 ************************/
     bool if_Pulse = data[4];
@@ -272,9 +273,9 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
             double sum = std::accumulate(_dis_arr.begin(), _dis_arr.end(), 0.0);
             double avg_dis = _dis_arr.isEmpty() ? 0.0 : sum / _dis_arr.size();
 
-            ui->lineE_dis_max->setText(QString::number(max_dis));
-            ui->lineE_dis_min->setText(QString::number(min_dis));
-            ui->lineE_dis_avg->setText(QString::number(avg_dis));
+            ui->lineE_dis_max->setText(QString::number(max_dis, 'f', DIGIT));
+            ui->lineE_dis_min->setText(QString::number(min_dis, 'f', DIGIT));
+            ui->lineE_dis_avg->setText(QString::number(avg_dis, 'f', DIGIT));
 
             _if_rep_mea = false;        // 结束重复精度测量
             _dis_arr.clear();           // 清空
@@ -286,11 +287,23 @@ void showWin_proximitySwitch::slot_get_vol_cur_pul_dis_and_show(QVector<double> 
     double bat = data[6];
     ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
     ui->pBar_battery->setMinimum(0);                   // 最小值
-    ui->pBar_battery->setMaximum(24);                   // 最大值
-    ui->pBar_battery->setValue(bat);                  // 当前进度
-    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+    ui->pBar_battery->setMaximum(25);                   // 最大值
+    double dProgress = (bat - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
+    // 定义电量档位
+    int batteryLevel;
+    if (dProgress <= 25.0) {
+        batteryLevel = 25;  // 第一档：25%
+    } else if (dProgress <= 50.0) {
+        batteryLevel = 50;  // 第二档：50%
+    } else if (dProgress <= 75.0) {
+        batteryLevel = 75;  // 第三档：75%
+    } else {
+        batteryLevel = 100; // 第四档：100%
+    }
+
+    ui->pBar_battery->setValue(batteryLevel);                  // 当前进度
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(batteryLevel, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 
     /******************** 文件保存 *********************/

@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets PrintSupport SerialPort SerialBus Core Network)
 
-add_executable(Proj_Sensor
+add_executable(Proj_Sensor WIN32
     main.cpp
 #    widget.cpp widget.h widget.ui
     mainwindow.cpp mainwindow.h mainwindow.ui

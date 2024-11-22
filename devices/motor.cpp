@@ -5,7 +5,7 @@ Motor::Motor(QObject *parent) : QObject(parent)
     // 线程  参数
     modbus_com = new Modbus();
     thread_modbus = new QThread;
-    qDebug() << "(In motor)fisrt new modbus";
+    // qDebug() << "(In motor)fisrt new modbus";
 
     modbus_com->moveToThread(thread_modbus);
     // 回收
@@ -218,7 +218,7 @@ void Motor::rev_spd_from_modbus(int data)
  **************************************************************/
 void Motor::get_config_signal()
 {
-    qDebug() << "(In motor)收到界面的配置信号";
+    // qDebug() << "(In motor)收到界面的配置信号";
     emit signal_set_config_modbus();
 }
 
@@ -230,7 +230,7 @@ void Motor::get_config_signal()
  **************************************************************/
 void Motor::get_close_signal()
 {
-    qDebug() << "(In motor)收到界面的关闭信号";
+    // qDebug() << "(In motor)收到界面的关闭信号";
     emit signal_close_modbus();
 }
 

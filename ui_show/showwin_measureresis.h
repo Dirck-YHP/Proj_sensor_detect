@@ -21,6 +21,8 @@ private slots:
     void on_btn_ok_clicked();
     void on_btn_start_finish_mea_toggled(bool checked);
 
+    void on_comboBox_currentIndexChanged(int index);
+
 public slots:
     void slot_get_resis_and_show(QVector<double> data);
 
@@ -34,6 +36,8 @@ private:
 
 signals:
     void signal_delete();
+
+    void signal_change_resis(int index);
 };
 
 #endif // SHOWWIN_MEASURERESIS_H

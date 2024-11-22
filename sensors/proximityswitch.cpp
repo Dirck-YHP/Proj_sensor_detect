@@ -4,7 +4,7 @@ ProximitySwitch::ProximitySwitch(QObject *parent) : QObject(parent)
 {
     if (data_acquire_ai == nullptr) {
         data_acquire_ai = new DataAcquireAI;
-        qDebug() << "(In PxS)new acq_ai succeed";
+        // qDebug() << "(In PxS)new acq_ai succeed";
     }
 
     connect(data_acquire_ai, &DataAcquireAI::send_data,
@@ -112,16 +112,22 @@ QString ProximitySwitch::get_sensing_matirial() const
  **************************************************************/
 void ProximitySwitch::set_channel(QString channel)
 {
+    /*  这里由于硬件连线问题，映射顺序做个调换
+        用户选择的 1   映射到   实际的 5
+        用户选择的 2   映射到   实际的 4
+        ...
+        以此类推
+    */
     if (channel == "1") {
-        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_1) + "," + chToStr(CH_PS_SUPC_1);
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_5) + "," + chToStr(CH_PS_SUPC_5);
     } else if (channel == "2") {
-        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_2) + "," + chToStr(CH_PS_SUPC_2);
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_4) + "," + chToStr(CH_PS_SUPC_4);
     } else if (channel == "3") {
         _channel = chToStr(CH_PS_SIGV_SIGC_PUL_3) + "," + chToStr(CH_PS_SUPC_3);
     } else if (channel == "4") {
-        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_4) + "," + chToStr(CH_PS_SUPC_4);
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_2) + "," + chToStr(CH_PS_SUPC_2);
     } else if (channel == "5") {
-        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_5) + "," + chToStr(CH_PS_SUPC_5);
+        _channel = chToStr(CH_PS_SIGV_SIGC_PUL_1) + "," + chToStr(CH_PS_SUPC_1);
     }
 }
 
@@ -151,7 +157,7 @@ void ProximitySwitch::start_acquire()
                             chToStr(CH_VR_DIS) + "," +
                             chToStr(CH_BAT);
 
-    qDebug() << "fi: " << channel_final;
+    // qDebug() << "fi: " << channel_final;
     data_acquire_ai->get_channel(channel_final);
 
     QThreadPool::globalInstance()->start(data_acquire_ai);
@@ -181,7 +187,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
     // 判断channel_final的size和data的size是否一致，根据channel_final的顺序取数据
 //    qDebug() << "(In PxS)通道size: " << Assist::extractNumbers(channel_final).size() << " 接收数据size: " << data.size();
     if (data.size() != Assist::extractNumbers(channel_final).size()) {
-        qDebug() << "(In PxS)通道和接收数据的size不一致！";
+        // qDebug() << "(In PxS)通道和接收数据的size不一致！";
         return;
     }
 
@@ -190,14 +196,19 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
 
     // 信号电压、信号电流、是否触发
     double sig_vol = data[1];
+    sig_vol = sig_vol * 0.9954 - 0.0406;
+
     double sig_cur = sig_vol / 5100 * 1000;
+    sig_cur = 0.9969 * sig_cur - 0.0022;
+
     double if_pulse = (sig_vol > THREAD_VOL_TO_PUL) ? 1 : 0;
 
 //    qDebug() << "(In PxS)if_pulse" << if_pulse;
 
     // 供电电流
     double sup_cur = data[2] / 1 * 1000;
-//    qDebug() << sup_cur;
+    sup_cur = 0.9795 * sup_cur + 0.9399;
+    // qDebug() << "(Pxs)sup_cur: " << sup_cur;
 
     // 滑动变阻器计算距离
     double cur = data[3] / 1 * 1000;
@@ -225,7 +236,7 @@ void ProximitySwitch::rev_data_from_ni9205(QVector<double> data)
  **************************************************************/
 void ProximitySwitch::slot_get_err(bool err)
 {
-    qDebug() << "(In PxS)get err sig!!";
+    // qDebug() << "(In PxS)get err sig!!";
     emit sig_err_to_ui(err);
 }
 
@@ -237,11 +248,11 @@ void ProximitySwitch::slot_get_err(bool err)
  **************************************************************/
 void ProximitySwitch::slot_acq_delete()
 {
-    qDebug() << "(In PxS)get delete sig";
+    // qDebug() << "(In PxS)get delete sig";
 
     if (data_acquire_ai != nullptr) {
         delete data_acquire_ai;
-        qDebug() << "(In PxS)delete acq_ai succeed!!!!!!!!!!";
+        // qDebug() << "(In PxS)delete acq_ai succeed!!!!!!!!!!";
     }
 }
 
@@ -255,8 +266,8 @@ double ProximitySwitch::map_from_cur_to_varDis(double current)
 {
     // 电流补偿
     // qDebug() << current;
-    current = current * 0.9917 + 0.3784 - 0.3;
-    // qDebug() << current;
+    current = current * 0.9856 + 0.0955;
+    qDebug() << current;
 
     double dis = (current - 4) * (_range.second - _range.first) / (20 -4) + _range.first;
 

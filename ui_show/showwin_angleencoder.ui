@@ -35,14 +35,14 @@
           <string>显示——角位移编码器</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
        <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -58,7 +58,7 @@
           <string notr="true">background-color: rgb（255,255,255）</string>
          </property>
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -106,7 +106,7 @@
         <string notr="true">background-color: rgb（255,255,255）</string>
        </property>
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -154,16 +154,6 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_20">
          <item>
-          <widget class="Line" name="line_8">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb（255,255,255）</string>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -177,7 +167,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>300</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -216,7 +206,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>300</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -255,7 +245,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>300</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -294,12 +284,12 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>300</width>
                  <height>16777215</height>
                 </size>
                </property>
                <property name="text">
-                <string>误差百分比：</string>
+                <string>相位差：</string>
                </property>
               </widget>
              </item>
@@ -330,7 +320,7 @@
      <item>
       <widget class="Line" name="line_4">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -372,16 +362,6 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="Line" name="line_10">
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb（255,255,255）</string>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -395,7 +375,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>300</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -440,7 +420,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>300</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -485,7 +465,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>100</width>
+                 <width>300</width>
                  <height>16777215</height>
                 </size>
                </property>
@@ -590,7 +570,7 @@
         <string notr="true">background-color: rgb（255,255,255）</string>
        </property>
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -660,7 +640,7 @@
           <string notr="true">background-color: rgb（255,255,255）</string>
          </property>
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -728,7 +708,7 @@
           <string notr="true">background-color: rgb（255,255,255）</string>
          </property>
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -791,62 +771,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_22">
-           <item>
-            <widget class="QLabel" name="label_period">
-             <property name="text">
-              <string>period:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineE_period">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>50</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_23">
-           <item>
-            <widget class="QLabel" name="label_two_edge_sep">
-             <property name="text">
-              <string>interval</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineE_two_edge_sep">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>50</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+        <layout class="QVBoxLayout" name="verticalLayout_9"/>
        </item>
       </layout>
      </item>
@@ -856,7 +781,7 @@
         <string notr="true">background-color: rgb（255,255,255）</string>
        </property>
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
       </widget>
      </item>

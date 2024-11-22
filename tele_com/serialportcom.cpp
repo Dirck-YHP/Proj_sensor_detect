@@ -2,12 +2,12 @@
 
 SerialPortCom::SerialPortCom(QObject *parent) : QObject(parent)
 {
-    qDebug() <<  "(In serial)1 线程ID：" << QThread::currentThreadId();
+    // // qDebug() <<  "(In serial)1 线程ID：" << QThread::currentThreadId();
 }
 
 SerialPortCom::~SerialPortCom()
 {
-    qDebug() << "(In serial)~SerialPort";
+    // // qDebug() << "(In serial)~SerialPort";
 }
 
 /***************************************************************
@@ -27,7 +27,7 @@ void SerialPortCom::serial_port_connect()
     serialPort->setPortName(COM);
     if (!serialPort->open(QIODevice::ReadWrite)) {
         // 打开失败，处理错误
-        qDebug() << "(In serial)Connect Error";
+        // // qDebug() << "(In serial)Connect Error";
     }
     serialPort->setBaudRate(QSerialPort::Baud9600);
     serialPort->setDataBits(QSerialPort::Data8); // 设置为8位数据位
@@ -79,15 +79,15 @@ QString SerialPortCom::serial_rev_msg()
  **************************************************************/
 void SerialPortCom::slot_configSrialport()
 {
-    qDebug() << "(In serial)serial port cfg cur thread: " << QThread::currentThreadId();
+    // // qDebug() << "(In serial)serial port cfg cur thread: " << QThread::currentThreadId();
     serial_port_connect();
 
     bool if_port_connected = checkPortAvailability(COM);
     if (if_port_connected) {
-        qDebug() << "(In serial)串口打开";
+        // // qDebug() << "(In serial)串口打开";
         timer_Serialport->start(200);   // 开启定时器
     } else {
-        qDebug() << "(In serial)串口打开失败";
+        // // qDebug() << "(In serial)串口打开失败";
     }
 }
 
@@ -99,7 +99,7 @@ void SerialPortCom::slot_configSrialport()
  **************************************************************/
 void SerialPortCom::slot_closeOpneSrialport()
 {
-    qDebug() << "(In serial)close serial current thread: " << QThread::currentThreadId();
+    // // qDebug() << "(In serial)close serial current thread: " << QThread::currentThreadId();
     // 关闭串口
     serial_port_break();
     serialPort->deleteLater();
@@ -129,7 +129,7 @@ void SerialPortCom::slots_readData()
  **************************************************************/
 void SerialPortCom::writeData()
 {
-//    qDebug() << "snd thread: " << QThread::currentThreadId();
+//    // // qDebug() << "snd thread: " << QThread::currentThreadId();
 //    serial_snd_msg(SEND_MSG);
 }
 
@@ -141,12 +141,12 @@ void SerialPortCom::writeData()
  **************************************************************/
 void SerialPortCom::slot_serialport_init()
 {
-    qDebug() << "(In serial)启动线程";
+    // // qDebug() << "(In serial)启动线程";
     // 创建定时 - Ps: 如果线程中需要定时一定要在线程中Start
     timer_Serialport = new QTimer();
     connect(timer_Serialport, &QTimer::timeout, this, &SerialPortCom::writeData);
-    qDebug() << "(In serial)定时器配置完成。";
-    qDebug() << "(In serial)init conn cur thread: " << QThread::currentThreadId();
+    // qDebug() << "(In serial)定时器配置完成。";
+    // qDebug() << "(In serial)init conn cur thread: " << QThread::currentThreadId();
 }
 
 /***************************************************************
@@ -164,16 +164,16 @@ bool SerialPortCom::checkPortAvailability(const QString &portName) {
         if (portInfo.portName() == portName) {
             // 如果找到匹配的串口名称，检查其是否可用
             if (portInfo.isBusy()) {
-                qDebug() << portName << "(In serial)is busy.";
+                // qDebug() << portName << "(In serial)is busy.";
                 return true;
             } else {
-                qDebug() << portName << "(In serial)is available.";
+                // qDebug() << portName << "(In serial)is available.";
                 return false;
             }
         }
     }
 
     // 如果没有找到匹配的串口
-    qDebug() << portName << "(In serial)not found.";
+    // qDebug() << portName << "(In serial)not found.";
     return false;
 }

@@ -32,15 +32,22 @@ void DataAcquireAI::run()
         // 获取通道
         DAQmxGetTaskNumChans(_task, &_channel_num);
 
-//        qDebug() << "(In acq_ai) sampPerChanRead: " << _sampsPerChanRead << "chan: " << _channel_num;
-        // LowPass
-        for (int i = 0; i < _sampsPerChanRead * _channel_num; i++) {
-            data[i] = _filters[i / _sampsPerChanRead].update(data[i]);
+       // qDebug() << "(In acq_ai) sampPerChanRead: " << _sampsPerChanRead << "chan: " << _channel_num;
+        for (int i = 0; i < _channel_num; i++) {
+            data_final[i] = std::accumulate(data + i*_sampsPerChanRead,
+                                    data + (i+1)*_sampsPerChanRead, 0.0) / _sampsPerChanRead;
         }
+
+        // LowPass
+        for (int i = 0; i < _channel_num; i++) {
+            data_final[i] = _filters[i].update(data_final[i]);
+        }
+        // qDebug() << data_final[0] << " " << data_final[1]
+        //          << " " << data_final[2] << " " << data_final[3];
         // 发送数据
-        if(_sampsPerChanRead > 0) emit send_data(QVector<double>(data, data + _sampsPerChanRead * _channel_num));
+        if(_sampsPerChanRead > 0) emit send_data(QVector<double>(data_final, data_final + _channel_num));
         else {
-            qDebug() << "没有采集到数据！";
+            // qDebug() << "没有采集到数据！";
         }
         QThread::msleep(10);
     }

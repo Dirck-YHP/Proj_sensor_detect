@@ -247,15 +247,16 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     /****************************** 新板 *************************************/
     // 接收到的data中数据顺序如下：
     // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
+    const int DIGIT = 4;
     int total_len = data.size();
-//    qDebug() << "(In Win)处理之后的数据大小为：" << total_len;
+    // qDebug() << "(In Win)处理之后的数据大小为：" << total_len;
 
     /*********************** 数值框显示 *****************************/
     show_vol_cur_press(data);
 
     /*********************** 液压站相关 *****************************/
     /******************** 压力数值框显示 *********************/
-    ui->lineE_hydra_val->setText(QString::number(_pressure) + "Pa.?");
+    ui->lineE_hydra_val->setText(QString::number(_pressure, 'f', DIGIT) + "Pa");
 
     /*********************** 压力值画图 ****************************/
     // 根据用户选择确定通道然后画图
@@ -287,26 +288,28 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     ui->plot_pressure->replot();
 
     /*********************** 误差值画图 ****************************/
-    // 根据用户选择确定通道然后画图
-    int length_err = 1;
-    QVector<double> x_err(length_err);
-    int point_count_err = ui->plot_error->graph(0)->dataCount();
+    if (channel_num - 2 != 0) { // 不止一路
+        // 根据用户选择确定通道然后画图
+        int length_err = 1;
+        QVector<double> x_err(length_err);
+        int point_count_err = ui->plot_error->graph(0)->dataCount();
 
-    // 确定画图的横轴
-    for (int i = 0; i < length; i++) {
-        x_err[i] = i + point_count_err;
+        // 确定画图的横轴
+        for (int i = 0; i < length; i++) {
+            x_err[i] = i + point_count_err;
+        }
+
+        // 画图
+        for (int i = 0; i < channel_num - 2; i++) {
+            QVector<double> y_err = QVector<double>{err_save[i]};
+            ui->plot_error->graph(i)->addData(x_err, y_err, true);
+        }
+        // 清空
+        err_save.clear();
+
+        ui->plot_error->rescaleAxes();       // 自适应大小
+        ui->plot_error->replot();
     }
-
-    // 画图
-    for (int i = 0; i < channel_num - 2; i++) {
-        QVector<double> y_err = QVector<double>{err_save[i]};
-        ui->plot_error->graph(i)->addData(x_err, y_err, true);
-    }
-    // 清空
-    err_save.clear();
-
-    ui->plot_error->rescaleAxes();       // 自适应大小
-    ui->plot_error->replot();
 
     /*********************** 文件保存 *****************************/
     if (FILE_SAVE) {
@@ -317,11 +320,23 @@ void showWin_pressureSensor::slot_plot_press_from_sensor(QVector<double> data)
     double bat = data[total_len - 1];
     ui->pBar_battery->setOrientation(Qt::Horizontal);  // 水平方向
     ui->pBar_battery->setMinimum(0);                   // 最小值
-    ui->pBar_battery->setMaximum(24);                   // 最大值
-    ui->pBar_battery->setValue(bat);                  // 当前进度
-    double dProgress = (ui->pBar_battery->value() - ui->pBar_battery->minimum()) * 100.0
+    ui->pBar_battery->setMaximum(25);                   // 最大值
+    double dProgress = (bat - ui->pBar_battery->minimum()) * 100.0
                     / (ui->pBar_battery->maximum() - ui->pBar_battery->minimum());
-    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(dProgress, 'f', 1)));
+    // 定义电量档位
+    int batteryLevel;
+    if (dProgress <= 25.0) {
+        batteryLevel = 25;  // 第一档：25%
+    } else if (dProgress <= 50.0) {
+        batteryLevel = 50;  // 第二档：50%
+    } else if (dProgress <= 75.0) {
+        batteryLevel = 75;  // 第三档：75%
+    } else {
+        batteryLevel = 100; // 第四档：100%
+    }
+
+    ui->pBar_battery->setValue(batteryLevel);                  // 当前进度
+    ui->pBar_battery->setFormat(QString::fromLocal8Bit("bat left: %1%").arg(QString::number(batteryLevel, 'f', 1)));
     ui->pBar_battery->setAlignment(Qt::AlignRight | Qt::AlignVCenter);  // 对齐方式
 }
 
@@ -367,7 +382,7 @@ void showWin_pressureSensor::set_visiable()
     QVector<int> selected_channel_arr  = Assist::extractNumbers(selected_channel_str);
 
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num + 25)) {
+        if (selected_channel_arr.contains(31 - ch_num)) {
             QString baseName = "lineE_"; // 基础名称
             setLineEditsForRowEnable(baseName + "pres_val", ch_num, true);
             setLineEditsForRowEnable(baseName + "signal_current", ch_num, true);
@@ -432,7 +447,7 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
     QVector<double> other_value;
 
     for (int ch_num = 1; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num + 25)) {
+        if (selected_channel_arr.contains(31 - ch_num)) {
             QString baseName = "lineE_"; // 基础名称
             // 供电电压、(信号电压、信号电流、压力) * (len - 1)、电池电量
             /*********************** 供电电压 *****************************/
@@ -445,21 +460,21 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
 
             /*********************** 信号电流 *****************************/
             double sig_cur = data[2 + start_idx * len];
-            if (ch_num == 1) {sig_cur = sig_cur * 0.9675 - 0.0601 + 0.1;}
-            else if (ch_num == 2) {sig_cur = sig_cur * 0.9593 - 0.0232 + 0.1;}
-            else if (ch_num == 3) {sig_cur = sig_cur * 0.9519 + 0.0161 + 0.1;}
-            else if (ch_num == 4) {sig_cur = sig_cur * 0.9458 + 0.0169 + 0.1;}
-            else if (ch_num == 5) {sig_cur = sig_cur * 0.9389 + 0.0419 + 0.1;}
+            if (ch_num == 5) {sig_cur = sig_cur * 0.9598 + 0.1599;}
+            else if (ch_num == 4) {sig_cur = sig_cur * 1.0147 - 0.0082;}
+            else if (ch_num == 3) {sig_cur = sig_cur * 0.9447 + 0.1603;}
+            else if (ch_num == 2) {sig_cur = sig_cur * 0.9384 + 0.1677;}
+            else if (ch_num == 1) {sig_cur = sig_cur * 0.9302 + 0.134;}
 
             setLineEditsForRowValue(baseName + "signal_current", ch_num, sig_cur);
 
             /*********************** 供电电流 *****************************/
             double sup_cur = data[2 + start_idx * len];
-            if (ch_num == 1) {sup_cur = sup_cur * 0.9675 - 0.0601 + 0.1;}
-            else if (ch_num == 2) {sup_cur = sup_cur * 0.9593 - 0.0232 + 0.1;}
-            else if (ch_num == 3) {sup_cur = sup_cur * 0.9519 + 0.0161 + 0.1;}
-            else if (ch_num == 4) {sup_cur = sup_cur * 0.9458 + 0.0169 + 0.1;}
-            else if (ch_num == 5) {sup_cur = sup_cur * 0.9389 + 0.0419 + 0.1;}
+            if (ch_num == 5) {sup_cur = sup_cur * 0.9598 + 0.1599;}
+            else if (ch_num == 4) {sup_cur = sup_cur * 1.0147 - 0.0082;}
+            else if (ch_num == 3) {sup_cur = sup_cur * 0.9447 + 0.1603;}
+            else if (ch_num == 2) {sup_cur = sup_cur * 0.9384 + 0.1677;}
+            else if (ch_num == 1) {sup_cur = sup_cur * 0.9302 + 0.134;}
 
             setLineEditsForRowValue(baseName + "supply_current", ch_num, sup_cur);
 
@@ -484,7 +499,7 @@ void showWin_pressureSensor::show_vol_cur_press(QVector<double> data)
 //    qDebug() << "  value: " << other_value;
 
     for (int ch_num = 2; ch_num <= 5; ch_num++) {
-        if (selected_channel_arr.contains(ch_num + 25)) {
+        if (selected_channel_arr.contains(31 - ch_num)) {
             QString baseName = "lineE_"; // 基础名称
             QString objectName = baseName + "pres_val_" + QString::number(ch_num);
 
